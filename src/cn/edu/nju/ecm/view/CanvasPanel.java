@@ -184,6 +184,8 @@ public class CanvasPanel extends JScrollPane {
 				} else {
 
 				}
+				
+				ECMMainFrame.resetButton();
 
 				setChanged(true);
 			}

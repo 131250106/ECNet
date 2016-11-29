@@ -67,11 +67,14 @@ public class ECMMainFrame {
 	// 画布所在的面板
 	public JTabbedPane tabbedCanvasPanel = null;
 	// 当前选中的命令按钮
-	public JButton currentCommandButton;
+	public static JButton currentCommandButton;
+	//选择按钮
+	private static JButton editChoose;
 
 	// 记录新建文件的个数和打开的文件个数
 	public int newNum = 0;
 	public int openNum = 0;
+	
 
 	/**
 	 * Create the application.
@@ -213,7 +216,7 @@ public class ECMMainFrame {
 		JToolBar editBar = new JToolBar();
 		editPanel.add(editBar);
 
-		JButton editChoose = new JButton("\u9009\u62E9");
+		editChoose = new JButton("\u9009\u62E9");
 		editChoose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				currentCommandButton.setBackground(defaultColor);
@@ -339,6 +342,14 @@ public class ECMMainFrame {
 
 		JPanel elementInforPanel = new JPanel();
 		scrollPane.setViewportView(elementInforPanel);
+	}
+	
+	public static void resetButton(){
+		currentCommandButton.setBackground(defaultColor);
+
+		ECMMainFrame.command = Command.Choose;
+		currentCommandButton = editChoose;
+		currentCommandButton.setBackground(Color.LIGHT_GRAY);
 	}
 
 	/*
