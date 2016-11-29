@@ -49,6 +49,9 @@ public class CanvasPanel extends JScrollPane {
 	// 画布
 	private JPanel canvasPanel;
 
+	// 从工具栏拖拽时使用，当前所拖拽的label
+	private JLabel currentLabel = new JLabel();
+
 	private boolean changed;
 	private boolean fromDragging = false;
 	private boolean rotate = false;
@@ -62,7 +65,8 @@ public class CanvasPanel extends JScrollPane {
 	 * 
 	 * @throws DocumentException
 	 */
-	public CanvasPanel(JLabel cursorStatus, FileType type, JLabel title, File file, Element newModel, JFrame mainFrame)
+	public CanvasPanel(JLabel cursorStatus, FileType type, JLabel title,
+			File file, Element newModel, JFrame mainFrame)
 			throws DocumentException {
 		mainPanel = this;
 		this.model = new ECModel();
@@ -100,6 +104,9 @@ public class CanvasPanel extends JScrollPane {
 		this.canvasPanel.addMouseMotionListener(new MouseMoveAction());
 
 		this.setViewportView(this.canvasPanel);
+
+		currentLabel.setVisible(false);
+		this.canvasPanel.add(currentLabel);
 	}
 
 	public boolean isChanged() {
@@ -128,6 +135,53 @@ public class CanvasPanel extends JScrollPane {
 		this.setChanged(false);
 	}
 
+	public void showCurrentlabel(int x, int y, String name) {
+		if (x > 5 && y > 8) {
+			currentLabel.setText(name);
+			currentLabel.setLocation(x, y);
+			currentLabel.setVisible(true);
+		}else
+			currentLabel.setVisible(false);
+	}
+
+	public void drawCurrentlabel(int x, int y) {
+		currentLabel.setText("");
+		currentLabel.setVisible(false);
+		if (x > 5 && y > 5)
+			drawElement(x, y);
+	}
+
+	private void drawElement(int x, int y) {
+		// TODO Auto-generated method stub
+		if (ECMMainFrame.command == Command.EBody) {
+			ElementDialog dialog = new ElementDialog(mainFrame,
+					ElementType.EBody);
+			EBody eBodyEntity = (EBody) dialog.showCreateDialog();
+			if (eBodyEntity == null) {
+				return;
+			}
+			EBodyModel eBodyModel = new EBodyModel(x,
+					y, 2);
+			eBodyModel.seteBody(eBodyEntity);
+			model.insertNewWElement(eBodyModel);
+		} else if (ECMMainFrame.command == Command.EHeader) {
+			CanvasElement eHeader = new EHeaderModel(x,
+					y, 2);
+			model.insertNewWElement(eHeader);
+		} else if (ECMMainFrame.command == Command.EConnector) {
+			ConnectorModel connector = new ConnectorModel(x,
+					y, 2);
+			model.insertNewWElement(connector);
+		} else if (ECMMainFrame.command == Command.ERelation) {
+			CanvasElement hRelation = new HRelationModel(x,
+					y, 2);
+			model.insertNewWElement(hRelation);
+		}
+		ECMMainFrame.resetButton();
+		setChanged(true);
+		canvasPanel.repaint();
+	}
+
 	class MouseAction extends MouseAdapter {
 
 		public void mouseEntered(MouseEvent me) {
@@ -143,7 +197,8 @@ public class CanvasPanel extends JScrollPane {
 		 */
 		public void mousePressed(MouseEvent me) {
 			if (ECMMainFrame.command == Command.Choose) {
-				CanvasElement choosed = model.getChoosedElement(me.getX(), me.getY());
+				CanvasElement choosed = model.getChoosedElement(me.getX(),
+						me.getY());
 				if (currentChoosed != null) {
 					currentChoosed.setChoosed(false);
 				}
@@ -160,37 +215,22 @@ public class CanvasPanel extends JScrollPane {
 				}
 			} else {
 				if (ECMMainFrame.command == Command.Delete) {
-
+					CanvasElement choosed = model.getChoosedElement(me.getX(),
+							me.getY());
+					if (choosed != null) {
+						model.deleteElement(choosed.getID());
+					}
 				} else if (ECMMainFrame.command == Command.Edit) {
 
-				} else if (ECMMainFrame.command == Command.EBody) {
-					ElementDialog dialog = new ElementDialog(mainFrame, ElementType.EBody);
-					EBody eBodyEntity = (EBody) dialog.showCreateDialog();
-					if (eBodyEntity == null) {
-						return;
-					}
-					EBodyModel eBodyModel = new EBodyModel(me.getX(), me.getY(), 2);
-					eBodyModel.seteBody(eBodyEntity);
-					model.insertNewWElement(eBodyModel);
-				} else if (ECMMainFrame.command == Command.EHeader) {
-					CanvasElement eHeader = new EHeaderModel(me.getX(), me.getY(), 2);
-					model.insertNewWElement(eHeader);
-				} else if (ECMMainFrame.command == Command.EConnector) {
-					ConnectorModel connector = new ConnectorModel(me.getX(), me.getY(), 2);
-					model.insertNewWElement(connector);
-				} else if (ECMMainFrame.command == Command.ERelation) {
-					CanvasElement hRelation = new HRelationModel(me.getX(), me.getY(), 2);
-					model.insertNewWElement(hRelation);
-				} else {
-
+				} else  {
+					drawElement(me.getX(),me.getY());
 				}
-				
+
 				ECMMainFrame.resetButton();
 
 				setChanged(true);
 			}
 
-			canvasPanel.repaint();
 			canvasPanel.repaint();
 		}
 
@@ -200,23 +240,29 @@ public class CanvasPanel extends JScrollPane {
 		public void mouseReleased(MouseEvent me) {
 			if (ECMMainFrame.command == Command.Choose && fromDragging) {
 				if (currentChoosed != null) {
-					if (!currentChoosed.isConnectedOwner() || !currentChoosed.isConnectedSon()) {
+					if (!currentChoosed.isConnectedOwner()
+							|| !currentChoosed.isConnectedSon()) {
 						model.reSetConnected(currentChoosed);
 					}
 					int currentWidth = canvasPanel.getWidth();
 					int currentHeight = canvasPanel.getHeight();
-					int potentialWidth = currentChoosed.getX1() + currentChoosed.getWidth();
-					int potentialHeight = currentChoosed.getY1() + currentChoosed.getHeight();
+					int potentialWidth = currentChoosed.getX1()
+							+ currentChoosed.getWidth();
+					int potentialHeight = currentChoosed.getY1()
+							+ currentChoosed.getHeight();
 					if (potentialWidth < currentWidth) {
 						potentialWidth = currentWidth;
 					}
 					if (potentialHeight < currentHeight) {
 						potentialHeight = currentHeight;
 					}
-					canvasPanel.setPreferredSize(new Dimension(potentialWidth, potentialHeight));
+					canvasPanel.setPreferredSize(new Dimension(potentialWidth,
+							potentialHeight));
 					mainPanel.updateUI();
-					canvasPanel.scrollRectToVisible(currentChoosed.getRectangles()[0]);
-					canvasPanel.scrollRectToVisible(currentChoosed.getRectangles()[1]);
+					canvasPanel.scrollRectToVisible(currentChoosed
+							.getRectangles()[0]);
+					canvasPanel.scrollRectToVisible(currentChoosed
+							.getRectangles()[1]);
 					mainPanel.updateUI();
 				}
 				fromDragging = false;

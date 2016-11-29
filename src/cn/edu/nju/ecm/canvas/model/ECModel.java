@@ -40,6 +40,11 @@ public class ECModel implements Serializable {
 		element.setID(this.maxIDNumber);
 		this.getElements().add(0, element);
 	}
+	
+	public void deleteElement(int ID){
+		CanvasElement element = this.getElementByID(ID);
+		this.getElements().remove(element);
+	}
 
 	public CanvasElement getElementByID(int ID) {
 		for (CanvasElement element : this.getElements()) {

@@ -11,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -68,13 +70,15 @@ public class ECMMainFrame {
 	public JTabbedPane tabbedCanvasPanel = null;
 	// 当前选中的命令按钮
 	public static JButton currentCommandButton;
-	//选择按钮
-	private static JButton editChoose;
 
 	// 记录新建文件的个数和打开的文件个数
 	public int newNum = 0;
 	public int openNum = 0;
-	
+
+	private JButton elementBody = new JButton("链体");
+	private JButton elementHead = new JButton("链头");
+	private JButton elementDirectedLine = new JButton("箭头");
+	private JButton elementConnector = new JButton("联结");
 
 	/**
 	 * Create the application.
@@ -144,7 +148,8 @@ public class ECMMainFrame {
 		closeMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel.getSelectedComponent();
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getSelectedComponent();
 					closeHandler(currentCanvas);
 				}
 			}
@@ -161,7 +166,8 @@ public class ECMMainFrame {
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel.getSelectedComponent();
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getSelectedComponent();
 					saveHandler(currentCanvas);
 				}
 			}
@@ -212,82 +218,27 @@ public class ECMMainFrame {
 		editPanel.setBackground(UIManager.getColor("PopupMenu.background"));
 		commandPanel.add(editPanel);
 
-		// 图元操作命令
-		JToolBar editBar = new JToolBar();
-		editPanel.add(editBar);
-
-		editChoose = new JButton("\u9009\u62E9");
-		editChoose.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				currentCommandButton.setBackground(defaultColor);
-
-				ECMMainFrame.command = Command.Choose;
-				currentCommandButton = editChoose;
-				currentCommandButton.setBackground(Color.LIGHT_GRAY);
-			}
-		});
-		editBar.add(editChoose);
-		this.currentCommandButton = editChoose;
-		ECMMainFrame.command = Command.Choose;
-		editChoose.setBackground(Color.LIGHT_GRAY);
-
-		JButton editDelete = new JButton("\u5220\u9664");
-		editBar.add(editDelete);
-
-		JButton editEdit = new JButton("\u7F16\u8F91");
-		editBar.add(editEdit);
-
 		// 图元绘制命令
 		JToolBar elementBar = new JToolBar();
 		editPanel.add(elementBar);
 
-		JButton elementBody = new JButton("\u94FE\u4F53");
-		elementBody.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				currentCommandButton.setBackground(defaultColor);
-
-				ECMMainFrame.command = Command.EBody;
-				currentCommandButton = elementBody;
-				currentCommandButton.setBackground(Color.LIGHT_GRAY);
-			}
-		});
+		
+		elementBody.addMouseListener(new MouseAction());
+		elementBody.addMouseMotionListener(new MouseMotionAction());	
 		elementBar.add(elementBody);
 
-		JButton elementHead = new JButton("\u94FE\u5934");
-		elementHead.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				currentCommandButton.setBackground(defaultColor);
-
-				ECMMainFrame.command = Command.EHeader;
-				currentCommandButton = elementHead;
-				currentCommandButton.setBackground(Color.LIGHT_GRAY);
-			}
-		});
+		elementHead.addMouseListener(new MouseAction());
+		elementHead.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementHead);
-
-		JButton elementDirectedLine = new JButton("\u7BAD\u5934");
-		elementDirectedLine.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				currentCommandButton.setBackground(defaultColor);
-
-				ECMMainFrame.command = Command.ERelation;
-				currentCommandButton = elementDirectedLine;
-				currentCommandButton.setBackground(Color.LIGHT_GRAY);
-			}
-		});
+		
+		elementDirectedLine.addMouseListener(new MouseAction());
+		elementDirectedLine.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementDirectedLine);
 
-		JButton elementConnector = new JButton("\u8054\u7ED3");
-		elementConnector.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				currentCommandButton.setBackground(defaultColor);
-
-				ECMMainFrame.command = Command.EConnector;
-				currentCommandButton = elementConnector;
-				currentCommandButton.setBackground(Color.LIGHT_GRAY);
-			}
-		});
+		elementConnector.addMouseListener(new MouseAction());
+		elementConnector.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementConnector);
+		
 
 		/*
 		 * 主要窗体，包括画布和右侧信息栏
@@ -342,14 +293,15 @@ public class ECMMainFrame {
 
 		JPanel elementInforPanel = new JPanel();
 		scrollPane.setViewportView(elementInforPanel);
-	}
-	
-	public static void resetButton(){
-		currentCommandButton.setBackground(defaultColor);
 
-		ECMMainFrame.command = Command.Choose;
-		currentCommandButton = editChoose;
-		currentCommandButton.setBackground(Color.LIGHT_GRAY);
+	}
+
+	public static void resetButton() {
+		if (currentCommandButton != null) {
+			currentCommandButton.setBackground(defaultColor);
+			ECMMainFrame.command = Command.Choose;
+			currentCommandButton = null;
+		}
 	}
 
 	/*
@@ -369,7 +321,8 @@ public class ECMMainFrame {
 			Element newModel = null;
 			if (fileType == FileType.Open) {
 				this.file = ViewHelper.showOpenFileDialog(frmEcm,
-						new FileNameExtensionFilter("Evidence Chain: .ecm", "ecm"), null);
+						new FileNameExtensionFilter("Evidence Chain: .ecm",
+								"ecm"), null);
 				if (this.file == null) {
 					return;
 				}
@@ -377,14 +330,17 @@ public class ECMMainFrame {
 				int tabCount = tabbedCanvasPanel.getTabCount();
 				for (int canvasIndex = 0; canvasIndex < tabCount; canvasIndex++) {
 					File tmpFile = null;
-					if ((tmpFile = ((CanvasPanel) tabbedCanvasPanel.getComponentAt(canvasIndex)).model
-							.getFile()) != null && tmpFile.getAbsolutePath().equals(this.file.getAbsolutePath())) {
+					if ((tmpFile = ((CanvasPanel) tabbedCanvasPanel
+							.getComponentAt(canvasIndex)).model.getFile()) != null
+							&& tmpFile.getAbsolutePath().equals(
+									this.file.getAbsolutePath())) {
 						tabbedCanvasPanel.setSelectedIndex(canvasIndex);
 						return;
 					}
 				}
 			} else {
-				ElementDialog dialog = new ElementDialog(frmEcm, ElementType.Model);
+				ElementDialog dialog = new ElementDialog(frmEcm,
+						ElementType.Model);
 				newModel = dialog.showCreateDialog();
 				if (newModel == null) {
 					return;
@@ -399,7 +355,8 @@ public class ECMMainFrame {
 			JLabel title = new JLabel();
 
 			try {
-				CanvasPanel canvasPanel = new CanvasPanel(lblPosition, fileType, title, file, newModel, frmEcm);
+				CanvasPanel canvasPanel = new CanvasPanel(lblPosition,
+						fileType, title, file, newModel, frmEcm);
 
 				tabbedCanvasPanel.add(canvasPanel);
 				canvasPanel.setVisible(true);
@@ -412,12 +369,15 @@ public class ECMMainFrame {
 					ViewHelper.fileTitleDisplay(fileName, title);
 				}
 				JLabel closeIcon = new JLabel();
-				closeIcon.setIcon(new ImageIcon("resources/close-out.png", "Close"));
+				closeIcon.setIcon(new ImageIcon("resources/close-out.png",
+						"Close"));
 				closeIcon.setToolTipText("关闭");
 				componentPanel.add(title);
 				componentPanel.add(closeIcon);
 
-				tabbedCanvasPanel.setTabComponentAt(tabbedCanvasPanel.indexOfComponent(canvasPanel), componentPanel);
+				tabbedCanvasPanel.setTabComponentAt(
+						tabbedCanvasPanel.indexOfComponent(canvasPanel),
+						componentPanel);
 
 				tabbedCanvasPanel.setSelectedComponent(canvasPanel);
 
@@ -432,20 +392,22 @@ public class ECMMainFrame {
 					@Override
 					public void mouseEntered(MouseEvent e) {
 						// TODO Auto-generated method stub
-						closeIcon.setIcon(new ImageIcon("resources/close-in.png", "Close"));
+						closeIcon.setIcon(new ImageIcon(
+								"resources/close-in.png", "Close"));
 					}
 
 					@Override
 					public void mouseExited(MouseEvent e) {
 						// TODO Auto-generated method stub
-						closeIcon.setIcon(new ImageIcon("resources/close-out.png", "Close"));
+						closeIcon.setIcon(new ImageIcon(
+								"resources/close-out.png", "Close"));
 					}
 
 				});
 			} catch (DocumentException e1) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(frmEcm, e1.getLocalizedMessage(), "无法打开或者新建文件",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frmEcm, e1.getLocalizedMessage(),
+						"无法打开或者新建文件", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -454,8 +416,9 @@ public class ECMMainFrame {
 	private void closeHandler(CanvasPanel canvasPanel) {
 		if (canvasPanel.isChanged()) {
 			Object[] options = { "保存", "取消" };
-			int returnVal = JOptionPane.showOptionDialog(frmEcm, "您要关闭的文件没有保存，需要保存吗？", "保存文件",
-					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			int returnVal = JOptionPane.showOptionDialog(frmEcm,
+					"您要关闭的文件没有保存，需要保存吗？", "保存文件", JOptionPane.DEFAULT_OPTION,
+					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (returnVal == JOptionPane.YES_OPTION) {
 				saveHandler(canvasPanel);
 			}
@@ -467,14 +430,105 @@ public class ECMMainFrame {
 	private void saveHandler(CanvasPanel canvasPanel) {
 		try {
 			if (canvasPanel.type == FileType.New) {
-				ViewHelper.showSaveFileDialog(frmEcm, canvasPanel, tabbedCanvasPanel);
+				ViewHelper.showSaveFileDialog(frmEcm, canvasPanel,
+						tabbedCanvasPanel);
 			} else {
 				if (canvasPanel.isChanged()) {
 					canvasPanel.saveModel(null);
 				}
 			}
 		} catch (IOException exception) {
-			JOptionPane.showMessageDialog(frmEcm, exception.getLocalizedMessage(), "文件无法保存", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frmEcm,
+					exception.getLocalizedMessage(), "文件无法保存",
+					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	class MouseAction implements MouseListener {
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+					.getSelectedComponent();
+			int x = e.getX() + ScreenCenterX/ 40;
+			int y = e.getY() - ScreenCenterY / 7;
+			if (((JButton) e.getSource()).getText().equals("链头")) {
+				x+=((JButton)e.getSource()).getWidth();
+			}else if(((JButton) e.getSource()).getText().equals("箭头")){
+				x+=((JButton)e.getSource()).getWidth()*2;
+			}else if(((JButton) e.getSource()).getText().equals("联结")){
+				x+=((JButton)e.getSource()).getWidth()*3;
+			}
+			if (canvasPanel != null) {
+				canvasPanel.drawCurrentlabel(x,y);
+
+			}
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			if (currentCommandButton != null)
+				currentCommandButton.setBackground(defaultColor);
+
+			if (((JButton) e.getSource()).getText().equals("链体")) {
+				ECMMainFrame.command = Command.EBody;
+				currentCommandButton = elementBody;
+			} else if (((JButton) e.getSource()).getText().equals("链头")) {
+				ECMMainFrame.command = Command.EHeader;
+				currentCommandButton = elementHead;
+			}else if(((JButton) e.getSource()).getText().equals("箭头")){
+				ECMMainFrame.command = Command.ERelation;
+				currentCommandButton = elementDirectedLine;
+			}else if(((JButton) e.getSource()).getText().equals("联结")){
+				ECMMainFrame.command = Command.EConnector;
+				currentCommandButton = elementConnector;
+			}
+			currentCommandButton.setBackground(Color.LIGHT_GRAY);
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+		}
+	}
+
+	class MouseMotionAction implements MouseMotionListener{
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			// TODO Auto-generated method stub
+			int x = e.getX() + ScreenCenterX/ 40;
+			int y = e.getY() - ScreenCenterY / 7;
+			if (((JButton) e.getSource()).getText().equals("链头")) {
+				x+=((JButton)e.getSource()).getWidth();
+			}else if(((JButton) e.getSource()).getText().equals("箭头")){
+				x+=((JButton)e.getSource()).getWidth()*2;
+			}else if(((JButton) e.getSource()).getText().equals("联结")){
+				x+=((JButton)e.getSource()).getWidth()*3;
+			}
+			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+					.getSelectedComponent();
+			if (canvasPanel != null)
+				canvasPanel.showCurrentlabel(x, y, ((JButton)e.getSource()).getText());
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }
