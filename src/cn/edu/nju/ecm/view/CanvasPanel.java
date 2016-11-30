@@ -10,6 +10,8 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -137,9 +139,20 @@ public class CanvasPanel extends JScrollPane {
 
 	public void showCurrentlabel(int x, int y, String name) {
 		if (x > 5 && y > 8) {
-			currentLabel.setText(name);
 			currentLabel.setLocation(x, y);
 			currentLabel.setVisible(true);
+			
+			ImageIcon icon = new ImageIcon("resources/ebody.png");
+			if(name.equals("链体")){
+				icon = new ImageIcon("resources/ebody.png");
+			}else if(name.equals("链头")){
+				icon = new ImageIcon("resources/eheader.png");
+			}else if(name.equals("箭头")){
+				icon = new ImageIcon("resources/hconnector.png");
+			}else if(name.equals("联结")){
+				icon = new ImageIcon("resources/hrelation.png");
+			}
+			currentLabel.setIcon(icon);
 		}else
 			currentLabel.setVisible(false);
 	}
@@ -205,7 +218,11 @@ public class CanvasPanel extends JScrollPane {
 				if (choosed != null) {
 					currentChoosed = choosed;
 					currentChoosed.setChoosed(true);
-					if (currentChoosed.getWithInRotate()) {
+					if(me.getButton()==MouseEvent.BUTTON1&&me.getClickCount()==2){
+						System.out.println("双击");
+						//todo 
+						
+					}else if (currentChoosed.getWithInRotate()) {		//如果选择了旋转点
 						rotate = true;
 					} else {
 						rotate = false;
@@ -223,7 +240,8 @@ public class CanvasPanel extends JScrollPane {
 				} else if (ECMMainFrame.command == Command.Edit) {
 
 				} else  {
-					drawElement(me.getX(),me.getY());
+					if(me.getButton()==MouseEvent.BUTTON1)		//必须要是左键点击才画图，默认右键点击和滑轮为取消
+						drawElement(me.getX(),me.getY());
 				}
 
 				ECMMainFrame.resetButton();

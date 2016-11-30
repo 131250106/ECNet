@@ -41,6 +41,8 @@ import org.dom4j.DocumentException;
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
+import cn.edu.nju.ecm.view.entity.panel.EBodyPanel;
+import cn.edu.nju.ecm.view.entity.panel.InfoPanel;
 
 public class ECMMainFrame {
 
@@ -129,22 +131,22 @@ public class ECMMainFrame {
 		JMenuBar fileMenuBar = new JMenuBar();
 		filePanel.add(fileMenuBar);
 
-		JMenu fileMenu = new JMenu("\u6587\u4EF6");
+		JMenu fileMenu = new JMenu("文件");
 		fileMenu.setHorizontalAlignment(SwingConstants.CENTER);
 		fileMenuBar.add(fileMenu);
 
-		JMenuItem newFileMenuItem = new JMenuItem("\u65B0\u5EFA");
+		JMenuItem newFileMenuItem = new JMenuItem("新建");
 		fileMenu.add(newFileMenuItem);
 		newFileMenuItem.addActionListener(new CreateCanvasAction(FileType.New));
 
-		JMenuItem openMenuItem = new JMenuItem("\u6253\u5F00");
+		JMenuItem openMenuItem = new JMenuItem("打开");
 		fileMenu.add(openMenuItem);
 		openMenuItem.addActionListener(new CreateCanvasAction(FileType.Open));
 
 		JSeparator separator = new JSeparator();
 		fileMenu.add(separator);
 
-		JMenuItem closeMenuItem = new JMenuItem("\u5173\u95ED");
+		JMenuItem closeMenuItem = new JMenuItem("关闭");
 		closeMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabbedCanvasPanel.getSelectedComponent() != null) {
@@ -156,13 +158,13 @@ public class ECMMainFrame {
 		});
 		fileMenu.add(closeMenuItem);
 
-		JMenuItem closeAllMenuItem = new JMenuItem("\u5173\u95ED\u6240\u6709");
+		JMenuItem closeAllMenuItem = new JMenuItem("关闭所有");
 		fileMenu.add(closeAllMenuItem);
 
 		JSeparator separator_1 = new JSeparator();
 		fileMenu.add(separator_1);
 
-		JMenuItem saveMenuItem = new JMenuItem("\u4FDD\u5B58");
+		JMenuItem saveMenuItem = new JMenuItem("保存");
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (tabbedCanvasPanel.getSelectedComponent() != null) {
@@ -174,42 +176,40 @@ public class ECMMainFrame {
 		});
 		fileMenu.add(saveMenuItem);
 
-		JMenuItem saveAsMenuItem = new JMenuItem("\u53E6\u5B58\u4E3A...");
+		JMenuItem saveAsMenuItem = new JMenuItem("另存为");
 		fileMenu.add(saveAsMenuItem);
 
-		JMenuItem saveAllMenuItem = new JMenuItem("\u4FDD\u5B58\u6240\u6709");
+		JMenuItem saveAllMenuItem = new JMenuItem("保存所有");
 		fileMenu.add(saveAllMenuItem);
 
 		JMenuBar functionMenuBar = new JMenuBar();
 		filePanel.add(functionMenuBar);
 
-		JMenu editMenu = new JMenu("\u7F16\u8F91");
+		JMenu editMenu = new JMenu("编辑");
 		functionMenuBar.add(editMenu);
 
-		JMenuItem undoMenuItem = new JMenuItem("\u64A4\u9500");
+		JMenuItem undoMenuItem = new JMenuItem("撤销");
 		editMenu.add(undoMenuItem);
 
-		JMenuItem redoMenuItem = new JMenuItem("\u91CD\u505A");
-		editMenu.add(redoMenuItem);
-
-		JSeparator separator_2 = new JSeparator();
-		editMenu.add(separator_2);
-
-		JMenuItem copyMenuItem = new JMenuItem("\u590D\u5236");
-		editMenu.add(copyMenuItem);
-
-		JMenuItem pasteMenuItem = new JMenuItem("\u7C98\u8D34");
-		editMenu.add(pasteMenuItem);
-
-		JSeparator separator_3 = new JSeparator();
-		editMenu.add(separator_3);
-
-		JMenuItem deleteMenuItem = new JMenuItem("\u5220\u9664");
-		editMenu.add(deleteMenuItem);
-
-		JMenuItem chooseAllMenuItem = new JMenuItem("\u9009\u62E9\u6240\u6709");
-		editMenu.add(chooseAllMenuItem);
-
+		JMenuItem formatMenuItem = new JMenuItem("自动排版");
+		editMenu.add(formatMenuItem);
+		
+		JMenuBar setMenuBar = new JMenuBar();
+		filePanel.add(setMenuBar);
+		JMenu setMenu = new JMenu("设置");
+		setMenuBar.add(setMenu);
+		JMenuItem keyMenuItem = new JMenuItem("快捷键设置");
+		setMenu.add(keyMenuItem);
+		
+		JMenuBar helpMenuBar = new JMenuBar();
+		filePanel.add(helpMenuBar);
+		JMenuItem helpMenu = new JMenu("帮助");
+		helpMenuBar.add(helpMenu);
+		JMenuItem aboutusMenuItem = new JMenuItem("关于我们");
+		helpMenu.add(aboutusMenuItem);
+		JMenuItem updateMenuItem = new JMenuItem("检查更新");
+		helpMenu.add(updateMenuItem);
+		
 		// 快速操作和命令栏
 		JPanel editPanel = new JPanel();
 		FlowLayout fl_editPanel = (FlowLayout) editPanel.getLayout();
@@ -222,7 +222,10 @@ public class ECMMainFrame {
 		JToolBar elementBar = new JToolBar();
 		editPanel.add(elementBar);
 
-		
+//		ImageIcon icon = new ImageIcon("resources/ebody.png");
+//		elementBody.setIcon(icon);
+//		elementBody.setBorderPainted(false);
+//		elementBody.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
 		elementBody.addMouseListener(new MouseAction());
 		elementBody.addMouseMotionListener(new MouseMotionAction());	
 		elementBar.add(elementBody);
@@ -250,8 +253,8 @@ public class ECMMainFrame {
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
 		mainPanel.add(splitPane, BorderLayout.CENTER);
-
-		// 右侧信息栏
+		
+		// 左側區域信息
 		JPanel modelPanel = new JPanel();
 		splitPane.setLeftComponent(modelPanel);
 		modelPanel.setLayout(new BorderLayout(0, 3));
@@ -294,6 +297,8 @@ public class ECMMainFrame {
 		JPanel elementInforPanel = new JPanel();
 		scrollPane.setViewportView(elementInforPanel);
 
+		JPanel infoPanel = new InfoPanel();
+		splitPane.setRightComponent(infoPanel);
 	}
 
 	public static void resetButton() {
@@ -451,7 +456,7 @@ public class ECMMainFrame {
 			// TODO Auto-generated method stub
 			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 					.getSelectedComponent();
-			int x = e.getX() + ScreenCenterX/ 40;
+			int x = e.getX() + ScreenCenterX / 30;
 			int y = e.getY() - ScreenCenterY / 7;
 			if (((JButton) e.getSource()).getText().equals("链头")) {
 				x+=((JButton)e.getSource()).getWidth();
@@ -509,8 +514,8 @@ public class ECMMainFrame {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			// TODO Auto-generated method stub
-			int x = e.getX() + ScreenCenterX/ 40;
-			int y = e.getY() - ScreenCenterY / 7;
+			int x = e.getX() ;
+			int y = e.getY() - ScreenCenterY / 6;
 			if (((JButton) e.getSource()).getText().equals("链头")) {
 				x+=((JButton)e.getSource()).getWidth();
 			}else if(((JButton) e.getSource()).getText().equals("箭头")){
