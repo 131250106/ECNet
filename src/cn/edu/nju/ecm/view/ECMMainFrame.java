@@ -202,13 +202,13 @@ public class ECMMainFrame {
 		
 		JMenuItem copyMenuItem = new JMenuItem("复制");
 		//增加快捷键（CTRL+C）
-		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C,  
 		                java.awt.Event.CTRL_MASK)); 
 		editMenu.add(copyMenuItem);
 		
-		JMenuItem pasteMenuItem = new JMenuItem("撤销");
+		JMenuItem pasteMenuItem = new JMenuItem("粘贴");
 		//增加快捷键（CTRL+V）
-		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,  
 		                java.awt.Event.CTRL_MASK)); 
 		editMenu.add(pasteMenuItem);
 

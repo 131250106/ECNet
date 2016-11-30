@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -13,7 +17,9 @@ import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
 import org.dom4j.DocumentException;
@@ -61,6 +67,19 @@ public class CanvasPanel extends JScrollPane {
 
 	JFrame mainFrame;
 
+	//右键选择菜单
+	JPopupMenu popupMenu = new JPopupMenu();
+	JMenuItem deleteItem = new JMenuItem("删除");
+	JMenuItem copyItem = new JMenuItem("复制");
+    JMenuItem pasteItem = new JMenuItem("粘贴");
+    JMenuItem undoItem = new JMenuItem("撤销");
+    
+    //当前被复制的图元
+    private CanvasElement currentCopyElement =  null;
+    
+    //鼠标当前位置
+    private int currentX;
+    private int currentY;
 	/**
 	 * Create the panel.
 	 * 
@@ -103,11 +122,41 @@ public class CanvasPanel extends JScrollPane {
 		this.canvasPanel.setBackground(Color.WHITE);
 		this.canvasPanel.addMouseListener(new MouseAction());
 		this.canvasPanel.addMouseMotionListener(new MouseMoveAction());
-
+		
 		this.setViewportView(this.canvasPanel);
 
 		currentLabel.setVisible(false);
 		this.canvasPanel.add(currentLabel);
+		
+		//新增弹出式菜单
+        popupMenu.add(deleteItem);
+        deleteItem.addActionListener(new ActionListener() {		
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(currentChoosed!=null){
+					deleteElement(currentChoosed.getID());
+				}
+			}
+		});
+        popupMenu.add(copyItem);
+        copyItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+					currentCopyElement = currentChoosed;
+			}
+		});
+        popupMenu.add(pasteItem);
+        pasteItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				pasteElement();
+			}
+		});
+        popupMenu.add(undoItem);
+        
 	}
 
 	public boolean isChanged() {
@@ -138,6 +187,28 @@ public class CanvasPanel extends JScrollPane {
 
 	public void deleteElement(int ElementId) {
 		model.deleteElement(ElementId);
+		refresh();
+	}
+	
+	protected void pasteElement() {
+		if(currentCopyElement.getElementType() == CanvasElement.ElementType.Body){
+			EBodyModel eBodyModel = new EBodyModel(currentX, currentY, 2);
+			eBodyModel.seteBody(((EBodyModel)currentCopyElement).geteBody());
+			model.insertNewWElement(eBodyModel);
+		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Header){
+			EHeaderModel eHeader = new EHeaderModel(currentX, currentY, 2);
+			eHeader.seteHeader(((EHeaderModel)currentCopyElement).geteHeader());
+			model.insertNewWElement(eHeader);
+		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Connector){
+			ConnectorModel connector = new ConnectorModel(currentX, currentY, 2);
+			connector.sethConnector(((ConnectorModel)currentCopyElement).gethConnector());
+			model.insertNewWElement(connector);
+		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Relation){
+			HRelationModel hRelation = new HRelationModel(currentX, currentY, 2);
+			hRelation.sethRelation(((HRelationModel)currentCopyElement).gethRelation());
+			model.insertNewWElement(hRelation);
+		}
+		ECMMainFrame.resetButton();
 		refresh();
 	}
 
@@ -186,7 +257,7 @@ public class CanvasPanel extends JScrollPane {
 			eBodyModel.seteBody(eBodyEntity);
 			model.insertNewWElement(eBodyModel);
 		} else if (ECMMainFrame.command == Command.EHeader) {
-			CanvasElement eHeader = new EHeaderModel(x, y, 2);
+			EHeaderModel eHeader = new EHeaderModel(x, y, 2);
 			model.insertNewWElement(eHeader);
 		} else if (ECMMainFrame.command == Command.EConnector) {
 			ConnectorModel connector = new ConnectorModel(x, y, 2);
@@ -228,21 +299,36 @@ public class CanvasPanel extends JScrollPane {
 						System.out.println("双击");
 						// todo
 
-					} else if (currentChoosed.getWithInRotate()) { // 如果选择了旋转点
+					}else if(me.getButton()==3){
+						deleteItem.setEnabled(true);
+				        copyItem.setEnabled(true);
+				        pasteItem.setEnabled(false);
+				        undoItem.setEnabled(false);
+						popupMenu.show(me.getComponent(),me.getX(),me.getY());
+					}else if (currentChoosed.getWithInRotate()) { // 如果选择了旋转点
 						rotate = true;
 					} else {
 						rotate = false;
 					}
 				} else {
+					//未选中目标时，右键菜单显示粘贴和撤销
+					if(me.getButton()==3){
+				        deleteItem.setEnabled(false);
+				        copyItem.setEnabled(false);
+				        if(currentCopyElement!=null)
+				        	pasteItem.setEnabled(true);
+				        else
+				        	pasteItem.setEnabled(false);
+				        undoItem.setEnabled(true);
+						popupMenu.show(me.getComponent(),me.getX(),me.getY());
+					}
 					ECMMainFrame.resetInfo();
 					currentChoosed = null;
 				}
 			} else {
-
 				if (me.getButton() == MouseEvent.BUTTON1) // 必须要是左键点击才画图，默认右键点击和滑轮为取消
 					drawElement(me.getX(), me.getY());
 				ECMMainFrame.resetButton();
-				setChanged(true);
 			}
 
 			canvasPanel.repaint();
@@ -291,6 +377,8 @@ public class CanvasPanel extends JScrollPane {
 
 		public void mouseMoved(MouseEvent me) {
 			cursorStatus.setText("鼠标当前位置: x-" + me.getX() + ", y-" + me.getY());
+			currentX = me.getX();
+			currentY = me.getY();
 		}
 
 		// 鼠标拖动的处理，分为旋转和平移；旋转只需要动一个点，平移需要动所有点；但是都需要更新与操作图元链接的其他图元
