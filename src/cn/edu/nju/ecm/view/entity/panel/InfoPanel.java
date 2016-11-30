@@ -76,6 +76,14 @@ public class InfoPanel extends JPanel {
 		jScrollPane1.setViewportView(contentArea);
 
 		modify.setText("确认修改");
+		modify.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				modifyCanvasElement();
+			}
+		});
 
 		reset.setText("重置信息");
 		reset.addActionListener(new ActionListener() {
@@ -281,13 +289,28 @@ public class InfoPanel extends JPanel {
 		contentArea.setText(contentstr);
 	}
 
-	private void modifyCanvasElement(CanvasElement element, String titlestr,
-			String contentstr) {
-		// todo
+	private void modifyCanvasElement() {
+		if(element==null)
+			reSetInfo();
+		else{
+			if (element.getElementType() == ElementType.Body) {
+				EBody eb = ((EBodyModel) element).geteBody();
+				eb.setName(titleField.getText());
+				eb.setContent(contentArea.getText());
+			} else if (element.getElementType() == ElementType.Header) {
+				EHeader eh = ((EHeaderModel) element).geteHeader();
+				eh.setName(titleField.getText());
+				eh.setContent(contentArea.getText());
+			} else if (element.getElementType() == ElementType.Connector) {
+				HConnector hc = ((ConnectorModel) element).gethConnector();
+				hc.setName(titleField.getText());
+				hc.setContent(contentArea.getText());
+			} else if (element.getElementType() == ElementType.Relation) {
+				HRelation hr = ((HRelationModel) element).gethRelation();
+				hr.setName(titleField.getText());
+				hr.setContent(contentArea.getText());
+			}
+			ECMMainFrame.reFreshAll();
+		}
 	}
-
-	private void resetCanvasElement(CanvasElement element) {
-		setInfo(element);
-	}
-
 }

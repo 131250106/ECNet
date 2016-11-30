@@ -135,9 +135,13 @@ public class CanvasPanel extends JScrollPane {
 		this.model.setFile(new File(filePath));
 		this.setChanged(false);
 	}
-	
-	public void deleteElement(int ElementId){
+
+	public void deleteElement(int ElementId) {
 		model.deleteElement(ElementId);
+		refresh();
+	}
+
+	public void refresh() {
 		setChanged(true);
 		canvasPanel.repaint();
 	}
@@ -146,19 +150,19 @@ public class CanvasPanel extends JScrollPane {
 		if (x > 5 && y > 8) {
 			currentLabel.setLocation(x, y);
 			currentLabel.setVisible(true);
-			
+
 			ImageIcon icon = new ImageIcon("resources/ebody.png");
-			if(name.equals("链体")){
+			if (name.equals("链体")) {
 				icon = new ImageIcon("resources/ebody.png");
-			}else if(name.equals("链头")){
+			} else if (name.equals("链头")) {
 				icon = new ImageIcon("resources/eheader.png");
-			}else if(name.equals("箭头")){
+			} else if (name.equals("箭头")) {
 				icon = new ImageIcon("resources/hconnector.png");
-			}else if(name.equals("联结")){
+			} else if (name.equals("联结")) {
 				icon = new ImageIcon("resources/hrelation.png");
 			}
 			currentLabel.setIcon(icon);
-		}else
+		} else
 			currentLabel.setVisible(false);
 	}
 
@@ -178,26 +182,21 @@ public class CanvasPanel extends JScrollPane {
 			if (eBodyEntity == null) {
 				return;
 			}
-			EBodyModel eBodyModel = new EBodyModel(x,
-					y, 2);
+			EBodyModel eBodyModel = new EBodyModel(x, y, 2);
 			eBodyModel.seteBody(eBodyEntity);
 			model.insertNewWElement(eBodyModel);
 		} else if (ECMMainFrame.command == Command.EHeader) {
-			CanvasElement eHeader = new EHeaderModel(x,
-					y, 2);
+			CanvasElement eHeader = new EHeaderModel(x, y, 2);
 			model.insertNewWElement(eHeader);
 		} else if (ECMMainFrame.command == Command.EConnector) {
-			ConnectorModel connector = new ConnectorModel(x,
-					y, 2);
+			ConnectorModel connector = new ConnectorModel(x, y, 2);
 			model.insertNewWElement(connector);
 		} else if (ECMMainFrame.command == Command.ERelation) {
-			CanvasElement hRelation = new HRelationModel(x,
-					y, 2);
+			CanvasElement hRelation = new HRelationModel(x, y, 2);
 			model.insertNewWElement(hRelation);
 		}
 		ECMMainFrame.resetButton();
-		setChanged(true);
-		canvasPanel.repaint();
+		refresh();
 	}
 
 	class MouseAction extends MouseAdapter {
@@ -224,11 +223,12 @@ public class CanvasPanel extends JScrollPane {
 					currentChoosed = choosed;
 					currentChoosed.setChoosed(true);
 					ECMMainFrame.showElementInfo(choosed);
-					if(me.getButton()==MouseEvent.BUTTON1&&me.getClickCount()==2){
+					if (me.getButton() == MouseEvent.BUTTON1
+							&& me.getClickCount() == 2) {
 						System.out.println("双击");
-						//todo 
-						
-					}else if (currentChoosed.getWithInRotate()) {		//如果选择了旋转点
+						// todo
+
+					} else if (currentChoosed.getWithInRotate()) { // 如果选择了旋转点
 						rotate = true;
 					} else {
 						rotate = false;
@@ -238,21 +238,10 @@ public class CanvasPanel extends JScrollPane {
 					currentChoosed = null;
 				}
 			} else {
-				if (ECMMainFrame.command == Command.Delete) {
-					CanvasElement choosed = model.getChoosedElement(me.getX(),
-							me.getY());
-					if (choosed != null) {
-						model.deleteElement(choosed.getID());
-					}
-				} else if (ECMMainFrame.command == Command.Edit) {
 
-				} else  {
-					if(me.getButton()==MouseEvent.BUTTON1)		//必须要是左键点击才画图，默认右键点击和滑轮为取消
-						drawElement(me.getX(),me.getY());
-				}
-
+				if (me.getButton() == MouseEvent.BUTTON1) // 必须要是左键点击才画图，默认右键点击和滑轮为取消
+					drawElement(me.getX(), me.getY());
 				ECMMainFrame.resetButton();
-
 				setChanged(true);
 			}
 

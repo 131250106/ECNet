@@ -324,6 +324,12 @@ public class ECMMainFrame {
 		if(canvasPanel!=null)
 			canvasPanel.deleteElement(infoPanel.getID());
 	}
+	public static void reFreshAll(){
+		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+				.getSelectedComponent();
+		if(canvasPanel!=null)
+			canvasPanel.refresh();
+	}
 
 	/*
 	 * 新建文件和打开文件的动作处理函数
