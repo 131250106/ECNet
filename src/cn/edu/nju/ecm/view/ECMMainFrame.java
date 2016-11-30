@@ -204,13 +204,49 @@ public class ECMMainFrame {
 		//增加快捷键（CTRL+C）
 		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C,  
 		                java.awt.Event.CTRL_MASK)); 
+		copyMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+						.getSelectedComponent();
+				if (canvasPanel != null)
+					canvasPanel.copyElement();
+			}
+		});
 		editMenu.add(copyMenuItem);
 		
 		JMenuItem pasteMenuItem = new JMenuItem("粘贴");
 		//增加快捷键（CTRL+V）
 		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_V,  
 		                java.awt.Event.CTRL_MASK)); 
+		pasteMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+						.getSelectedComponent();
+				if (canvasPanel != null)
+					canvasPanel.pasteElement();
+			}
+		});
 		editMenu.add(pasteMenuItem);
+		
+		JMenuItem deleteMenuItem = new JMenuItem("删除所选");
+		//增加快捷键（CTRL+D）
+		deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D,  
+		                java.awt.Event.CTRL_MASK)); 
+		deleteMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+						.getSelectedComponent();
+				if (canvasPanel != null)
+					canvasPanel.deleteCurrentElement();
+			}
+		});
+		editMenu.add(deleteMenuItem);
 
 		JMenuItem undoMenuItem = new JMenuItem("撤销");
 		//增加快捷键（CTRL+Z）

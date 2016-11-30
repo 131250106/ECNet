@@ -67,19 +67,20 @@ public class CanvasPanel extends JScrollPane {
 
 	JFrame mainFrame;
 
-	//右键选择菜单
-	JPopupMenu popupMenu = new JPopupMenu();
-	JMenuItem deleteItem = new JMenuItem("删除");
-	JMenuItem copyItem = new JMenuItem("复制");
-    JMenuItem pasteItem = new JMenuItem("粘贴");
-    JMenuItem undoItem = new JMenuItem("撤销");
-    
-    //当前被复制的图元
-    private CanvasElement currentCopyElement =  null;
-    
-    //鼠标当前位置
-    private int currentX;
-    private int currentY;
+	// 右键选择菜单
+	private JPopupMenu popupMenu = new JPopupMenu();
+	private JMenuItem deleteItem = new JMenuItem("删除");
+	private JMenuItem copyItem = new JMenuItem("复制");
+	private JMenuItem pasteItem = new JMenuItem("粘贴");
+	private JMenuItem undoItem = new JMenuItem("撤销");
+
+	// 当前被复制的图元
+	private CanvasElement currentCopyElement = null;
+
+	// 鼠标当前位置
+	private int currentX;
+	private int currentY;
+
 	/**
 	 * Create the panel.
 	 * 
@@ -122,41 +123,41 @@ public class CanvasPanel extends JScrollPane {
 		this.canvasPanel.setBackground(Color.WHITE);
 		this.canvasPanel.addMouseListener(new MouseAction());
 		this.canvasPanel.addMouseMotionListener(new MouseMoveAction());
-		
+
 		this.setViewportView(this.canvasPanel);
 
 		currentLabel.setVisible(false);
 		this.canvasPanel.add(currentLabel);
-		
-		//新增弹出式菜单
-        popupMenu.add(deleteItem);
-        deleteItem.addActionListener(new ActionListener() {		
+
+		// 新增弹出式菜单
+		popupMenu.add(deleteItem);
+		deleteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				if(currentChoosed!=null){
+				if (currentChoosed != null) {
 					deleteElement(currentChoosed.getID());
 				}
 			}
 		});
-        popupMenu.add(copyItem);
-        copyItem.addActionListener(new ActionListener() {	
+		popupMenu.add(copyItem);
+		copyItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-					currentCopyElement = currentChoosed;
+				copyElement();
 			}
 		});
-        popupMenu.add(pasteItem);
-        pasteItem.addActionListener(new ActionListener() {
+		popupMenu.add(pasteItem);
+		pasteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				pasteElement();
 			}
 		});
-        popupMenu.add(undoItem);
-        
+		popupMenu.add(undoItem);
+
 	}
 
 	public boolean isChanged() {
@@ -189,23 +190,36 @@ public class CanvasPanel extends JScrollPane {
 		model.deleteElement(ElementId);
 		refresh();
 	}
-	
-	protected void pasteElement() {
-		if(currentCopyElement.getElementType() == CanvasElement.ElementType.Body){
+
+	public void deleteCurrentElement() {
+		if (currentChoosed != null) {
+			model.deleteElement(currentChoosed.getID());
+			refresh();
+		}
+	}
+
+	public void copyElement() {
+		currentCopyElement = currentChoosed;
+	}
+
+	public void pasteElement() {
+		if (currentCopyElement.getElementType() == CanvasElement.ElementType.Body) {
 			EBodyModel eBodyModel = new EBodyModel(currentX, currentY, 2);
-			eBodyModel.seteBody(((EBodyModel)currentCopyElement).geteBody());
+			eBodyModel.seteBody(((EBodyModel) currentCopyElement).geteBody());
 			model.insertNewWElement(eBodyModel);
-		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Header){
+		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Header) {
 			EHeaderModel eHeader = new EHeaderModel(currentX, currentY, 2);
-			eHeader.seteHeader(((EHeaderModel)currentCopyElement).geteHeader());
+			eHeader.seteHeader(((EHeaderModel) currentCopyElement).geteHeader());
 			model.insertNewWElement(eHeader);
-		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Connector){
+		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Connector) {
 			ConnectorModel connector = new ConnectorModel(currentX, currentY, 2);
-			connector.sethConnector(((ConnectorModel)currentCopyElement).gethConnector());
+			connector.sethConnector(((ConnectorModel) currentCopyElement)
+					.gethConnector());
 			model.insertNewWElement(connector);
-		} else if(currentCopyElement.getElementType() == CanvasElement.ElementType.Relation){
+		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Relation) {
 			HRelationModel hRelation = new HRelationModel(currentX, currentY, 2);
-			hRelation.sethRelation(((HRelationModel)currentCopyElement).gethRelation());
+			hRelation.sethRelation(((HRelationModel) currentCopyElement)
+					.gethRelation());
 			model.insertNewWElement(hRelation);
 		}
 		ECMMainFrame.resetButton();
@@ -299,28 +313,28 @@ public class CanvasPanel extends JScrollPane {
 						System.out.println("双击");
 						// todo
 
-					}else if(me.getButton()==3){
+					} else if (me.getButton() == 3) {
 						deleteItem.setEnabled(true);
-				        copyItem.setEnabled(true);
-				        pasteItem.setEnabled(false);
-				        undoItem.setEnabled(false);
-						popupMenu.show(me.getComponent(),me.getX(),me.getY());
-					}else if (currentChoosed.getWithInRotate()) { // 如果选择了旋转点
+						copyItem.setEnabled(true);
+						pasteItem.setEnabled(false);
+						undoItem.setEnabled(false);
+						popupMenu.show(me.getComponent(), me.getX(), me.getY());
+					} else if (currentChoosed.getWithInRotate()) { // 如果选择了旋转点
 						rotate = true;
 					} else {
 						rotate = false;
 					}
 				} else {
-					//未选中目标时，右键菜单显示粘贴和撤销
-					if(me.getButton()==3){
-				        deleteItem.setEnabled(false);
-				        copyItem.setEnabled(false);
-				        if(currentCopyElement!=null)
-				        	pasteItem.setEnabled(true);
-				        else
-				        	pasteItem.setEnabled(false);
-				        undoItem.setEnabled(true);
-						popupMenu.show(me.getComponent(),me.getX(),me.getY());
+					// 未选中目标时，右键菜单显示粘贴和撤销
+					if (me.getButton() == 3) {
+						deleteItem.setEnabled(false);
+						copyItem.setEnabled(false);
+						if (currentCopyElement != null)
+							pasteItem.setEnabled(true);
+						else
+							pasteItem.setEnabled(false);
+						undoItem.setEnabled(true);
+						popupMenu.show(me.getComponent(), me.getX(), me.getY());
 					}
 					ECMMainFrame.resetInfo();
 					currentChoosed = null;
