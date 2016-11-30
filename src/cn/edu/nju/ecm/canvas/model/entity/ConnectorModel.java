@@ -54,6 +54,12 @@ public class ConnectorModel extends CanvasElement {
 		g2d.setStroke(new BasicStroke(1));
 
 		g2d.fillRect(x1, y1, width, height);
+		
+		if (!this.gethConnector().getName().equals("")) {
+			g2d.setPaint(Color.BLACK);
+			g2d.setStroke(new BasicStroke(1));
+			drawName(g2d,this.gethConnector().getName());
+		}
 	}
 
 	public boolean pointWithInMe(int x, int y) {
@@ -76,6 +82,12 @@ public class ConnectorModel extends CanvasElement {
 	public void setOffset(int x, int y) {
 		this.offsetX1 = x - this.x1;
 		this.offsetY1 = y - this.y1;
+	}
+	
+	private void drawName(Graphics2D g2d, String name) {
+		int x = this.x1  - name.length() * 2;
+		int y = this.y1   + 5;
+		g2d.drawString(name, x, y);
 	}
 
 	private void setConnectedOffset(int x, int y) {

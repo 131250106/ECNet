@@ -185,13 +185,16 @@ public class ECModel implements Serializable {
 		} else if (element.getElementType() == ElementType.Relation) {
 			for (CanvasElement ce : this.elements) {
 				if (ce.isChoosed()) {
-					if (ce.getElementType() == ElementType.Header || ce.getElementType() == ElementType.Connector) {
+					if (ce.getElementType() == ElementType.Header ) {
 						if (ce.pointWithInMe(element.getX1(), element.getY1())) {
 							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
 							ce.getConnectedOutputs().add(element);
 							element.setConnectedOwner(ce);
 						}
+						ce.setChoosed(false);
+						
+					}else if(ce.getElementType() == ElementType.Connector ) {
 						if (ce.pointWithInMe(element.getX2(), element.getY2())) {
 							element.setConnectedSon(true);
 							element.resetConnectedPointSon(ce);
