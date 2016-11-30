@@ -1,5 +1,8 @@
 package cn.edu.nju.ecm.view.entity.panel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,6 +21,7 @@ import cn.edu.nju.ecm.entity.detail.EBody;
 import cn.edu.nju.ecm.entity.detail.EHeader;
 import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
+import cn.edu.nju.ecm.view.ECMMainFrame;
 
 public class InfoPanel extends JPanel {
 
@@ -71,11 +75,31 @@ public class InfoPanel extends JPanel {
 		contentArea.setRows(5);
 		jScrollPane1.setViewportView(contentArea);
 
-		modify.setText("modify");
+		modify.setText("确认修改");
 
-		reset.setText("reset");
-
-		delete.setText("delete");
+		reset.setText("重置信息");
+		reset.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(element!=null){
+					setInfo(element);
+				}else
+					reSetInfo();
+			}
+		});
+		
+		delete.setText("删除图元");
+		delete.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				ECMMainFrame.deleteElement();
+				reSetInfo();
+			}
+		});
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
 		this.setLayout(layout);
@@ -255,12 +279,6 @@ public class InfoPanel extends JPanel {
 		type.setText(typestr);
 		titleField.setText(titlestr);
 		contentArea.setText(contentstr);
-	}
-
-	private void deleteCanvasElement(CanvasElement element) {
-		if (element != null) {
-			// todo
-		}
 	}
 
 	private void modifyCanvasElement(CanvasElement element, String titlestr,

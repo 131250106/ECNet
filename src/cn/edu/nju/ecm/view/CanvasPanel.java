@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -136,6 +135,12 @@ public class CanvasPanel extends JScrollPane {
 		this.model.setFile(new File(filePath));
 		this.setChanged(false);
 	}
+	
+	public void deleteElement(int ElementId){
+		model.deleteElement(ElementId);
+		setChanged(true);
+		canvasPanel.repaint();
+	}
 
 	public void showCurrentlabel(int x, int y, String name) {
 		if (x > 5 && y > 8) {
@@ -218,6 +223,7 @@ public class CanvasPanel extends JScrollPane {
 				if (choosed != null) {
 					currentChoosed = choosed;
 					currentChoosed.setChoosed(true);
+					ECMMainFrame.showElementInfo(choosed);
 					if(me.getButton()==MouseEvent.BUTTON1&&me.getClickCount()==2){
 						System.out.println("Ë«»÷");
 						//todo 
@@ -228,6 +234,7 @@ public class CanvasPanel extends JScrollPane {
 						rotate = false;
 					}
 				} else {
+					ECMMainFrame.resetInfo();
 					currentChoosed = null;
 				}
 			} else {

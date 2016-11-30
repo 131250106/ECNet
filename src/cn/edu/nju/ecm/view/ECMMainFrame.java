@@ -38,6 +38,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.dom4j.DocumentException;
 
+import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
@@ -69,9 +70,11 @@ public class ECMMainFrame {
 	private JLabel lblPosition;
 
 	// 画布所在的面板
-	public JTabbedPane tabbedCanvasPanel = null;
+	public static JTabbedPane tabbedCanvasPanel = null;
 	// 当前选中的命令按钮
 	public static JButton currentCommandButton;
+	//右侧信息栏
+	private static InfoPanel infoPanel;
 
 	// 记录新建文件的个数和打开的文件个数
 	public int newNum = 0;
@@ -297,7 +300,7 @@ public class ECMMainFrame {
 		JPanel elementInforPanel = new JPanel();
 		scrollPane.setViewportView(elementInforPanel);
 
-		JPanel infoPanel = new InfoPanel();
+		infoPanel = new InfoPanel();
 		splitPane.setRightComponent(infoPanel);
 	}
 
@@ -307,6 +310,19 @@ public class ECMMainFrame {
 			ECMMainFrame.command = Command.Choose;
 			currentCommandButton = null;
 		}
+	}
+	
+	public static void showElementInfo(CanvasElement element){
+		infoPanel.setInfo(element);
+	}
+	public static void resetInfo(){
+		infoPanel.reSetInfo();
+	}
+	public static void deleteElement(){
+		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+				.getSelectedComponent();
+		if(canvasPanel!=null)
+			canvasPanel.deleteElement(infoPanel.getID());
 	}
 
 	/*
