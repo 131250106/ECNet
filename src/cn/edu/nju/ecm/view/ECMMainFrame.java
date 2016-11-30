@@ -31,6 +31,7 @@ import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -42,7 +43,6 @@ import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
-import cn.edu.nju.ecm.view.entity.panel.EBodyPanel;
 import cn.edu.nju.ecm.view.entity.panel.InfoPanel;
 
 public class ECMMainFrame {
@@ -73,7 +73,7 @@ public class ECMMainFrame {
 	public static JTabbedPane tabbedCanvasPanel = null;
 	// 当前选中的命令按钮
 	public static JButton currentCommandButton;
-	//右侧信息栏
+	// 右侧信息栏
 	private static InfoPanel infoPanel;
 
 	// 记录新建文件的个数和打开的文件个数
@@ -139,10 +139,16 @@ public class ECMMainFrame {
 		fileMenuBar.add(fileMenu);
 
 		JMenuItem newFileMenuItem = new JMenuItem("新建");
+		//增加快捷键（CTRL+N）
+		newFileMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N,  
+		                java.awt.Event.CTRL_MASK));  
 		fileMenu.add(newFileMenuItem);
 		newFileMenuItem.addActionListener(new CreateCanvasAction(FileType.New));
 
 		JMenuItem openMenuItem = new JMenuItem("打开");
+		//增加快捷键（CTRL+O）
+		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O,  
+                java.awt.Event.CTRL_MASK)); 
 		fileMenu.add(openMenuItem);
 		openMenuItem.addActionListener(new CreateCanvasAction(FileType.Open));
 
@@ -168,6 +174,9 @@ public class ECMMainFrame {
 		fileMenu.add(separator_1);
 
 		JMenuItem saveMenuItem = new JMenuItem("保存");
+		//增加快捷键（CTRL+S）
+		saveMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S,  
+                java.awt.Event.CTRL_MASK));  
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (tabbedCanvasPanel.getSelectedComponent() != null) {
@@ -190,20 +199,38 @@ public class ECMMainFrame {
 
 		JMenu editMenu = new JMenu("编辑");
 		functionMenuBar.add(editMenu);
+		
+		JMenuItem copyMenuItem = new JMenuItem("复制");
+		//增加快捷键（CTRL+C）
+		copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+		                java.awt.Event.CTRL_MASK)); 
+		editMenu.add(copyMenuItem);
+		
+		JMenuItem pasteMenuItem = new JMenuItem("撤销");
+		//增加快捷键（CTRL+V）
+		pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+		                java.awt.Event.CTRL_MASK)); 
+		editMenu.add(pasteMenuItem);
 
 		JMenuItem undoMenuItem = new JMenuItem("撤销");
+		//增加快捷键（CTRL+Z）
+		undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
+		                java.awt.Event.CTRL_MASK)); 
 		editMenu.add(undoMenuItem);
 
 		JMenuItem formatMenuItem = new JMenuItem("自动排版");
+		//增加快捷键（CTRL+F）
+		formatMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F,  
+		                java.awt.Event.CTRL_MASK)); 
 		editMenu.add(formatMenuItem);
-		
+
 		JMenuBar setMenuBar = new JMenuBar();
 		filePanel.add(setMenuBar);
 		JMenu setMenu = new JMenu("设置");
 		setMenuBar.add(setMenu);
 		JMenuItem keyMenuItem = new JMenuItem("快捷键设置");
 		setMenu.add(keyMenuItem);
-		
+
 		JMenuBar helpMenuBar = new JMenuBar();
 		filePanel.add(helpMenuBar);
 		JMenuItem helpMenu = new JMenu("帮助");
@@ -212,7 +239,7 @@ public class ECMMainFrame {
 		helpMenu.add(aboutusMenuItem);
 		JMenuItem updateMenuItem = new JMenuItem("检查更新");
 		helpMenu.add(updateMenuItem);
-		
+
 		// 快速操作和命令栏
 		JPanel editPanel = new JPanel();
 		FlowLayout fl_editPanel = (FlowLayout) editPanel.getLayout();
@@ -225,18 +252,19 @@ public class ECMMainFrame {
 		JToolBar elementBar = new JToolBar();
 		editPanel.add(elementBar);
 
-//		ImageIcon icon = new ImageIcon("resources/ebody.png");
-//		elementBody.setIcon(icon);
-//		elementBody.setBorderPainted(false);
-//		elementBody.setPreferredSize(new Dimension(icon.getIconWidth(), icon.getIconHeight()));
+		// ImageIcon icon = new ImageIcon("resources/ebody.png");
+		// elementBody.setIcon(icon);
+		// elementBody.setBorderPainted(false);
+		// elementBody.setPreferredSize(new Dimension(icon.getIconWidth(),
+		// icon.getIconHeight()));
 		elementBody.addMouseListener(new MouseAction());
-		elementBody.addMouseMotionListener(new MouseMotionAction());	
+		elementBody.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementBody);
 
 		elementHead.addMouseListener(new MouseAction());
 		elementHead.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementHead);
-		
+
 		elementDirectedLine.addMouseListener(new MouseAction());
 		elementDirectedLine.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementDirectedLine);
@@ -244,7 +272,6 @@ public class ECMMainFrame {
 		elementConnector.addMouseListener(new MouseAction());
 		elementConnector.addMouseMotionListener(new MouseMotionAction());
 		elementBar.add(elementConnector);
-		
 
 		/*
 		 * 主要窗体，包括画布和右侧信息栏
@@ -256,7 +283,7 @@ public class ECMMainFrame {
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
 		mainPanel.add(splitPane, BorderLayout.CENTER);
-		
+
 		// 左側區域信息
 		JPanel modelPanel = new JPanel();
 		splitPane.setLeftComponent(modelPanel);
@@ -311,23 +338,26 @@ public class ECMMainFrame {
 			currentCommandButton = null;
 		}
 	}
-	
-	public static void showElementInfo(CanvasElement element){
+
+	public static void showElementInfo(CanvasElement element) {
 		infoPanel.setInfo(element);
 	}
-	public static void resetInfo(){
+
+	public static void resetInfo() {
 		infoPanel.reSetInfo();
 	}
-	public static void deleteElement(){
+
+	public static void deleteElement() {
 		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 				.getSelectedComponent();
-		if(canvasPanel!=null)
+		if (canvasPanel != null)
 			canvasPanel.deleteElement(infoPanel.getID());
 	}
-	public static void reFreshAll(){
+
+	public static void reFreshAll() {
 		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 				.getSelectedComponent();
-		if(canvasPanel!=null)
+		if (canvasPanel != null)
 			canvasPanel.refresh();
 	}
 
@@ -481,14 +511,14 @@ public class ECMMainFrame {
 			int x = e.getX() + ScreenCenterX / 30;
 			int y = e.getY() - ScreenCenterY / 7;
 			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x+=((JButton)e.getSource()).getWidth();
-			}else if(((JButton) e.getSource()).getText().equals("箭头")){
-				x+=((JButton)e.getSource()).getWidth()*2;
-			}else if(((JButton) e.getSource()).getText().equals("联结")){
-				x+=((JButton)e.getSource()).getWidth()*3;
+				x += ((JButton) e.getSource()).getWidth();
+			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
+				x += ((JButton) e.getSource()).getWidth() * 2;
+			} else if (((JButton) e.getSource()).getText().equals("联结")) {
+				x += ((JButton) e.getSource()).getWidth() * 3;
 			}
 			if (canvasPanel != null) {
-				canvasPanel.drawCurrentlabel(x,y);
+				canvasPanel.drawCurrentlabel(x, y);
 
 			}
 		}
@@ -505,10 +535,10 @@ public class ECMMainFrame {
 			} else if (((JButton) e.getSource()).getText().equals("链头")) {
 				ECMMainFrame.command = Command.EHeader;
 				currentCommandButton = elementHead;
-			}else if(((JButton) e.getSource()).getText().equals("箭头")){
+			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
 				ECMMainFrame.command = Command.ERelation;
 				currentCommandButton = elementDirectedLine;
-			}else if(((JButton) e.getSource()).getText().equals("联结")){
+			} else if (((JButton) e.getSource()).getText().equals("联结")) {
 				ECMMainFrame.command = Command.EConnector;
 				currentCommandButton = elementConnector;
 			}
@@ -531,31 +561,32 @@ public class ECMMainFrame {
 		}
 	}
 
-	class MouseMotionAction implements MouseMotionListener{
+	class MouseMotionAction implements MouseMotionListener {
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			// TODO Auto-generated method stub
-			int x = e.getX() ;
+			int x = e.getX();
 			int y = e.getY() - ScreenCenterY / 6;
 			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x+=((JButton)e.getSource()).getWidth();
-			}else if(((JButton) e.getSource()).getText().equals("箭头")){
-				x+=((JButton)e.getSource()).getWidth()*2;
-			}else if(((JButton) e.getSource()).getText().equals("联结")){
-				x+=((JButton)e.getSource()).getWidth()*3;
+				x += ((JButton) e.getSource()).getWidth();
+			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
+				x += ((JButton) e.getSource()).getWidth() * 2;
+			} else if (((JButton) e.getSource()).getText().equals("联结")) {
+				x += ((JButton) e.getSource()).getWidth() * 3;
 			}
 			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 					.getSelectedComponent();
 			if (canvasPanel != null)
-				canvasPanel.showCurrentlabel(x, y, ((JButton)e.getSource()).getText());
+				canvasPanel.showCurrentlabel(x, y,
+						((JButton) e.getSource()).getText());
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
 			// TODO Auto-generated method stub
-			
+
 		}
-		
+
 	}
 }
