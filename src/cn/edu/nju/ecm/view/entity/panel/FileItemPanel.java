@@ -1,17 +1,13 @@
 package cn.edu.nju.ecm.view.entity.panel;
 
 import javax.swing.JPanel;
-import javax.swing.JTable;
 
-import java.awt.Component;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.awt.event.ActionEvent;

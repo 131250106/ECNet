@@ -11,7 +11,6 @@ public class EvidenceFileTypeManagement {
 	private static String[] video = {"rmvb", "avi", "mp4"};
 	private static String[] image = {"jpg", "jpeg", "png"};
 	private static String[] voice = {"mp3", "wav", "wma"};
-	private static String[] others = {"ecm"};
 	
 	public static EvidenceFileType decodeFromExtension(String fileExtension){
 		if(hasThisExtension(text, fileExtension)){

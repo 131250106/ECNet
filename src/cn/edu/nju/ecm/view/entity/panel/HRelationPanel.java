@@ -12,7 +12,6 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import cn.edu.nju.ecm.entity.Element;
-import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.view.entity.ElementPanel;
 

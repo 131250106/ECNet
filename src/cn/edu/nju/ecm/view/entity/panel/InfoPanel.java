@@ -13,12 +13,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
-import cn.edu.nju.ecm.canvas.model.ECModel;
 import cn.edu.nju.ecm.canvas.model.entity.ConnectorModel;
 import cn.edu.nju.ecm.canvas.model.entity.EBodyModel;
 import cn.edu.nju.ecm.canvas.model.entity.EHeaderModel;
@@ -28,13 +25,11 @@ import cn.edu.nju.ecm.entity.detail.EHeader;
 import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.view.CanvasPanel;
-import cn.edu.nju.ecm.view.ECMMainFrame;
 
 public class InfoPanel extends JPanel {
 
-	/**
-	 * Creates new form NewJPanel
-	 */
+	private static final long serialVersionUID = 1L;
+
 	public InfoPanel(CanvasElement element) {
 		this.element = element;
 		initComponents();

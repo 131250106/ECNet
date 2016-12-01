@@ -36,7 +36,6 @@ import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.file.ECMFileManage;
 import cn.edu.nju.ecm.utility.Undotooler;
 import cn.edu.nju.ecm.utility.undoCommand;
-import cn.edu.nju.ecm.utility.undoCommand.ActionType;
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.entity.ElementDialog;

@@ -66,6 +66,8 @@ public class ECMFileManage {
 		String name = ebody.element("name").getText();
 		String content = ebody.element("content").getText();
 		EBody entityEBody = new EBody(name, content);
+		
+		@SuppressWarnings("unchecked")
 		List<Element> evidenceFiles = ebody.element("files").elements();
 		for (Element file : evidenceFiles) {
 			String type = file.attributeValue("type");
