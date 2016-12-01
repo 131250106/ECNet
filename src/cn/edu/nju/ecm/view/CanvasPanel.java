@@ -341,6 +341,7 @@ public class CanvasPanel extends JScrollPane {
 		 * 监听鼠标按下的动作：根据不同的命令进行处理
 		 */
 		public void mousePressed(MouseEvent me) {
+			requestFocus();
 			if (ECMMainFrame.command == Command.Choose) {
 				CanvasElement choosed = model.getChoosedElement(me.getX(),
 						me.getY());

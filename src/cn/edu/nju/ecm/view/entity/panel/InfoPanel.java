@@ -2,7 +2,10 @@ package cn.edu.nju.ecm.view.entity.panel;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -10,9 +13,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
+import cn.edu.nju.ecm.canvas.model.ECModel;
 import cn.edu.nju.ecm.canvas.model.entity.ConnectorModel;
 import cn.edu.nju.ecm.canvas.model.entity.EBodyModel;
 import cn.edu.nju.ecm.canvas.model.entity.EHeaderModel;
@@ -21,6 +27,7 @@ import cn.edu.nju.ecm.entity.detail.EBody;
 import cn.edu.nju.ecm.entity.detail.EHeader;
 import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
+import cn.edu.nju.ecm.view.CanvasPanel;
 import cn.edu.nju.ecm.view.ECMMainFrame;
 
 public class InfoPanel extends JPanel {
@@ -37,7 +44,7 @@ public class InfoPanel extends JPanel {
 		initComponents();
 	}
 
-	private JLabel infoLabel;
+	private JLabel modelLabel;
 	private JLabel type;
 	private JLabel title;
 	private JTextField titleField;
@@ -48,9 +55,37 @@ public class InfoPanel extends JPanel {
 	private JButton delete;
 	private CanvasElement element;
 
+	private JLabel modeltitle;
+	private JLabel modelcontent;
+	private JTextField modeltitleField;
+	private JTextArea modelcontentArea;
+
+	private CanvasPanel canvasPanel;
+
 	private void initComponents() {
-		
-		infoLabel = new JLabel();
+
+		modelLabel = new JLabel();
+		modelLabel.setFont(new java.awt.Font("宋体", 1, 24));
+		modelLabel.setText("证据链信息");
+
+		modeltitle = new JLabel();
+		modeltitle.setFont(new java.awt.Font("宋体", 0, 18));
+		modeltitle.setText("标题:");
+
+		modelcontent = new JLabel();
+		modelcontent.setFont(new java.awt.Font("宋体", 0, 18));
+		modelcontent.setText("简介:");
+
+		modeltitleField = new JTextField();
+		modeltitleField.addFocusListener(new MyFocusListener());
+		JScrollPane jScrollPane2 = new JScrollPane();
+
+		modelcontentArea = new JTextArea();
+		modelcontentArea.setColumns(120);
+		modelcontentArea.setRows(5);
+		modelcontentArea.addFocusListener(new MyFocusListener());
+		jScrollPane2.setViewportView(modelcontentArea);
+
 		JSeparator jSeparator1 = new JSeparator();
 		type = new JLabel();
 		title = new JLabel();
@@ -62,22 +97,21 @@ public class InfoPanel extends JPanel {
 		reset = new JButton();
 		delete = new JButton();
 
-		infoLabel.setFont(new java.awt.Font("宋体", 1, 36)); // NOI18N
-		infoLabel.setText("信息栏");
+		type.setFont(new java.awt.Font("宋体", 1, 24)); // NOI18N
 
-		type.setFont(new java.awt.Font("宋体", 1, 18)); // NOI18N
-
+		title.setFont(new java.awt.Font("宋体", 0, 18));
 		title.setText("标题：");
 
+		content.setFont(new java.awt.Font("宋体", 0, 18));
 		content.setText("内容:");
 
-		contentArea.setColumns(20);
+		contentArea.setColumns(120);
 		contentArea.setRows(5);
 		jScrollPane1.setViewportView(contentArea);
 
 		modify.setText("确认修改");
 		modify.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
@@ -87,163 +121,209 @@ public class InfoPanel extends JPanel {
 
 		reset.setText("重置信息");
 		reset.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				if(element!=null){
+				if (element != null) {
 					setInfo(element);
-				}else
+				} else
 					reSetInfo();
 			}
 		});
-		
+
 		delete.setText("删除图元");
 		delete.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				ECMMainFrame.deleteElement();
-				reSetInfo();
+				if(canvasPanel!=null){
+					canvasPanel.deleteElementById(getID(),false);
+					reSetInfo();
+				}
 			}
 		});
 
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+		GroupLayout layout = new GroupLayout(this);
 		this.setLayout(layout);
 		layout.setHorizontalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(jSeparator1,
-						javax.swing.GroupLayout.Alignment.TRAILING)
+				.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addComponent(jSeparator1, GroupLayout.Alignment.TRAILING)
 				.addGroup(
 						layout.createSequentialGroup()
-								.addContainerGap()
+								.addGap(0, 0, Short.MAX_VALUE)
+								.addComponent(modelLabel)
+								.addContainerGap(GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE))
+				.addGroup(
+						layout.createSequentialGroup()
+								.addGap(15, 15, 15)
 								.addGroup(
 										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
+												GroupLayout.Alignment.TRAILING)
 												.addGroup(
+														GroupLayout.Alignment.LEADING,
 														layout.createSequentialGroup()
 																.addGroup(
 																		layout.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING)
-																				.addComponent(
-																						title)
-																				.addComponent(
-																						content))
-																.addGap(18, 18,
-																		18)
-																.addGroup(
-																		layout.createParallelGroup(
-																				javax.swing.GroupLayout.Alignment.LEADING)
-																				.addComponent(
-																						titleField)
-																				.addComponent(
-																						jScrollPane1)))
+																				GroupLayout.Alignment.TRAILING)
+																				.addGroup(
+																						GroupLayout.Alignment.LEADING,
+																						layout.createSequentialGroup()
+																								.addGroup(
+																										layout.createParallelGroup(
+																												GroupLayout.Alignment.LEADING)
+																												.addComponent(
+																														modeltitle)
+																												.addComponent(
+																														modelcontent))
+																								.addPreferredGap(
+																										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																								.addGroup(
+																										layout.createParallelGroup(
+																												GroupLayout.Alignment.LEADING)
+																												.addComponent(
+																														jScrollPane2)
+																												.addComponent(
+																														modeltitleField)))
+																				.addGroup(
+																						GroupLayout.Alignment.LEADING,
+																						layout.createSequentialGroup()
+																								.addGroup(
+																										layout.createParallelGroup(
+																												GroupLayout.Alignment.LEADING)
+																												.addComponent(
+																														content)
+																												.addComponent(
+																														title))
+																								.addPreferredGap(
+																										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+																								.addGroup(
+																										layout.createParallelGroup(
+																												GroupLayout.Alignment.LEADING)
+																												.addComponent(
+																														titleField)
+																												.addComponent(
+																														jScrollPane1))))
+																.addGap(15, 15,
+																		15))
 												.addGroup(
+														GroupLayout.Alignment.LEADING,
 														layout.createSequentialGroup()
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE)
-																.addComponent(
-																		infoLabel)
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE))
-												.addGroup(
-														layout.createSequentialGroup()
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE)
-																.addComponent(
-																		type)
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE)))
-								.addContainerGap())
-				.addGroup(
-						layout.createSequentialGroup()
-								.addGap(24, 24, 24)
-								.addGroup(
-										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		delete)
-																.addContainerGap(
-																		javax.swing.GroupLayout.DEFAULT_SIZE,
-																		Short.MAX_VALUE))
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		modify)
 																.addPreferredGap(
 																		javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																		58,
+																		GroupLayout.DEFAULT_SIZE,
 																		Short.MAX_VALUE)
-																.addComponent(
-																		reset)
-																.addGap(35, 35,
-																		35)))));
-		layout.setVerticalGroup(layout
-				.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+																.addGroup(
+																		layout.createParallelGroup(
+																				GroupLayout.Alignment.LEADING)
+																				.addComponent(
+																						delete)
+																				.addGroup(
+																						layout.createSequentialGroup()
+																								.addComponent(
+																										modify)
+																								.addPreferredGap(
+																										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+																										GroupLayout.DEFAULT_SIZE,
+																										Short.MAX_VALUE)
+																								.addComponent(
+																										reset)))
+																.addContainerGap(
+																		GroupLayout.DEFAULT_SIZE,
+																		Short.MAX_VALUE))))
 				.addGroup(
 						layout.createSequentialGroup()
-								.addGap(8, 8, 8)
-								.addComponent(infoLabel)
-								.addGap(18, 18, 18)
-								.addComponent(jSeparator1,
-										javax.swing.GroupLayout.PREFERRED_SIZE,
-										javax.swing.GroupLayout.DEFAULT_SIZE,
-										javax.swing.GroupLayout.PREFERRED_SIZE)
-								.addGap(18, 18, 18)
+								.addContainerGap(106, Short.MAX_VALUE)
 								.addComponent(type)
-								.addGap(35, 35, 35)
+								.addGap(0, 104, Short.MAX_VALUE)));
+		layout.setVerticalGroup(layout
+				.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(
+						layout.createSequentialGroup()
+								.addContainerGap(18, Short.MAX_VALUE)
+								.addComponent(modelLabel)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										12, Short.MAX_VALUE)
 								.addGroup(
 										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.BASELINE)
-												.addComponent(title)
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														modeltitleField,
+														GroupLayout.PREFERRED_SIZE,
+														24,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(modeltitle))
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										12, Short.MAX_VALUE)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.LEADING)
+												.addComponent(
+														jScrollPane2,
+														GroupLayout.PREFERRED_SIZE,
+														137,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(
+														modelcontent,
+														GroupLayout.PREFERRED_SIZE,
+														18,
+														GroupLayout.PREFERRED_SIZE))
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										19, Short.MAX_VALUE)
+								.addComponent(jSeparator1,
+										GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE,
+										GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										14, Short.MAX_VALUE)
+								.addComponent(type)
+								.addPreferredGap(
+										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+										12, Short.MAX_VALUE)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
 												.addComponent(
 														titleField,
-														javax.swing.GroupLayout.PREFERRED_SIZE,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														javax.swing.GroupLayout.PREFERRED_SIZE))
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										42, Short.MAX_VALUE)
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(title))
+								.addGap(18, 18, 18)
 								.addGroup(
 										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.LEADING)
-												.addGroup(
-														layout.createSequentialGroup()
-																.addComponent(
-																		content)
-																.addGap(0,
-																		0,
-																		Short.MAX_VALUE))
+												GroupLayout.Alignment.LEADING)
 												.addComponent(
 														jScrollPane1,
-														javax.swing.GroupLayout.DEFAULT_SIZE,
-														251, Short.MAX_VALUE))
+														GroupLayout.PREFERRED_SIZE,
+														187,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(content))
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										31, Short.MAX_VALUE)
+										12, Short.MAX_VALUE)
 								.addGroup(
 										layout.createParallelGroup(
-												javax.swing.GroupLayout.Alignment.BASELINE)
+												GroupLayout.Alignment.LEADING)
 												.addComponent(modify)
 												.addComponent(reset))
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										33, Short.MAX_VALUE)
+										12, Short.MAX_VALUE)
 								.addComponent(delete)
-								.addContainerGap(40, Short.MAX_VALUE)));
-		
+								.addContainerGap(GroupLayout.DEFAULT_SIZE,
+										Short.MAX_VALUE)));
+
 		setInfo(element);
 	}
 
 	public int getID() {
-		if(element!=null)
+		if (element != null)
 			return element.getID();
 		return -1;
 	}
@@ -257,7 +337,7 @@ public class InfoPanel extends JPanel {
 
 	public void setInfo(CanvasElement element) {
 		this.element = element;
-		
+
 		String typestr = "未选中";
 		String titlestr = "";
 		String contentstr = "";
@@ -289,10 +369,23 @@ public class InfoPanel extends JPanel {
 		contentArea.setText(contentstr);
 	}
 
+	public void setCanvasPanel(CanvasPanel canvasPanel) {
+		this.canvasPanel = canvasPanel;
+		modeltitleField.setText(canvasPanel.model.getTitle());
+		modelcontentArea.setText(canvasPanel.model.getDescription());
+	}
+
+	public void reSetModel() {
+		this.canvasPanel = null;
+		modeltitleField.setText("");
+		modelcontentArea.setText("");
+		reSetInfo();
+	}
+
 	private void modifyCanvasElement() {
-		if(element==null)
+		if (element == null)
 			reSetInfo();
-		else{
+		else {
 			if (element.getElementType() == ElementType.Body) {
 				EBody eb = ((EBodyModel) element).geteBody();
 				eb.setName(titleField.getText());
@@ -310,7 +403,30 @@ public class InfoPanel extends JPanel {
 				hr.setName(titleField.getText());
 				hr.setContent(contentArea.getText());
 			}
-			ECMMainFrame.reFreshAll();
+			canvasPanel.refresh();
 		}
+	}
+
+	class MyFocusListener implements FocusListener {
+		@Override
+		public void focusGained(FocusEvent e) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (canvasPanel != null) {
+				if (canvasPanel.model.getTitle().equals(modeltitleField.getText())
+						&& canvasPanel.model.getDescription().equals(
+								modelcontentArea.getText())) {
+				} else{
+					canvasPanel.model.setTitle(modeltitleField.getText());
+					canvasPanel.model.setDescription(modelcontentArea.getText());
+					canvasPanel.setChanged(true);
+				}
+			}
+		}
+
 	}
 }

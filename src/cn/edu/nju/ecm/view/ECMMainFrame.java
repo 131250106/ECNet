@@ -35,6 +35,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.dom4j.DocumentException;
@@ -72,7 +76,7 @@ public class ECMMainFrame {
 	private JLabel lblPosition;
 
 	// 画布所在的面板
-	public static JTabbedPane tabbedCanvasPanel = null;
+	public JTabbedPane tabbedCanvasPanel = null;
 	// 当前选中的命令按钮
 	public static JButton currentCommandButton;
 	// 右侧信息栏
@@ -387,6 +391,18 @@ public class ECMMainFrame {
 		// 画布区，底部是一个多Tab的panel
 		JTabbedPane tabbedModelsPanel = new JTabbedPane(JTabbedPane.TOP);
 		tabbedModelsPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedModelsPanel.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+						.getSelectedComponent();
+				if (canvasPanel != null){
+					infoPanel.setCanvasPanel(canvasPanel);
+				}else{
+					infoPanel.reSetModel();
+				}
+			}
+		});
 		modelPanel.add(tabbedModelsPanel, BorderLayout.CENTER);
 		tabbedCanvasPanel = tabbedModelsPanel;
 
@@ -440,20 +456,6 @@ public class ECMMainFrame {
 
 	public static void resetInfo() {
 		infoPanel.reSetInfo();
-	}
-
-	public static void deleteElement() {
-		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-				.getSelectedComponent();
-		if (canvasPanel != null)
-			canvasPanel.deleteElementById(infoPanel.getID(),false);
-	}
-
-	public static void reFreshAll() {
-		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-				.getSelectedComponent();
-		if (canvasPanel != null)
-			canvasPanel.refresh();
 	}
 
 	/*
