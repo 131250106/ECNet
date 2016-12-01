@@ -31,7 +31,8 @@ public class ConnectorModel extends CanvasElement {
 		this.elementType = ElementType.Connector;
 	}
 
-	public ConnectorModel(int x1, int y1, int height, int width, int id, HConnector hConnector) {
+	public ConnectorModel(int x1, int y1, int height, int width, int id,
+			HConnector hConnector) {
 		super();
 		this.x1 = x1;
 		this.y1 = y1;
@@ -54,23 +55,25 @@ public class ConnectorModel extends CanvasElement {
 		g2d.setStroke(new BasicStroke(1));
 
 		g2d.fillRect(x1, y1, width, height);
-		
+
 		if (!this.gethConnector().getName().equals("")) {
 			g2d.setPaint(Color.BLACK);
 			g2d.setStroke(new BasicStroke(1));
-			drawName(g2d,this.gethConnector().getName());
+			drawName(g2d, this.gethConnector().getName());
 		}
 	}
 
 	public boolean pointWithInMe(int x, int y) {
-		if (this.x1 <= x && this.y1 <= y && x <= this.x1 + this.width && y <= this.y1 + this.height) {
+		if (this.x1 <= x && this.y1 <= y && x <= this.x1 + this.width
+				&& y <= this.y1 + this.height) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean withInMe(int x, int y) {
-		if (this.x1 <= x && this.y1 <= y && x <= this.x1 + this.width && y <= this.y1 + this.height) {
+		if (this.x1 <= x && this.y1 <= y && x <= this.x1 + this.width
+				&& y <= this.y1 + this.height) {
 			this.setOffset(x, y);
 			setConnectedOffset(x, y);
 			return true;
@@ -83,10 +86,10 @@ public class ConnectorModel extends CanvasElement {
 		this.offsetX1 = x - this.x1;
 		this.offsetY1 = y - this.y1;
 	}
-	
+
 	private void drawName(Graphics2D g2d, String name) {
-		int x = this.x1  - name.length() * 2;
-		int y = this.y1   + 5;
+		int x = this.x1 - name.length() * 2;
+		int y = this.y1 + 5;
 		g2d.drawString(name, x, y);
 	}
 
@@ -151,11 +154,19 @@ public class ConnectorModel extends CanvasElement {
 
 	@Override
 	public String toXMLString() {
-		String result = "\t<connector x=\"" + this.x1 + "\" y=\"" + this.y1 + "\" height=\"" + this.height
-				+ "\" width=\"" + this.width + "\" id=\"" + this.getID() + "\">" + ECMFileManage.NEW_LINE;
+		String result = "\t<connector x=\"" + this.x1 + "\" y=\"" + this.y1
+				+ "\" height=\"" + this.height + "\" width=\"" + this.width
+				+ "\" id=\"" + this.getID() + "\">" + ECMFileManage.NEW_LINE;
 		result += this.hConnector.toXMLString();
 		result += "\t</connector>" + ECMFileManage.NEW_LINE;
 		return result;
+	}
+
+	public CanvasElement copy() {
+		CanvasElement copy = new ConnectorModel(getX1(), getY1(), getHeight(),
+				getWidth(), getID(), gethConnector());
+		copy.setConnectedInputs(getConnectedInputs());
+		return copy;
 	}
 
 }

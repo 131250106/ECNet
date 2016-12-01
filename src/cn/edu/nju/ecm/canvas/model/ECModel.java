@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
+import cn.edu.nju.ecm.utility.Undotooler;
+import cn.edu.nju.ecm.utility.undoCommand;
+import cn.edu.nju.ecm.utility.undoCommand.ActionType;
 
 public class ECModel implements Serializable {
 
@@ -35,15 +38,25 @@ public class ECModel implements Serializable {
 		this.file = file;
 	}
 
-	public void insertNewWElement(CanvasElement element) {
-		this.maxIDNumber++;
-		element.setID(this.maxIDNumber);
+	public void insertNewWElement(CanvasElement element,boolean isUndo) {
+		if(!isUndo){					//如果不是由于撤销操作引起的则增加undo记录
+			this.maxIDNumber++;
+			element.setID(this.maxIDNumber);
+			Undotooler.pushUndoCommand(new undoCommand(element,ActionType.New));
+		}
 		this.getElements().add(0, element);
 	}
-	
-	public void deleteElement(int ID){
+
+	public boolean deleteElement(int ID, boolean isUndo) {
 		CanvasElement element = this.getElementByID(ID);
-		this.getElements().remove(element);
+		if (element != null) {
+			this.getElements().remove(element);
+			if (!isUndo) 			// 如果不是由于撤销操作引起的则增加undo记录
+				Undotooler.pushUndoCommand(new undoCommand(element,
+						ActionType.Delete));
+			return true;
+		}
+		return false;
 	}
 
 	public CanvasElement getElementByID(int ID) {
@@ -119,8 +132,11 @@ public class ECModel implements Serializable {
 		if (element.getElementType() == ElementType.Header) {
 			for (CanvasElement ce : this.elements) {
 				if (ce.getElementType() == ElementType.Body) {
-					if (!hasChoosedOwner && ce.pointWithInMe(element.getX1(), element.getY1())
-							&& !ce.pointWithInMe(element.getX2(), element.getY2())) {
+					if (!hasChoosedOwner
+							&& ce.pointWithInMe(element.getX1(),
+									element.getY1())
+							&& !ce.pointWithInMe(element.getX2(),
+									element.getY2())) {
 						ce.setChoosed(true);
 						hasChoosedOwner = true;
 					} else {
@@ -131,15 +147,22 @@ public class ECModel implements Serializable {
 		}
 		if (element.getElementType() == ElementType.Relation) {
 			for (CanvasElement ce : this.elements) {
-				if (ce.getElementType() == ElementType.Header || ce.getElementType() == ElementType.Connector) {
-					if (!hasChoosedOwner && ce.pointWithInMe(element.getX1(), element.getY1())
-							&& !ce.pointWithInMe(element.getX2(), element.getY2())) {
+				if (ce.getElementType() == ElementType.Header
+						|| ce.getElementType() == ElementType.Connector) {
+					if (!hasChoosedOwner
+							&& ce.pointWithInMe(element.getX1(),
+									element.getY1())
+							&& !ce.pointWithInMe(element.getX2(),
+									element.getY2())) {
 						ce.setChoosed(true);
 						hasChoosedOwner = true;
 						continue;
 					}
-					if (!hasChoosedSon && ce.pointWithInMe(element.getX2(), element.getY2())
-							&& !ce.pointWithInMe(element.getX1(), element.getY1())) {
+					if (!hasChoosedSon
+							&& ce.pointWithInMe(element.getX2(),
+									element.getY2())
+							&& !ce.pointWithInMe(element.getX1(),
+									element.getY1())) {
 						ce.setChoosed(true);
 						hasChoosedSon = true;
 					} else {
@@ -151,7 +174,7 @@ public class ECModel implements Serializable {
 	}
 
 	public void reSetConnected(CanvasElement element) {
-		if (element.getElementType() == ElementType.Header || element.getElementType() == ElementType.Connector) {
+		if (element.getElementType() == ElementType.Header) {
 			if (element.getElementType() == ElementType.Header) {
 				for (CanvasElement ce : this.elements) {
 					if (ce.getElementType() == ElementType.Body) {
@@ -166,26 +189,23 @@ public class ECModel implements Serializable {
 					}
 				}
 			}
-			for (CanvasElement connectedRelation : element.getConnectedOutputs()) {
+			for (CanvasElement connectedRelation : element
+					.getConnectedOutputs()) {
 				connectedRelation.resetConnectedPointOwner(element);
-				if (connectedRelation.isConnectedSon()) {
-					connectedRelation.resetConnectedPointSon(connectedRelation.getConnectedSon());
-				}
 			}
+		
+		} else if (element.getElementType() == ElementType.Connector) {
 			for (CanvasElement connectedRelation : element.getConnectedInputs()) {
 				connectedRelation.resetConnectedPointSon(element);
-				if (connectedRelation.isConnectedOwner()) {
-					connectedRelation.resetConnectedPointOwner(connectedRelation.getConnectedOwner());
-				}
 			}
-		} else if (element.getElementType() == ElementType.Body) {
+		}  else if (element.getElementType() == ElementType.Body) {
 			for (CanvasElement connectedHeader : element.getConnectedOutputs()) {
 				connectedHeader.resetConnectedPointOwner(element);
 			}
 		} else if (element.getElementType() == ElementType.Relation) {
 			for (CanvasElement ce : this.elements) {
 				if (ce.isChoosed()) {
-					if (ce.getElementType() == ElementType.Header ) {
+					if (ce.getElementType() == ElementType.Header) {
 						if (ce.pointWithInMe(element.getX1(), element.getY1())) {
 							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
@@ -193,8 +213,8 @@ public class ECModel implements Serializable {
 							element.setConnectedOwner(ce);
 						}
 						ce.setChoosed(false);
-						
-					}else if(ce.getElementType() == ElementType.Connector ) {
+
+					} else if (ce.getElementType() == ElementType.Connector) {
 						if (ce.pointWithInMe(element.getX2(), element.getY2())) {
 							element.setConnectedSon(true);
 							element.resetConnectedPointSon(ce);

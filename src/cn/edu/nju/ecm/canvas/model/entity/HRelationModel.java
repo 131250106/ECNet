@@ -181,15 +181,7 @@ public class HRelationModel extends CanvasElement {
 
 	public void resetConnectedPointSon(CanvasElement ce) {
 		int[] newXY2;
-		if (ce.getElementType() == ElementType.Header) {
-			CanvasElement ceTmp = new EBodyModel();
-			ceTmp.setX1Y1(ce.getX2() - ce.getWidth(), ce.getY2() - ce.getWidth());
-			ceTmp.setHeight(ce.getWidth() * 2);
-			ceTmp.setWidth(ce.getWidth() * 2);
-			newXY2 = CanvasElement.calculateNewConnectedPointRectangle(ceTmp, this.x1, this.y1);
-		} else {
-			newXY2 = CanvasElement.calculateNewConnectedPointRectangle(ce, this.x1, this.y1);
-		}
+		newXY2 = CanvasElement.calculateNewConnectedPointRectangle(ce, this.x1, this.y1);
 		this.x2 = newXY2[0];
 		this.y2 = newXY2[1];
 	}
@@ -308,5 +300,15 @@ public class HRelationModel extends CanvasElement {
 		result += this.hRelation.toXMLString();
 		result += "\t</hrelation>" + ECMFileManage.NEW_LINE;
 		return result;
+	}
+	
+	public CanvasElement copy() {
+		CanvasElement copy = new HRelationModel(getX1(), getY1(), getX2(),
+				getY2(), getID(), gethRelation());
+		copy.setConnectedOwner(getConnectedOwner());
+		copy.setConnectedOwner(isConnectedOwner());
+		copy.setConnectedSon(getConnectedSon());
+		copy.setConnectedSon(isConnectedSon());
+		return copy;
 	}
 }

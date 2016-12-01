@@ -239,11 +239,23 @@ public class CanvasElement implements Serializable {
 
 	// 获取图元的输入和输出图元列表
 	public Set<CanvasElement> getConnectedInputs() {
-		return null;
+		return this.connectedInputs;
 	}
 
 	public Set<CanvasElement> getConnectedOutputs() {
-		return null;
+		return this.connectedOutputs;
+	}
+
+	public CanvasElement getConnectedOutput() {
+		return connectedOutput;
+	}
+
+	public void setConnectedInputs(Set<CanvasElement> connectedInputs) {		
+		this.connectedInputs = connectedInputs;
+	}
+
+	public void setConnectedOutputs(Set<CanvasElement> connectedOutputs) {
+		this.connectedOutputs = connectedOutputs;
 	}
 
 	// 用来计算图元和图元间的链接点位置
@@ -285,5 +297,19 @@ public class CanvasElement implements Serializable {
 		}
 		return newXY;
 	}
-
+	
+	public CanvasElement copy(){
+		CanvasElement copy = new CanvasElement();
+		copy.setChoosed(choosed);
+		copy.setConnectedOwner(connectedOwner);
+		copy.setConnectedSon(connectedSon);
+		copy.setRotateOwner(rotateOwner);
+		copy.setElementType(elementType);
+		copy.setHeight(height);
+		copy.setID(ID);
+		copy.setWidth(width);
+		copy.setX1Y1(x1, y1);
+		copy.setX2Y2(x2, y2);
+		return copy;
+	}
 }

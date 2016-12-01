@@ -34,6 +34,9 @@ import cn.edu.nju.ecm.entity.detail.EHeader;
 import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.file.ECMFileManage;
+import cn.edu.nju.ecm.utility.Undotooler;
+import cn.edu.nju.ecm.utility.undoCommand;
+import cn.edu.nju.ecm.utility.undoCommand.ActionType;
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
@@ -77,6 +80,7 @@ public class CanvasPanel extends JScrollPane {
 
 	// 当前被复制的图元
 	private CanvasElement currentCopyElement = null;
+	private CanvasElement beforeMovedElement = null;
 
 	// 鼠标当前位置
 	private int currentX;
@@ -137,7 +141,7 @@ public class CanvasPanel extends JScrollPane {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				if (currentChoosed != null) {
-					deleteElement(currentChoosed.getID());
+					deleteElementById(currentChoosed.getID(), false);
 				}
 			}
 		});
@@ -187,60 +191,68 @@ public class CanvasPanel extends JScrollPane {
 		this.setChanged(false);
 	}
 
-	public void deleteElement(int ElementId) {
-		model.deleteElement(ElementId);
-		refresh();
-		ECMMainFrame.resetInfo();
-	}
-
-	public void deleteCurrentElement() {
-		if (currentChoosed != null) {
-			model.deleteElement(currentChoosed.getID());
+	public void deleteElementById(int ElementId, boolean isUndo) {		//根据Id删除图元，若是由于撤销操作删除的，isUndo=true
+		if (model.deleteElement(ElementId, isUndo)) {
 			refresh();
 			ECMMainFrame.resetInfo();
 		}
 	}
 
-	public void copyElement() {
+	public void deleteCurrentElement() {							//删除当前选中的图元
+		if (model.deleteElement(currentChoosed.getID(), false)) {
+			refresh();
+			ECMMainFrame.resetInfo();
+		}
+	}
+
+	public void copyElement() {										//复制当前选中图元
 		currentCopyElement = currentChoosed;
 	}
 
-	public void pasteElement() {
+	public void pasteElement() {									//粘贴当前选中图元
 		if (currentCopyElement != null) {
 			if (currentCopyElement.getElementType() == CanvasElement.ElementType.Body) {
 				EBodyModel eBodyModel = new EBodyModel(currentX, currentY, 2);
 				eBodyModel.seteBody(((EBodyModel) currentCopyElement)
 						.geteBody());
-				model.insertNewWElement(eBodyModel);
+				model.insertNewWElement(eBodyModel,false);
 			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Header) {
 				EHeaderModel eHeader = new EHeaderModel(currentX, currentY, 2);
 				eHeader.seteHeader(((EHeaderModel) currentCopyElement)
 						.geteHeader());
-				model.insertNewWElement(eHeader);
+				model.insertNewWElement(eHeader,false);
 			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Connector) {
 				ConnectorModel connector = new ConnectorModel(currentX,
 						currentY, 2);
 				connector.sethConnector(((ConnectorModel) currentCopyElement)
 						.gethConnector());
-				model.insertNewWElement(connector);
+				model.insertNewWElement(connector,false);
 			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Relation) {
 				HRelationModel hRelation = new HRelationModel(currentX,
 						currentY, 2);
 				hRelation.sethRelation(((HRelationModel) currentCopyElement)
 						.gethRelation());
-				model.insertNewWElement(hRelation);
+				model.insertNewWElement(hRelation,false);
 			}
 			ECMMainFrame.resetButton();
 			refresh();
 		}
 	}
 
-	public void refresh() {
+	public void recoverElement(CanvasElement element) { // 删除后undo 的恢复操作
+		model.insertNewWElement(element,true);
+		model.updateConnectable(element);
+		element.setChoosed(true);
+		model.reSetConnected(element);
+		refresh();
+	}
+
+	public void refresh() {								//修改后刷新界面
 		setChanged(true);
 		canvasPanel.repaint();
 	}
 
-	public void showCurrentlabel(int x, int y, String name) {
+	public void showCurrentlabel(int x, int y, String name) {			//显示正在拖拽的图元
 		if (x > 5 && y > 8) {
 			currentLabel.setLocation(x, y);
 			currentLabel.setVisible(true);
@@ -260,15 +272,14 @@ public class CanvasPanel extends JScrollPane {
 			currentLabel.setVisible(false);
 	}
 
-	public void drawCurrentlabel(int x, int y) {
+	public void drawCurrentlabel(int x, int y) {			//先拖拽的图元画出来
 		currentLabel.setText("");
 		currentLabel.setVisible(false);
 		if (x > 5 && y > 5)
 			drawElement(x, y);
 	}
 
-	private void drawElement(int x, int y) {
-		// TODO Auto-generated method stub
+	private void drawElement(int x, int y) {				//画图元逻辑
 		if (ECMMainFrame.command == Command.EBody) {
 			ElementDialog dialog = new ElementDialog(mainFrame,
 					ElementType.EBody);
@@ -278,7 +289,8 @@ public class CanvasPanel extends JScrollPane {
 			}
 			EBodyModel eBodyModel = new EBodyModel(x, y, 2);
 			eBodyModel.seteBody(eBodyEntity);
-			model.insertNewWElement(eBodyModel);
+			model.insertNewWElement(eBodyModel,false);
+			
 		} else if (ECMMainFrame.command == Command.EHeader) {
 			ElementDialog dialog = new ElementDialog(mainFrame,
 					ElementType.EHeader);
@@ -288,7 +300,7 @@ public class CanvasPanel extends JScrollPane {
 			}
 			EHeaderModel eHeader = new EHeaderModel(x, y, 2);
 			eHeader.seteHeader(EHeaderEntity);
-			model.insertNewWElement(eHeader);
+			model.insertNewWElement(eHeader,false);
 		} else if (ECMMainFrame.command == Command.EConnector) {
 			ElementDialog dialog = new ElementDialog(mainFrame,
 					ElementType.Connector);
@@ -299,7 +311,7 @@ public class CanvasPanel extends JScrollPane {
 			}
 			ConnectorModel connector = new ConnectorModel(x, y, 2);
 			connector.sethConnector(hConnectorEntity);
-			model.insertNewWElement(connector);
+			model.insertNewWElement(connector,false);
 		} else if (ECMMainFrame.command == Command.ERelation) {
 			ElementDialog dialog = new ElementDialog(mainFrame,
 					ElementType.HRelation);
@@ -309,7 +321,7 @@ public class CanvasPanel extends JScrollPane {
 			}
 			HRelationModel hRelation = new HRelationModel(x, y, 2);
 			hRelation.sethRelation(hRealationEntity);
-			model.insertNewWElement(hRelation);
+			model.insertNewWElement(hRelation,false);
 		}
 		ECMMainFrame.resetButton();
 		refresh();
@@ -336,6 +348,8 @@ public class CanvasPanel extends JScrollPane {
 					currentChoosed.setChoosed(false);
 				}
 				if (choosed != null) {
+					beforeMovedElement = choosed.copy();
+					
 					currentChoosed = choosed;
 					currentChoosed.setChoosed(true);
 					ECMMainFrame.showElementInfo(choosed);
@@ -384,6 +398,8 @@ public class CanvasPanel extends JScrollPane {
 		 */
 		public void mouseReleased(MouseEvent me) {
 			if (ECMMainFrame.command == Command.Choose && fromDragging) {
+				Undotooler.pushUndoCommand(new undoCommand(beforeMovedElement, undoCommand.ActionType.Move));
+				
 				if (currentChoosed != null) {
 					if (!currentChoosed.isConnectedOwner()
 							|| !currentChoosed.isConnectedSon()) {

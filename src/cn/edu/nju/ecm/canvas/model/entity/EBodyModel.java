@@ -138,5 +138,12 @@ public class EBodyModel extends CanvasElement {
 		result += "\t</ebody>" + ECMFileManage.NEW_LINE;
 		return result;
 	}
+	
+	public CanvasElement copy() {
+		CanvasElement copy = new EBodyModel(getX1(), getY1(), getHeight(),
+				getWidth(), getID(), geteBody());
+		copy.setConnectedOutputs(getConnectedOutputs());
+		return copy;
+	}
 
 }

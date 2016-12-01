@@ -313,4 +313,14 @@ public class EHeaderModel extends CanvasElement {
 		result += "\t</eheader>" + ECMFileManage.NEW_LINE;
 		return result;
 	}
+	
+	public CanvasElement copy() {
+		CanvasElement copy = new EHeaderModel(getX1(), getY1(), getX2(),
+				getY2(), getID(), geteHeader());
+		copy.setConnectedOwner(getConnectedOwner());
+		copy.setConnectedOwner(isConnectedOwner());
+		copy.setConnectedOutputs(getConnectedOutputs());
+		copy.setConnectedInputs(getConnectedInputs());
+		return copy;
+	}
 }

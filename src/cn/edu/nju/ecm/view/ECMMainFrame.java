@@ -41,6 +41,8 @@ import org.dom4j.DocumentException;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.entity.Element;
+import cn.edu.nju.ecm.utility.Undotooler;
+import cn.edu.nju.ecm.utility.undoCommand;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 import cn.edu.nju.ecm.view.entity.panel.InfoPanel;
@@ -282,7 +284,33 @@ public class ECMMainFrame {
 		JMenuItem undoMenuItem = new JMenuItem("撤销");
 		//增加快捷键（CTRL+Z）
 		undoMenuItem.setAccelerator(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Z,  
-		                java.awt.Event.CTRL_MASK)); 
+		                java.awt.Event.CTRL_MASK));
+		undoMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				undoCommand undo = Undotooler.popUndoCommand();
+				if(undo!=null){
+					if(undo.getType()==undoCommand.ActionType.Delete){
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+								.getSelectedComponent();
+						if (canvasPanel != null)
+							canvasPanel.recoverElement(undo.getElement());
+					}else if(undo.getType()==undoCommand.ActionType.New){
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+								.getSelectedComponent();
+						if (canvasPanel != null)
+							canvasPanel.deleteElementById(undo.getElement().getID(), true);
+					}else if(undo.getType()==undoCommand.ActionType.Move){
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+								.getSelectedComponent();
+						if (canvasPanel != null){
+							canvasPanel.deleteElementById(undo.getElement().getID(), true);
+							canvasPanel.recoverElement(undo.getElement());
+						}
+					}
+				}
+			}
+		});
 		editMenu.add(undoMenuItem);
 
 		JMenuItem formatMenuItem = new JMenuItem("自动排版");
@@ -418,7 +446,7 @@ public class ECMMainFrame {
 		CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 				.getSelectedComponent();
 		if (canvasPanel != null)
-			canvasPanel.deleteElement(infoPanel.getID());
+			canvasPanel.deleteElementById(infoPanel.getID(),false);
 	}
 
 	public static void reFreshAll() {
