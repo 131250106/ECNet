@@ -3,44 +3,41 @@ package cn.edu.nju.ecm.view.entity.panel;
 import java.awt.Font;
 
 import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 import cn.edu.nju.ecm.entity.Element;
-import cn.edu.nju.ecm.view.checker.TextChecker;
-import cn.edu.nju.ecm.view.checker.TextChecker.CheckType;
+import cn.edu.nju.ecm.entity.detail.HConnector;
+import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.view.entity.ElementPanel;
 
-public class ECMModelPanel extends ElementPanel {
+public class HRelationPanel extends ElementPanel {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTextField ecmNameText;
-	private JTextArea ecmDescText;
+	private JTextField relationName;
+	private JTextArea relationContent;
 
 	/**
 	 * Create the panel.
 	 */
-	public ECMModelPanel() {
+	public HRelationPanel() {
 		super();
 
-		JLabel lblNewLabel = new JLabel("证据链标题");
+		JLabel lblNewLabel = new JLabel("箭头标题");
 		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
 
-		ecmNameText = new JTextField();
-		ecmNameText.setFont(new Font("宋体", Font.PLAIN, 15));
-		ecmNameText.setColumns(10);
-		TextChecker nameChecker = new TextChecker(ecmNameText, this, "证据链名称必须至少5个字", 5, 0);
-		nameChecker.setCheckType(CheckType.Length);
-		addChecker(nameChecker);
+		relationName = new JTextField();
+		relationName.setFont(new Font("宋体", Font.PLAIN, 15));
+		relationName.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("证据链简介");
+		JLabel lblNewLabel_1 = new JLabel("箭头简介");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		JScrollPane scrollPane = new JScrollPane();
@@ -50,7 +47,7 @@ public class ECMModelPanel extends ElementPanel {
 				.addGroup(groupLayout.createSequentialGroup().addContainerGap()
 						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel)
-										.addPreferredGap(ComponentPlacement.RELATED).addComponent(ecmNameText,
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(relationName,
 												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel_1)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(scrollPane,
@@ -59,27 +56,25 @@ public class ECMModelPanel extends ElementPanel {
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.LEADING).addGroup(groupLayout
 				.createSequentialGroup().addContainerGap()
 				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblNewLabel).addComponent(
-						ecmNameText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						relationName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18).addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblNewLabel_1)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
 				.addContainerGap()));
 
-		ecmDescText = new JTextArea();
-		ecmDescText.setLineWrap(true);
-		ecmDescText.setFont(new Font("Monospaced", Font.PLAIN, 15));
-		scrollPane.setViewportView(ecmDescText);
-		TextChecker descChecker = new TextChecker(ecmDescText, this, "证据链描述至少20个字", 20, 0);
-		descChecker.setCheckType(CheckType.Length);
-		addChecker(descChecker);
+		relationContent = new JTextArea();
+		relationContent.setLineWrap(true);
+		relationContent.setFont(new Font("Monospaced", Font.PLAIN, 15));
+		scrollPane.setViewportView(relationContent);
 
 		setLayout(groupLayout);
 
 	}
 
+
 	public Element generateElement() {
-		Element element = new Element();
-		element.setName(ecmNameText.getText());
-		element.setContent(ecmDescText.getText());
-		return element;
+		String name = relationName.getText();
+		String content = relationContent.getText();
+		HRelation relation = new HRelation(name, content);
+		return relation;
 	}
 }

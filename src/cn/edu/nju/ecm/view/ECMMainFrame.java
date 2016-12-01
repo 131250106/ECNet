@@ -95,7 +95,7 @@ public class ECMMainFrame {
 		ECMMainFrame.ScreenCenterX = width / 2;
 		ECMMainFrame.ScreenCenterY = height / 2;
 
-		int frameWidth = 900, frameHeight = 650;
+		int frameWidth = 1200, frameHeight = 750;
 		int x = ECMMainFrame.ScreenCenterX - frameWidth / 2;
 		int y = ECMMainFrame.ScreenCenterY - frameHeight / 2;
 		Rectangle bounds = new Rectangle(x, y, frameWidth, frameHeight);
@@ -168,6 +168,16 @@ public class ECMMainFrame {
 		fileMenu.add(closeMenuItem);
 
 		JMenuItem closeAllMenuItem = new JMenuItem("关闭所有");
+		closeAllMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				while(tabbedCanvasPanel.getSelectedComponent() != null){
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getSelectedComponent();
+					closeHandler(currentCanvas);
+				}
+			}
+		});
 		fileMenu.add(closeAllMenuItem);
 
 		JSeparator separator_1 = new JSeparator();
@@ -189,9 +199,30 @@ public class ECMMainFrame {
 		fileMenu.add(saveMenuItem);
 
 		JMenuItem saveAsMenuItem = new JMenuItem("另存为");
+		saveAsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (tabbedCanvasPanel.getSelectedComponent() != null) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getSelectedComponent();
+					currentCanvas.type=FileType.New;
+					saveHandler(currentCanvas);
+				}
+			}
+		});
 		fileMenu.add(saveAsMenuItem);
 
 		JMenuItem saveAllMenuItem = new JMenuItem("保存所有");
+		saveAllMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i=0;i<tabbedCanvasPanel.getTabCount();i++){
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getComponentAt(i);
+					saveHandler(currentCanvas);
+				}
+			}
+		});
 		fileMenu.add(saveAllMenuItem);
 
 		JMenuBar functionMenuBar = new JMenuBar();
@@ -507,7 +538,7 @@ public class ECMMainFrame {
 
 	// 检查是否需要保存修改
 	private void closeHandler(CanvasPanel canvasPanel) {
-		if (canvasPanel.isChanged()) {
+		if (canvasPanel.isChanged()||canvasPanel.type==FileType.New) {
 			Object[] options = { "保存", "取消" };
 			int returnVal = JOptionPane.showOptionDialog(frmEcm,
 					"您要关闭的文件没有保存，需要保存吗？", "保存文件", JOptionPane.DEFAULT_OPTION,

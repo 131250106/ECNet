@@ -5,8 +5,11 @@ import java.awt.Rectangle;
 import cn.edu.nju.ecm.view.ViewHelper;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 import cn.edu.nju.ecm.view.entity.ElementDialog.OpenModal;
+import cn.edu.nju.ecm.view.entity.panel.ConnectorPanel;
 import cn.edu.nju.ecm.view.entity.panel.EBodyPanel;
 import cn.edu.nju.ecm.view.entity.panel.ECMModelPanel;
+import cn.edu.nju.ecm.view.entity.panel.EHeaderPanel;
+import cn.edu.nju.ecm.view.entity.panel.HRelationPanel;
 
 public class ElementPanelFactory {
 
@@ -16,6 +19,15 @@ public class ElementPanelFactory {
 		case EBody:
 			elementPanel = new EBodyPanel();
 			break;
+		case EHeader:
+			elementPanel = new EHeaderPanel();
+			break;
+		case Connector:
+			elementPanel = new ConnectorPanel();
+			break;	
+		case HRelation:
+			elementPanel = new HRelationPanel();
+			break;	
 		case Model:
 			elementPanel = new ECMModelPanel();
 			break;
@@ -32,6 +44,15 @@ public class ElementPanelFactory {
 			rec = ViewHelper.getBounds(588, 400);
 			break;
 		case Model:
+			rec = ViewHelper.getBounds(405, 245);
+			break;
+		case EHeader:
+			rec = ViewHelper.getBounds(405, 245);
+			break;
+		case Connector:
+			rec = ViewHelper.getBounds(405, 245);
+			break;
+		case HRelation:
 			rec = ViewHelper.getBounds(405, 245);
 			break;
 		default:

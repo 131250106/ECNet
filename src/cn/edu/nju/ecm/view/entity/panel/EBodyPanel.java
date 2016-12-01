@@ -44,17 +44,17 @@ public class EBodyPanel extends ElementPanel {
 	 */
 	public EBodyPanel() {
 
-		JLabel lblNewLabel = new JLabel("\u94FE\u4F53\u540D\u79F0\uFF1A");
+		JLabel lblNewLabel = new JLabel("链体名称");
 		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		ebodyName = new JTextField();
 		ebodyName.setFont(new Font("宋体", Font.PLAIN, 15));
 		ebodyName.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("\u94FE\u4F53\u5185\u5BB9\uFF1A");
+		JLabel lblNewLabel_1 = new JLabel("链体内容");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
 
-		JLabel lblNewLabel_2 = new JLabel("\u5173\u8054\u6587\u4EF6\uFF1A");
+		JLabel lblNewLabel_2 = new JLabel("关联文件");
 		lblNewLabel_2.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		JScrollPane scrollPane_1 = new JScrollPane();
@@ -64,7 +64,7 @@ public class EBodyPanel extends ElementPanel {
 		scrollPane_1.setViewportView(panel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-		JButton addFileButton = new JButton("\u6DFB\u52A0\u6587\u4EF6");
+		JButton addFileButton = new JButton("添加文件");
 		addFileButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				File selectedFile = ViewHelper.showOpenFileDialog(panel, null, filePaths);

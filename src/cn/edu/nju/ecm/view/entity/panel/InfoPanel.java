@@ -71,7 +71,7 @@ public class InfoPanel extends JPanel {
 
 		content.setText("ÄÚÈÝ:");
 
-		contentArea.setColumns(120);
+		contentArea.setColumns(20);
 		contentArea.setRows(5);
 		jScrollPane1.setViewportView(contentArea);
 

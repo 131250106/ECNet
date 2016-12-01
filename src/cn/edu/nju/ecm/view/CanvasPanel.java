@@ -6,8 +6,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -32,6 +30,9 @@ import cn.edu.nju.ecm.canvas.model.entity.EHeaderModel;
 import cn.edu.nju.ecm.canvas.model.entity.HRelationModel;
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.entity.detail.EBody;
+import cn.edu.nju.ecm.entity.detail.EHeader;
+import cn.edu.nju.ecm.entity.detail.HConnector;
+import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.file.ECMFileManage;
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
@@ -189,12 +190,14 @@ public class CanvasPanel extends JScrollPane {
 	public void deleteElement(int ElementId) {
 		model.deleteElement(ElementId);
 		refresh();
+		ECMMainFrame.resetInfo();
 	}
 
 	public void deleteCurrentElement() {
 		if (currentChoosed != null) {
 			model.deleteElement(currentChoosed.getID());
 			refresh();
+			ECMMainFrame.resetInfo();
 		}
 	}
 
@@ -203,27 +206,33 @@ public class CanvasPanel extends JScrollPane {
 	}
 
 	public void pasteElement() {
-		if (currentCopyElement.getElementType() == CanvasElement.ElementType.Body) {
-			EBodyModel eBodyModel = new EBodyModel(currentX, currentY, 2);
-			eBodyModel.seteBody(((EBodyModel) currentCopyElement).geteBody());
-			model.insertNewWElement(eBodyModel);
-		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Header) {
-			EHeaderModel eHeader = new EHeaderModel(currentX, currentY, 2);
-			eHeader.seteHeader(((EHeaderModel) currentCopyElement).geteHeader());
-			model.insertNewWElement(eHeader);
-		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Connector) {
-			ConnectorModel connector = new ConnectorModel(currentX, currentY, 2);
-			connector.sethConnector(((ConnectorModel) currentCopyElement)
-					.gethConnector());
-			model.insertNewWElement(connector);
-		} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Relation) {
-			HRelationModel hRelation = new HRelationModel(currentX, currentY, 2);
-			hRelation.sethRelation(((HRelationModel) currentCopyElement)
-					.gethRelation());
-			model.insertNewWElement(hRelation);
+		if (currentCopyElement != null) {
+			if (currentCopyElement.getElementType() == CanvasElement.ElementType.Body) {
+				EBodyModel eBodyModel = new EBodyModel(currentX, currentY, 2);
+				eBodyModel.seteBody(((EBodyModel) currentCopyElement)
+						.geteBody());
+				model.insertNewWElement(eBodyModel);
+			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Header) {
+				EHeaderModel eHeader = new EHeaderModel(currentX, currentY, 2);
+				eHeader.seteHeader(((EHeaderModel) currentCopyElement)
+						.geteHeader());
+				model.insertNewWElement(eHeader);
+			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Connector) {
+				ConnectorModel connector = new ConnectorModel(currentX,
+						currentY, 2);
+				connector.sethConnector(((ConnectorModel) currentCopyElement)
+						.gethConnector());
+				model.insertNewWElement(connector);
+			} else if (currentCopyElement.getElementType() == CanvasElement.ElementType.Relation) {
+				HRelationModel hRelation = new HRelationModel(currentX,
+						currentY, 2);
+				hRelation.sethRelation(((HRelationModel) currentCopyElement)
+						.gethRelation());
+				model.insertNewWElement(hRelation);
+			}
+			ECMMainFrame.resetButton();
+			refresh();
 		}
-		ECMMainFrame.resetButton();
-		refresh();
 	}
 
 	public void refresh() {
@@ -271,13 +280,35 @@ public class CanvasPanel extends JScrollPane {
 			eBodyModel.seteBody(eBodyEntity);
 			model.insertNewWElement(eBodyModel);
 		} else if (ECMMainFrame.command == Command.EHeader) {
+			ElementDialog dialog = new ElementDialog(mainFrame,
+					ElementType.EHeader);
+			EHeader EHeaderEntity = (EHeader) dialog.showCreateDialog();
+			if (EHeaderEntity == null) {
+				return;
+			}
 			EHeaderModel eHeader = new EHeaderModel(x, y, 2);
+			eHeader.seteHeader(EHeaderEntity);
 			model.insertNewWElement(eHeader);
 		} else if (ECMMainFrame.command == Command.EConnector) {
+			ElementDialog dialog = new ElementDialog(mainFrame,
+					ElementType.Connector);
+			HConnector hConnectorEntity = (HConnector) dialog
+					.showCreateDialog();
+			if (hConnectorEntity == null) {
+				return;
+			}
 			ConnectorModel connector = new ConnectorModel(x, y, 2);
+			connector.sethConnector(hConnectorEntity);
 			model.insertNewWElement(connector);
 		} else if (ECMMainFrame.command == Command.ERelation) {
-			CanvasElement hRelation = new HRelationModel(x, y, 2);
+			ElementDialog dialog = new ElementDialog(mainFrame,
+					ElementType.HRelation);
+			HRelation hRealationEntity = (HRelation) dialog.showCreateDialog();
+			if (hRealationEntity == null) {
+				return;
+			}
+			HRelationModel hRelation = new HRelationModel(x, y, 2);
+			hRelation.sethRelation(hRealationEntity);
 			model.insertNewWElement(hRelation);
 		}
 		ECMMainFrame.resetButton();
