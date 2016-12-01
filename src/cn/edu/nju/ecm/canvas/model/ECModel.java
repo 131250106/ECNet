@@ -229,4 +229,22 @@ public class ECModel implements Serializable {
 
 		}
 	}
+	
+	public int getMaxWidth(){
+		int max = 0;
+		for (CanvasElement ce : this.elements) {
+			if(ce.getX1()>max)
+				max = ce.getX1();
+		}
+		return max;
+	}
+	
+	public int getMaxHeight(){
+		int max = 0;
+		for (CanvasElement ce : this.elements) {
+			if(ce.getY1()>max)
+				max = ce.getY1();
+		}
+		return max;
+	}
 }

@@ -26,7 +26,7 @@ import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.view.CanvasPanel;
 
-public class InfoPanel extends JPanel {
+public class InfoPanel extends JPanel {									//右侧信息栏panel
 
 	private static final long serialVersionUID = 1L;
 
@@ -92,10 +92,10 @@ public class InfoPanel extends JPanel {
 		reset = new JButton();
 		delete = new JButton();
 
-		type.setFont(new java.awt.Font("宋体", 1, 24)); // NOI18N
+		type.setFont(new java.awt.Font("宋体", 1, 24)); 
 
 		title.setFont(new java.awt.Font("宋体", 0, 18));
-		title.setText("标题：");
+		title.setText("名称：");
 
 		content.setFont(new java.awt.Font("宋体", 0, 18));
 		content.setText("内容:");
