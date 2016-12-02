@@ -7,11 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -19,7 +15,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
@@ -44,29 +39,22 @@ public class ECMMainFrame {
 
 	// 当前选中的命令，整个实例中唯一且能够被其他类型直接使用
 	public static Command command = Command.Choose;
-	public static Color defaultColor = new Color(240, 240, 240);
 
 	// 主要窗体
-	JFrame frmEcm;
+	private JFrame frmEcm = new JFrame();
 
 	// 底部鼠标位置信息
-	JLabel lblPosition;
+	private JLabel lblPosition = new JLabel("Position:");
 
 	// 画布所在的面板
-	JTabbedPane tabbedCanvasPanel = null;
-	// 当前选中的命令按钮
-	public static JButton currentCommandButton;
+	private JTabbedPane tabbedCanvasPanel = new JTabbedPane(JTabbedPane.TOP);
+
+	// 上层图元选择栏
+	private static MyelementBar elementBar;
+
 	// 右侧信息栏
 	private static InfoPanel infoPanel;
 
-	private JButton elementBody = new JButton("链体");
-	private JButton elementHead = new JButton("链头");
-	private JButton elementDirectedLine = new JButton("箭头");
-	private JButton elementConnector = new JButton("联结");
-
-	/**
-	 * Create the application.
-	 */
 	public ECMMainFrame() {
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screensize.getWidth();
@@ -79,7 +67,6 @@ public class ECMMainFrame {
 		int y = ECMMainFrame.ScreenCenterY - frameHeight / 2;
 		Rectangle bounds = new Rectangle(x, y, frameWidth, frameHeight);
 
-		frmEcm = new JFrame();
 		frmEcm.setTitle("ECM");
 		frmEcm.setBounds(bounds);
 		frmEcm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,40 +91,22 @@ public class ECMMainFrame {
 		frmEcm.getContentPane().add(commandPanel, BorderLayout.NORTH);
 		commandPanel.setLayout(new GridLayout(2, 1, 0, 0));
 
-		//菜单栏
-		JPanel filePanel = new myFilePanel(this);
+		// 菜单栏
+		JPanel filePanel = new MyFilePanel(tabbedCanvasPanel,frmEcm,lblPosition);
 		filePanel.setBackground(UIManager.getColor("Panel.background"));
 		commandPanel.add(filePanel);
 		filePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
 
-		
-		// 快速操作
+		// 快速操作栏
 		JPanel editPanel = new JPanel();
 		FlowLayout fl_editPanel = (FlowLayout) editPanel.getLayout();
 		fl_editPanel.setVgap(2);
 		fl_editPanel.setAlignment(FlowLayout.LEFT);
 		editPanel.setBackground(UIManager.getColor("PopupMenu.background"));
 		commandPanel.add(editPanel);
-
 		// 图元绘制命令
-		JToolBar elementBar = new JToolBar();
+		elementBar = new MyelementBar(tabbedCanvasPanel);
 		editPanel.add(elementBar);
-
-		elementBody.addMouseListener(new MouseAction());
-		elementBody.addMouseMotionListener(new MouseMotionAction());
-		elementBar.add(elementBody);
-
-		elementHead.addMouseListener(new MouseAction());
-		elementHead.addMouseMotionListener(new MouseMotionAction());
-		elementBar.add(elementHead);
-
-		elementDirectedLine.addMouseListener(new MouseAction());
-		elementDirectedLine.addMouseMotionListener(new MouseMotionAction());
-		elementBar.add(elementDirectedLine);
-
-		elementConnector.addMouseListener(new MouseAction());
-		elementConnector.addMouseMotionListener(new MouseMotionAction());
-		elementBar.add(elementConnector);
 
 		/*
 		 * 主要窗体，包括画布和右侧信息栏
@@ -156,22 +125,20 @@ public class ECMMainFrame {
 		modelPanel.setLayout(new BorderLayout(0, 3));
 
 		// 画布区，底部是一个多Tab的panel
-		JTabbedPane tabbedModelsPanel = new JTabbedPane(JTabbedPane.TOP);
-		tabbedModelsPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		tabbedModelsPanel.addChangeListener(new ChangeListener() {
+		tabbedCanvasPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedCanvasPanel.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
-				if (canvasPanel != null){
+				if (canvasPanel != null) {
 					infoPanel.setCanvasPanel(canvasPanel);
-				}else{
+				} else {
 					infoPanel.reSetModel();
 				}
 			}
 		});
-		modelPanel.add(tabbedModelsPanel, BorderLayout.CENTER);
-		tabbedCanvasPanel = tabbedModelsPanel;
+		modelPanel.add(tabbedCanvasPanel, BorderLayout.CENTER);
 
 		// 最底部的状态栏
 		JPanel statusPanel = new JPanel();
@@ -184,7 +151,6 @@ public class ECMMainFrame {
 		statusPanel.add(positionPanel, BorderLayout.WEST);
 		positionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		lblPosition = new JLabel("Position:");
 		lblPosition.setHorizontalAlignment(SwingConstants.CENTER);
 		positionPanel.add(lblPosition);
 
@@ -205,15 +171,14 @@ public class ECMMainFrame {
 		JPanel elementInforPanel = new JPanel();
 		scrollPane.setViewportView(elementInforPanel);
 
+		// 右侧信息栏
 		infoPanel = new InfoPanel();
 		splitPane.setRightComponent(infoPanel);
 	}
 
 	public static void resetButton() {
-		if (currentCommandButton != null) {
-			currentCommandButton.setBackground(defaultColor);
-			ECMMainFrame.command = Command.Choose;
-			currentCommandButton = null;
+		if (elementBar != null) {
+			elementBar.resetButton();
 		}
 	}
 
@@ -221,96 +186,7 @@ public class ECMMainFrame {
 		infoPanel.setInfo(element);
 	}
 
-	public static void resetInfo() {
+	public static void resetElementInfo() {
 		infoPanel.reSetInfo();
-	}
-
-	class MouseAction implements MouseListener {
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-					.getSelectedComponent();
-			int x = e.getX() + ScreenCenterX / 30;
-			int y = e.getY() - ScreenCenterY / 7;
-			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x += ((JButton) e.getSource()).getWidth();
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
-				x += ((JButton) e.getSource()).getWidth() * 2;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
-				x += ((JButton) e.getSource()).getWidth() * 3;
-			}
-			if (canvasPanel != null) {
-				canvasPanel.drawCurrentlabel(x, y);
-
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			if (currentCommandButton != null)
-				currentCommandButton.setBackground(defaultColor);
-
-			if (((JButton) e.getSource()).getText().equals("链体")) {
-				ECMMainFrame.command = Command.EBody;
-				currentCommandButton = elementBody;
-			} else if (((JButton) e.getSource()).getText().equals("链头")) {
-				ECMMainFrame.command = Command.EHeader;
-				currentCommandButton = elementHead;
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
-				ECMMainFrame.command = Command.ERelation;
-				currentCommandButton = elementDirectedLine;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
-				ECMMainFrame.command = Command.EConnector;
-				currentCommandButton = elementConnector;
-			}
-			currentCommandButton.setBackground(Color.LIGHT_GRAY);
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			// TODO Auto-generated method stub
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			// TODO Auto-generated method stub
-		}
-	}
-
-	class MouseMotionAction implements MouseMotionListener {
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-			int x = e.getX();
-			int y = e.getY() - ScreenCenterY / 6;
-			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x += ((JButton) e.getSource()).getWidth();
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
-				x += ((JButton) e.getSource()).getWidth() * 2;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
-				x += ((JButton) e.getSource()).getWidth() * 3;
-			}
-			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-					.getSelectedComponent();
-			if (canvasPanel != null)
-				canvasPanel.showCurrentlabel(x, y,
-						((JButton) e.getSource()).getText());
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 }

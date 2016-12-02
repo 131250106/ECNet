@@ -35,7 +35,7 @@ import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.file.ECMFileManage;
 import cn.edu.nju.ecm.utility.Undotooler;
-import cn.edu.nju.ecm.utility.undoCommand;
+import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
@@ -201,14 +201,14 @@ public class CanvasPanel extends JScrollPane {
 	public void deleteElementById(int ElementId, boolean isUndo) {		//根据Id删除图元，若是由于撤销操作删除的，isUndo=true
 		if (model.deleteElement(ElementId, isUndo)) {
 			refresh();
-			ECMMainFrame.resetInfo();
+			ECMMainFrame.resetElementInfo();
 		}
 	}
 
 	public void deleteCurrentElement() {							//删除当前选中的图元
 		if (model.deleteElement(currentChoosed.getID(), false)) {
 			refresh();
-			ECMMainFrame.resetInfo();
+			ECMMainFrame.resetElementInfo();
 		}
 	}
 
@@ -394,7 +394,7 @@ public class CanvasPanel extends JScrollPane {
 						undoItem.setEnabled(true);
 						popupMenu.show(me.getComponent(), me.getX(), me.getY());
 					}
-					ECMMainFrame.resetInfo();
+					ECMMainFrame.resetElementInfo();
 					currentChoosed = null;
 				}
 			} else {
@@ -411,7 +411,7 @@ public class CanvasPanel extends JScrollPane {
 		 */
 		public void mouseReleased(MouseEvent me) {
 			if (ECMMainFrame.command == Command.Choose && fromDragging) {
-				Undotooler.pushUndoCommand(new undoCommand(beforeMovedElement, undoCommand.ActionType.Move));
+				Undotooler.pushUndoCommand(new UndoCommand(beforeMovedElement, UndoCommand.ActionType.Move));
 				
 				if (currentChoosed != null) {
 					if (!currentChoosed.isConnectedOwner()

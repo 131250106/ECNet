@@ -7,8 +7,8 @@ import java.util.List;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
 import cn.edu.nju.ecm.utility.Undotooler;
-import cn.edu.nju.ecm.utility.undoCommand;
-import cn.edu.nju.ecm.utility.undoCommand.ActionType;
+import cn.edu.nju.ecm.utility.UndoCommand;
+import cn.edu.nju.ecm.utility.UndoCommand.ActionType;
 
 public class ECModel implements Serializable {
 
@@ -42,7 +42,7 @@ public class ECModel implements Serializable {
 		if(!isUndo){					//如果不是由于撤销操作引起的则增加undo记录
 			this.maxIDNumber++;
 			element.setID(this.maxIDNumber);
-			Undotooler.pushUndoCommand(new undoCommand(element,ActionType.New));
+			Undotooler.pushUndoCommand(new UndoCommand(element,ActionType.New));
 		}
 		this.getElements().add(0, element);
 	}
@@ -52,7 +52,7 @@ public class ECModel implements Serializable {
 		if (element != null) {
 			this.getElements().remove(element);
 			if (!isUndo) 			// 如果不是由于撤销操作引起的则增加undo记录
-				Undotooler.pushUndoCommand(new undoCommand(element,
+				Undotooler.pushUndoCommand(new UndoCommand(element,
 						ActionType.Delete));
 			return true;
 		}

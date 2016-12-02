@@ -2,14 +2,14 @@ package cn.edu.nju.ecm.utility;
 
 import cn.edu.nju.ecm.canvas.model.CanvasElement;
 
-public class undoCommand {
+public class UndoCommand {
 	private CanvasElement element;		//被操作的图元对象
 	public enum ActionType{
 		Move, New, Delete
 	}
 	private ActionType type;			//命令模式
 	
-	public undoCommand(CanvasElement element,ActionType type){
+	public UndoCommand(CanvasElement element,ActionType type){
 		this.type = type;
 		this.element = element;
 	}

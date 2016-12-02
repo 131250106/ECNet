@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -16,6 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,25 +26,29 @@ import org.dom4j.DocumentException;
 
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.utility.Undotooler;
-import cn.edu.nju.ecm.utility.undoCommand;
+import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 
-public class myFilePanel extends JPanel {
+public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 
 	private static final long serialVersionUID = 1L;
 
-	private ECMMainFrame mainFrame;
+	private JFrame frmEcm;
+	private JTabbedPane tabbedCanvasPanel;
+	private JLabel lblPosition;
 
 	// 记录新建文件的个数和打开的文件个数
 	private int newNum = 0;
 
 	// private int openNum = 0;
 
-	public myFilePanel(ECMMainFrame mainFrame) {
+	public MyFilePanel(JTabbedPane tabbedCanvasPane,JFrame frmEcm,JLabel lblPosition) {
 		super();
-		this.mainFrame = mainFrame;
+		this.frmEcm = frmEcm;
+		this.tabbedCanvasPanel = tabbedCanvasPane;
+		this.lblPosition = lblPosition;
 		initialMenu();
 	}
 
@@ -75,8 +81,8 @@ public class myFilePanel extends JPanel {
 		JMenuItem closeMenuItem = new JMenuItem("关闭");
 		closeMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (mainFrame.tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				if (tabbedCanvasPanel.getSelectedComponent() != null) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
 							.getSelectedComponent();
 					closeHandler(currentCanvas);
 				}
@@ -88,8 +94,8 @@ public class myFilePanel extends JPanel {
 		closeAllMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				while (mainFrame.tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				while (tabbedCanvasPanel.getSelectedComponent() != null) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
 							.getSelectedComponent();
 					closeHandler(currentCanvas);
 				}
@@ -106,8 +112,8 @@ public class myFilePanel extends JPanel {
 				java.awt.event.KeyEvent.VK_S, java.awt.Event.CTRL_MASK));
 		saveMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (mainFrame.tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				if (tabbedCanvasPanel.getSelectedComponent() != null) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
 							.getSelectedComponent();
 					saveHandler(currentCanvas);
 				}
@@ -119,8 +125,8 @@ public class myFilePanel extends JPanel {
 		saveAsMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (mainFrame.tabbedCanvasPanel.getSelectedComponent() != null) {
-					CanvasPanel currentCanvas = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				if (tabbedCanvasPanel.getSelectedComponent() != null) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
 							.getSelectedComponent();
 					currentCanvas.type = FileType.New;
 					saveHandler(currentCanvas);
@@ -133,8 +139,8 @@ public class myFilePanel extends JPanel {
 		saveAllMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (int i = 0; i < mainFrame.tabbedCanvasPanel.getTabCount(); i++) {
-					CanvasPanel currentCanvas = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				for (int i = 0; i < tabbedCanvasPanel.getTabCount(); i++) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
 							.getComponentAt(i);
 					saveHandler(currentCanvas);
 				}
@@ -156,7 +162,7 @@ public class myFilePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.copyElement();
@@ -172,7 +178,7 @@ public class myFilePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.pasteElement();
@@ -188,7 +194,7 @@ public class myFilePanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.deleteCurrentElement();
@@ -203,21 +209,21 @@ public class myFilePanel extends JPanel {
 		undoMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				undoCommand undo = Undotooler.popUndoCommand();
+				UndoCommand undo = Undotooler.popUndoCommand();
 				if (undo != null) {
-					if (undo.getType() == undoCommand.ActionType.Delete) {
-						CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+					if (undo.getType() == UndoCommand.ActionType.Delete) {
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 								.getSelectedComponent();
 						if (canvasPanel != null)
 							canvasPanel.recoverElement(undo.getElement());
-					} else if (undo.getType() == undoCommand.ActionType.New) {
-						CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+					} else if (undo.getType() == UndoCommand.ActionType.New) {
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 								.getSelectedComponent();
 						if (canvasPanel != null)
 							canvasPanel.deleteElementById(undo.getElement()
 									.getID(), true);
-					} else if (undo.getType() == undoCommand.ActionType.Move) {
-						CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+					} else if (undo.getType() == UndoCommand.ActionType.Move) {
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 								.getSelectedComponent();
 						if (canvasPanel != null) {
 							canvasPanel.deleteElementById(undo.getElement()
@@ -237,7 +243,7 @@ public class myFilePanel extends JPanel {
 		formatMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				CanvasPanel canvasPanel = (CanvasPanel) mainFrame.tabbedCanvasPanel
+				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.autoFormat();
@@ -278,27 +284,27 @@ public class myFilePanel extends JPanel {
 		public void actionPerformed(ActionEvent e) {
 			Element newModel = null;
 			if (fileType == FileType.Open) {
-				this.file = ViewHelper.showOpenFileDialog(mainFrame.frmEcm,
+				this.file = ViewHelper.showOpenFileDialog(frmEcm,
 						new FileNameExtensionFilter("Evidence Chain: .ecm",
 								"ecm"), null);
 				if (this.file == null) {
 					return;
 				}
 
-				int tabCount = mainFrame.tabbedCanvasPanel.getTabCount();
+				int tabCount = tabbedCanvasPanel.getTabCount();
 				for (int canvasIndex = 0; canvasIndex < tabCount; canvasIndex++) {
 					File tmpFile = null;
-					if ((tmpFile = ((CanvasPanel) mainFrame.tabbedCanvasPanel
+					if ((tmpFile = ((CanvasPanel) tabbedCanvasPanel
 							.getComponentAt(canvasIndex)).model.getFile()) != null
 							&& tmpFile.getAbsolutePath().equals(
 									this.file.getAbsolutePath())) {
-						mainFrame.tabbedCanvasPanel
+						tabbedCanvasPanel
 								.setSelectedIndex(canvasIndex);
 						return;
 					}
 				}
 			} else {
-				ElementDialog dialog = new ElementDialog(mainFrame.frmEcm,
+				ElementDialog dialog = new ElementDialog(frmEcm,
 						ElementType.Model);
 				newModel = dialog.showCreateDialog();
 				if (newModel == null) {
@@ -315,10 +321,10 @@ public class myFilePanel extends JPanel {
 
 			try {
 				CanvasPanel canvasPanel = new CanvasPanel(
-						mainFrame.lblPosition, fileType, title, file, newModel,
-						mainFrame.frmEcm);
+						lblPosition, fileType, title, file, newModel,
+						frmEcm);
 
-				mainFrame.tabbedCanvasPanel.add(canvasPanel);
+				tabbedCanvasPanel.add(canvasPanel);
 				canvasPanel.setVisible(true);
 
 				if (file == null) {
@@ -335,11 +341,11 @@ public class myFilePanel extends JPanel {
 				componentPanel.add(title);
 				componentPanel.add(closeIcon);
 
-				mainFrame.tabbedCanvasPanel.setTabComponentAt(
-						mainFrame.tabbedCanvasPanel
+				tabbedCanvasPanel.setTabComponentAt(
+						tabbedCanvasPanel
 								.indexOfComponent(canvasPanel), componentPanel);
 
-				mainFrame.tabbedCanvasPanel.setSelectedComponent(canvasPanel);
+				tabbedCanvasPanel.setSelectedComponent(canvasPanel);
 
 				closeIcon.addMouseListener(new MouseAdapter() {
 
@@ -366,7 +372,7 @@ public class myFilePanel extends JPanel {
 				});
 			} catch (DocumentException e1) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(mainFrame.frmEcm,
+				JOptionPane.showMessageDialog(frmEcm,
 						e1.getLocalizedMessage(), "无法打开或者新建文件",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -377,29 +383,29 @@ public class myFilePanel extends JPanel {
 	private void closeHandler(CanvasPanel canvasPanel) {
 		if (canvasPanel.isChanged() || canvasPanel.type == FileType.New) {
 			Object[] options = { "保存", "取消" };
-			int returnVal = JOptionPane.showOptionDialog(mainFrame.frmEcm,
+			int returnVal = JOptionPane.showOptionDialog(frmEcm,
 					"您要关闭的文件没有保存，需要保存吗？", "保存文件", JOptionPane.DEFAULT_OPTION,
 					JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 			if (returnVal == JOptionPane.YES_OPTION) {
 				saveHandler(canvasPanel);
 			}
 		}
-		mainFrame.tabbedCanvasPanel.remove(canvasPanel);
+		tabbedCanvasPanel.remove(canvasPanel);
 	}
 
 	// 选择保存文件路径
 	private void saveHandler(CanvasPanel canvasPanel) {
 		try {
 			if (canvasPanel.type == FileType.New) {
-				ViewHelper.showSaveFileDialog(mainFrame.frmEcm, canvasPanel,
-						mainFrame.tabbedCanvasPanel);
+				ViewHelper.showSaveFileDialog(frmEcm, canvasPanel,
+						tabbedCanvasPanel);
 			} else {
 				if (canvasPanel.isChanged()) {
 					canvasPanel.saveModel(null);
 				}
 			}
 		} catch (IOException exception) {
-			JOptionPane.showMessageDialog(mainFrame.frmEcm,
+			JOptionPane.showMessageDialog(frmEcm,
 					exception.getLocalizedMessage(), "文件无法保存",
 					JOptionPane.ERROR_MESSAGE);
 		}
