@@ -258,6 +258,11 @@ public class CanvasPanel extends JScrollPane {
 		setChanged(true);
 		canvasPanel.repaint();
 	}
+	
+	public void autoFormat(){								//自动化排版
+		model.autoFormat();
+		refresh();
+	}
 
 	public void showCurrentlabel(int x, int y, String name) {			//显示正在拖拽的图元
 		if (x > 5 && y > 8) {

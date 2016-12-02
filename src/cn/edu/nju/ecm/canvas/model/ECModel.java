@@ -247,4 +247,8 @@ public class ECModel implements Serializable {
 		}
 		return max;
 	}
+	
+	public void autoFormat(){
+		System.out.println("Format start!!");
+	}
 }

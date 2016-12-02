@@ -1,4 +1,4 @@
-package cn.edu.nju.ecm.view.entity.panel;
+package cn.edu.nju.ecm.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,7 +24,6 @@ import cn.edu.nju.ecm.entity.detail.EBody;
 import cn.edu.nju.ecm.entity.detail.EHeader;
 import cn.edu.nju.ecm.entity.detail.HConnector;
 import cn.edu.nju.ecm.entity.detail.HRelation;
-import cn.edu.nju.ecm.view.CanvasPanel;
 
 public class InfoPanel extends JPanel {									//”“≤‡–≈œ¢¿∏panel
 
