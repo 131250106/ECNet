@@ -261,6 +261,7 @@ public class CanvasPanel extends JScrollPane {
 	
 	public void autoFormat(){								//×Ô¶¯»¯ÅÅ°æ
 		model.autoFormat();
+		setcanvasPanelPreferredSize();
 		refresh();
 	}
 

@@ -146,4 +146,7 @@ public class EBodyModel extends CanvasElement {
 		return copy;
 	}
 
+	public int getDegree(){
+		return this.connectedOutputs.size();
+	}
 }

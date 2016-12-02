@@ -168,5 +168,9 @@ public class ConnectorModel extends CanvasElement {
 		copy.setConnectedInputs(getConnectedInputs());
 		return copy;
 	}
+	
+	public int getDegree(){
+		return this.connectedInputs.size();
+	}
 
 }

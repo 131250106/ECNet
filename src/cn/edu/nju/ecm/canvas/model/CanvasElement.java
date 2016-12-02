@@ -48,6 +48,9 @@ public class CanvasElement implements Serializable {
 
 	protected Set<CanvasElement> connectedInputs;
 	protected Set<CanvasElement> connectedOutputs;
+	
+	//自动化排版时使用，记录该图元是否被访问过：  0 未被访问  1 访问过
+	protected int flag;
 
 	public CanvasElement() {
 		connectedInputs = new HashSet<CanvasElement>();
@@ -311,5 +314,53 @@ public class CanvasElement implements Serializable {
 		copy.setX1Y1(x1, y1);
 		copy.setX2Y2(x2, y2);
 		return copy;
+	}
+
+	public int getFlag() {
+		return flag;
+	}
+
+	public void setFlag(int flag) {
+		this.flag = flag;
+	}
+
+	public int getDegree() {
+		return -1;
+	}
+	
+	private int relativeX=-1;
+	private int relativeY=-1;
+	private double startAngle = 0;
+	
+	public double getStartAngle() {
+		return startAngle;
+	}
+
+	public void setStartAngle(double startAngle) {
+		this.startAngle = startAngle;
+	}
+
+	public void setRelativeXY(int x,int y){
+		this.flag=1;
+//		if(this.relativeX!=-1)
+//			this.relativeX=(this.relativeX+x)/2;
+//		else
+			this.relativeX = x;
+//		if(this.relativeY!=-1)
+//			this.relativeY=(this.relativeY+y)/2;
+//		else
+			this.relativeY = y;
+	}
+	public int getRelativeX(){
+		return this.relativeX;
+	}
+	public int getRelativeY(){
+		return this.relativeY;
+	}
+	public void setRelativeX(int relativeX) {
+		this.relativeX = relativeX;
+	}
+	public void setRelativeY(int relativeY) {
+		this.relativeY = relativeY;
 	}
 }
