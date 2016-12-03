@@ -21,6 +21,8 @@ public class MyFormat {
 	 * 自动化排版功能 使用力向导算法
 	 * */
 	private void autoFormat2() {
+		resetElement();
+		
 		Spring sp = new Spring();
 		List<Node> lNodes = new ArrayList<Node>();
 		List<Edge> lEdges = new ArrayList<Edge>();
@@ -56,7 +58,7 @@ public class MyFormat {
 			}
 		}
 		reSetDrawCoordinate();
-		resetElement();
+		
 	}
 
 	/**
@@ -157,10 +159,43 @@ public class MyFormat {
 
 		reSetDrawCoordinate();
 
-		resetElement();
-		
 		if(isNeedFormat2)
 			autoFormat2();
+		
+		dealwithNoOutPutHeader();
+		dealWithNoConnectedElements(dx,getMaxRelativeY() + dx*3/2);
+		resetElement();
+	}
+
+	private void dealWithNoConnectedElements(int dx, int y) {			//处理游离的图元(未与任何其他图元相连接)
+		int x = 50;
+		for(CanvasElement ce : this.elements){
+			if(ce.getElementType()==ElementType.Header && !ce.isConnectedOwner()){
+				ce.setX1Y1(x, y);
+				ce.setX2Y2(x+dx/2, y);
+				x+=dx;
+			}else if(ce.getElementType()==ElementType.Relation&&!ce.isConnectedSon()&&!ce.isConnectedOwner()){
+				ce.setX1Y1(x, y);
+				ce.setX2Y2(x+dx/2, y);
+				x+=dx;
+			}
+		}
+	}
+
+	private void dealwithNoOutPutHeader() {					//处理没有出度的链头,或没有出度的箭头
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Header && ce.isConnectedOwner()&&ce.getFlag()==0){
+				CanvasElement body = ce.getConnectedOwner();
+				//TODO 暂定
+				ce.setX2Y2(body.getX1()-body.getWidth()/2+ce.getWidth()*2, body.getY1()-body.getWidth()/2+ce.getWidth()*2);
+			}else if(ce.getElementType()==ElementType.Relation && ce.isConnectedOwner()&&!ce.isConnectedSon()){
+				CanvasElement header = ce.getConnectedOwner();
+				ce.setX2Y2(header.getX2()-header.getWidth()*3, header.getY2()-header.getWidth()*3);
+			}else if(ce.getElementType()==ElementType.Relation && !ce.isConnectedOwner()&&ce.isConnectedSon()){
+				CanvasElement connector = ce.getConnectedSon();
+				ce.setX1Y1(connector.getX1()-connector.getWidth(), connector.getY1()-connector.getWidth());
+			}
+		}
 	}
 
 	// 设置链头坐标位置
