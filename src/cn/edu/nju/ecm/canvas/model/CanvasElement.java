@@ -49,9 +49,6 @@ public class CanvasElement implements Serializable {
 	protected Set<CanvasElement> connectedInputs;
 	protected Set<CanvasElement> connectedOutputs;
 	
-	//自动化排版时使用，记录该图元是否被访问过：  0 未被访问  1 访问过
-	protected int flag;
-
 	public CanvasElement() {
 		connectedInputs = new HashSet<CanvasElement>();
 		connectedOutputs = new HashSet<CanvasElement>();
@@ -328,6 +325,9 @@ public class CanvasElement implements Serializable {
 		return -1;
 	}
 	
+	//自动化排版时使用，记录该图元是否被访问过：  0 未被访问   其他为访问过，-1表示该图元坐标以固定，不能更改
+	protected int flag;
+	
 	private int relativeX=-1;
 	private int relativeY=-1;
 	private double startAngle = 0;
@@ -341,7 +341,7 @@ public class CanvasElement implements Serializable {
 	}
 
 	public void setRelativeXY(int x,int y){
-		this.flag=1;
+		this.flag++;
 //		if(this.relativeX!=-1)
 //			this.relativeX=(this.relativeX+x)/2;
 //		else
