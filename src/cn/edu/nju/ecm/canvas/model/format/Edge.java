@@ -1,4 +1,4 @@
-package ecm.main;
+package cn.edu.nju.ecm.canvas.model.format;
 
 public class Edge {
 	private String id1;

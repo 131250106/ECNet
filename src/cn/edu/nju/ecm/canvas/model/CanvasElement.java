@@ -48,7 +48,7 @@ public class CanvasElement implements Serializable {
 
 	protected Set<CanvasElement> connectedInputs;
 	protected Set<CanvasElement> connectedOutputs;
-	
+
 	public CanvasElement() {
 		connectedInputs = new HashSet<CanvasElement>();
 		connectedOutputs = new HashSet<CanvasElement>();
@@ -250,7 +250,7 @@ public class CanvasElement implements Serializable {
 		return connectedOutput;
 	}
 
-	public void setConnectedInputs(Set<CanvasElement> connectedInputs) {		
+	public void setConnectedInputs(Set<CanvasElement> connectedInputs) {
 		this.connectedInputs = connectedInputs;
 	}
 
@@ -259,7 +259,8 @@ public class CanvasElement implements Serializable {
 	}
 
 	// 用来计算图元和图元间的链接点位置
-	protected static int[] calculateNewConnectedPointRectangle(CanvasElement ce, int outX, int outY) {
+	protected static int[] calculateNewConnectedPointRectangle(
+			CanvasElement ce, int outX, int outY) {
 		// TODO Auto-generated method stub
 		int[] newXY = new int[2];
 		int ceCenterX = ce.getX1() + ce.getWidth() / 2;
@@ -279,7 +280,8 @@ public class CanvasElement implements Serializable {
 				newXY[0] = ce.getX1();
 			}
 		} else {
-			if ((Math.abs(outY - ceCenterY) / Math.abs(outX - ceCenterX)) > (ce.getHeight() / ce.getWidth())) {
+			if ((Math.abs(outY - ceCenterY) / Math.abs(outX - ceCenterX)) > (ce
+					.getHeight() / ce.getWidth())) {
 				newXY[0] = ceCenterX;
 				if (outY > ceCenterY) {
 					newXY[1] = ce.getY1() + ce.getHeight();
@@ -297,8 +299,8 @@ public class CanvasElement implements Serializable {
 		}
 		return newXY;
 	}
-	
-	public CanvasElement copy(){
+
+	public CanvasElement copy() {
 		CanvasElement copy = new CanvasElement();
 		copy.setChoosed(choosed);
 		copy.setConnectedOwner(connectedOwner);
@@ -324,14 +326,14 @@ public class CanvasElement implements Serializable {
 	public int getDegree() {
 		return -1;
 	}
-	
-	//自动化排版时使用，记录该图元是否被访问过：  0 未被访问   其他为访问过，-1表示该图元坐标以固定，不能更改
+
+	// 自动化排版时使用，记录该图元是否被访问过： 0 未被访问 其他为访问过，-1表示该图元坐标以固定，不能更改
 	protected int flag;
-	
-	private int relativeX=-1;
-	private int relativeY=-1;
+
+	private int relativeX = -1;
+	private int relativeY = -1;
 	private double startAngle = 0;
-	
+
 	public double getStartAngle() {
 		return startAngle;
 	}
@@ -340,39 +342,40 @@ public class CanvasElement implements Serializable {
 		this.startAngle = startAngle;
 	}
 
-	public void setRelativeXY(int x,int y){
+	public void setRelativeXY(int x, int y) {
 		this.flag++;
-//		if(this.relativeX!=-1)
-//			this.relativeX=(this.relativeX+x)/2;
-//		else
-			this.relativeX = x;
-//		if(this.relativeY!=-1)
-//			this.relativeY=(this.relativeY+y)/2;
-//		else
-			this.relativeY = y;
+		this.relativeX = x;
+		this.relativeY = y;
 	}
-	public int getRelativeX(){
+
+	public int getRelativeX() {
 		return this.relativeX;
 	}
-	public int getRelativeY(){
+
+	public int getRelativeY() {
 		return this.relativeY;
 	}
+
 	public void setRelativeX(int relativeX) {
 		this.relativeX = relativeX;
 	}
+
 	public void setRelativeY(int relativeY) {
 		this.relativeY = relativeY;
 	}
-	//是否作为原始起点
+
+	// 是否作为原始起点
 	private boolean isStart = false;
 
 	public boolean isStart() {
 		return isStart;
 	}
+
 	public void setStart(boolean isStart) {
 		this.isStart = isStart;
 	}
-	//是否按顺势针画图
+
+	// 是否按顺势针画图
 	private boolean isClockwise = true;
 
 	public boolean isClockwise() {
@@ -382,7 +385,8 @@ public class CanvasElement implements Serializable {
 	public void setClockwise(boolean isClockwise) {
 		this.isClockwise = isClockwise;
 	}
-	private double totalAngle= Math.PI;
+
+	private double totalAngle = Math.PI;
 
 	public double getTotalAngle() {
 		return totalAngle;
@@ -391,5 +395,5 @@ public class CanvasElement implements Serializable {
 	public void setTotalAngle(double totalAngle) {
 		this.totalAngle = totalAngle;
 	}
-	
+
 }

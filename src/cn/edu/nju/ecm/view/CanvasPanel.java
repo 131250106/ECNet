@@ -264,7 +264,7 @@ public class CanvasPanel extends JScrollPane {
 
 	public void showCurrentlabel(int x, int y, String name) {			//显示正在拖拽的图元
 		if (x > 5 && y > 8) {
-			currentLabel.setLocation(x, y);
+			currentLabel.setLocation(x+this.getHorizontalScrollBar().getValue(), y+this.getVerticalScrollBar().getValue());
 			currentLabel.setVisible(true);
 
 			ImageIcon icon = new ImageIcon("resources/ebody.png");
@@ -286,8 +286,9 @@ public class CanvasPanel extends JScrollPane {
 		currentLabel.setText("");
 		currentLabel.setVisible(false);
 		if (x > 5 && y > 5)
-			drawElement(x, y);
+			drawElement(x+this.getHorizontalScrollBar().getValue(), y+this.getVerticalScrollBar().getValue());
 	}
+
 
 	private void drawElement(int x, int y) {				//画图元逻辑
 		if (ECMMainFrame.command == Command.EBody) {

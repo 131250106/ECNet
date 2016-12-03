@@ -1,4 +1,4 @@
-package ecm.main;
+package cn.edu.nju.ecm.canvas.model.format;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +14,7 @@ public class Spring {
         Map<String,Double> dispx = new HashMap<String,Double>();
         Map<String,Double> dispy = new HashMap<String,Double>();
             
-        int ejectfactor = 3;
+        int ejectfactor = 1;
 
         for (int v = 0; v < nodes.size(); v++) {
             dispx.put(nodes.get(v).getId(), 0.0);
@@ -27,7 +27,7 @@ public class Spring {
                     diff = Math.sqrt(diffx * diffx + diffy * diffy);
                  
                     if (diff < 30)
-                        ejectfactor = 5;
+                        ejectfactor = 2;
 
                     if (diff > 0 && diff < 250) {
                         String id = nodes.get(v).getId();
@@ -38,7 +38,7 @@ public class Spring {
             }
         }      
         //3. 计算每次迭代每条边的引力对两端节点所产生的单位位移（一般为负值）     
-        int condensefactor = 3;
+        int condensefactor = 1;
         Node visnodeS = null, visnodeE = null;
         
         for (int e = 0; e < edges.size(); e++) {
