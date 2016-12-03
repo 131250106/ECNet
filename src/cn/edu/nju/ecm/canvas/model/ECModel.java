@@ -305,7 +305,7 @@ public class ECModel implements Serializable {
 			max = findMaxDegreeElement(this.elements);
 			if (max == null)
 				break;
-			DY = getMaxRelativeY() + dx / 2;
+			DY = getMaxRelativeY() + dx ;
 			max.setRelativeXY(0, DY);
 			max.setStartAngle(0);
 			queueElements.add(max);
@@ -313,14 +313,13 @@ public class ECModel implements Serializable {
 
 		reSetDrawCoordinate();
 
-//		printCoordinate();
+		// printCoordinate();
 
 		resetElement();
 	}
 
 	// 设置链头坐标位置
 	private void setHeaderCoordinate() {
-		// TODO 暂时不考虑联结点和链体之间由多个链头链接
 		for (CanvasElement ce : this.elements) {
 			if (ce.getElementType() == ElementType.Header) {
 				CanvasElement body = ce.getConnectedOwner();
@@ -359,6 +358,23 @@ public class ECModel implements Serializable {
 				}
 			}
 		}
+
+		// 检查链头是否与其他的链头重合
+		for (int i = 0; i < this.elements.size(); i++) {
+			if (elements.get(i).getElementType() == ElementType.Header) {
+				for (int j = i + 1; j < elements.size(); j++) {
+					if (elements.get(j).getElementType() == ElementType.Header
+							&& elements.get(i).getX2() == elements.get(j)
+									.getX2()
+							&& elements.get(i).getY2() == elements.get(j)
+									.getY2()) {
+						moveHeader(elements.get(i));
+						break;
+					}
+				}
+			}
+		}
+
 	}
 
 	private void reSetDrawCoordinate() {
@@ -531,20 +547,21 @@ public class ECModel implements Serializable {
 	private void moveHeader(CanvasElement header, CanvasElement body) { // header相对于body进行一个身位的平移
 		int bodyX = body.getX1() + body.getWidth() / 2;
 		int bodyY = body.getY1() + body.getHeight() / 2;
-		int headX = header.getX2() ;
-		int headY = header.getY2() ;
+		int headX = header.getX2();
+		int headY = header.getY2();
 		int dx = headX - bodyX;
 		int dy = headY - bodyY;
-		//忽略由于double转换为int的误差
-		System.out.println(dx+"   "+dy);
-		System.out.println(bodyX+"   "+bodyY);
-		System.out.println(headX+"   "+headY);
-		if(Math.abs(dx)<2)
+		// 忽略由于double转换为int的误差
+		if (Math.abs(dx) < 2)
 			dx = 0;
-		if(Math.abs(dy)<2)
+		if (Math.abs(dy) < 2)
 			dy = 0;
 		if (dx == 0 && dy == 0) {
-			dy -= 3 * header.getWidth();
+			if (Math.abs(body.getStartAngle()) <= Math.PI / 4
+					|| Math.abs(body.getStartAngle()) >= Math.PI * 3 / 4)
+				dy -= 3 * header.getWidth();
+			else
+				dx -= (2 * header.getWidth() + body.getWidth() / 2);
 		} else {
 			while ((dx * dx + dy * dy) < (Math.pow(
 					(3 * header.getWidth() + body.getWidth() / 2), 2) + Math
@@ -561,7 +578,43 @@ public class ECModel implements Serializable {
 				}
 			}
 		}
-		header.setX2Y2(dx + bodyX ,
-				dy + bodyY);
+		header.setX2Y2(dx + bodyX, dy + bodyY);
+	}
+
+	private void moveHeader(CanvasElement header) { // 解决链头与链头重合问题
+		if (header.connectedOwner) {
+			ArrayList<CanvasElement> overLyingHeaders = new ArrayList<CanvasElement>();
+			for (CanvasElement ce : this.elements) {
+				if (ce.getElementType() == ElementType.Header
+						&& ce.getX2() == header.getX2()
+						&& ce.getY2() == header.getY2()) {
+					overLyingHeaders.add(ce);
+				}
+			}
+			int headX = header.getX2();
+			int headY = header.getY2();
+			CanvasElement body = header.getConnectedOwner();
+			int bodyX = body.getX1() + body.getWidth() / 2;
+			int bodyY = body.getY1() + body.getHeight() / 2;
+			int DX = headX - bodyX;
+			int DY = headY - bodyY;
+			
+			double distance = Math.pow((DX*DX+DY*DY), 0.5);
+			int dx = (int)(3*header.getWidth()/distance*DY);
+			int dy = (int)(3*header.getWidth()/distance*DX);
+			
+			int half = overLyingHeaders.size()/2;
+			
+			for(int i=0;i<half;i++){
+				CanvasElement temp = overLyingHeaders.get(i);
+				temp.setX2Y2(temp.getX2()+dx*(i+1), temp.getY2()+dy*(i+1));
+			}
+			
+			
+			for(int i=half;i<half*2;i++){
+				CanvasElement temp = overLyingHeaders.get(i);
+				temp.setX2Y2(temp.getX2()-dx*(i+1-half), temp.getY2()-dy*(i+1-half));
+			}
+		}
 	}
 }
