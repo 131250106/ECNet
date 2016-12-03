@@ -127,11 +127,7 @@ public class CanvasPanel extends JScrollPane {
 		this.canvasPanel.setBackground(Color.WHITE);
 		this.canvasPanel.addMouseListener(new MouseAction());
 		this.canvasPanel.addMouseMotionListener(new MouseMoveAction());
-
-		canvasPanel.setPreferredSize(new Dimension(1000, 1000));
 		
-		this.setViewportView(this.canvasPanel);
-
 		currentLabel.setVisible(false);
 		this.canvasPanel.add(currentLabel);
 
@@ -170,6 +166,7 @@ public class CanvasPanel extends JScrollPane {
 
 	private void setcanvasPanelPreferredSize() {			//设置画布的最佳大小
 		canvasPanel.setPreferredSize(new Dimension(model.getMaxWidth()+100, model.getMaxHeight()+100));
+		this.setViewportView(this.canvasPanel);
 	}
 
 	public boolean isChanged() {

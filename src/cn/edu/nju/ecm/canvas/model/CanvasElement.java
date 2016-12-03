@@ -363,4 +363,33 @@ public class CanvasElement implements Serializable {
 	public void setRelativeY(int relativeY) {
 		this.relativeY = relativeY;
 	}
+	//是否作为原始起点
+	private boolean isStart = false;
+
+	public boolean isStart() {
+		return isStart;
+	}
+	public void setStart(boolean isStart) {
+		this.isStart = isStart;
+	}
+	//是否按顺势针画图
+	private boolean isClockwise = true;
+
+	public boolean isClockwise() {
+		return isClockwise;
+	}
+
+	public void setClockwise(boolean isClockwise) {
+		this.isClockwise = isClockwise;
+	}
+	private double totalAngle= Math.PI;
+
+	public double getTotalAngle() {
+		return totalAngle;
+	}
+
+	public void setTotalAngle(double totalAngle) {
+		this.totalAngle = totalAngle;
+	}
+	
 }

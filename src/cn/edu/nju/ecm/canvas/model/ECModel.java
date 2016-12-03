@@ -1,5 +1,6 @@
 package cn.edu.nju.ecm.canvas.model;
 
+import java.awt.Canvas;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,6 +17,10 @@ import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
 import cn.edu.nju.ecm.utility.Undotooler;
 import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.utility.UndoCommand.ActionType;
+import cn.edu.nju.ecm.view.CanvasPanel;
+import ecm.main.Edge;
+import ecm.main.Node;
+import ecm.main.Spring;
 
 public class ECModel implements Serializable {
 
@@ -257,10 +262,56 @@ public class ECModel implements Serializable {
 	}
 
 	/**
+	 * 自动化排版功能 使用力向导算法
+	 * */
+	public void autoFormat2() {
+		Spring sp = new Spring();
+		List<Node> lNodes = new ArrayList<Node>();
+		List<Edge> lEdges = new ArrayList<Edge>();
+		for (CanvasElement ce : this.elements) {
+			if (ce.getElementType() == ElementType.Connector
+					|| ce.getElementType() == ElementType.Body) {
+				lNodes.add(new Node(ce.getX1(), ce.getY1(), "" + ce.getID()));
+			} else if (ce.getElementType() == ElementType.Header) {
+				if (ce.connectedOwner) {
+					ArrayList<CanvasElement> relations = getAllRelation(ce);
+					for (int i = 0; i < relations.size(); i++) {
+						CanvasElement tempRelation = relations.get(i);
+						if (tempRelation.connectedSon)
+							lEdges.add(new Edge(""
+									+ ce.getConnectedOwner().getID(),
+									tempRelation.getConnectedSon().getID() + ""));
+					}
+				}
+			}
+		}
+		List<Node> reSetNodes = sp.springLayout(lNodes, lEdges);
+		// 4.反复2,3步 迭代300次
+		for (int i = 0; i < 1000; i++) {
+			reSetNodes = sp.springLayout(reSetNodes, lEdges);
+		}
+
+		for (Node node : reSetNodes) {
+			for (CanvasElement ce : this.elements) {
+				if (Integer.parseInt(node.getId()) == ce.getID()) {
+					ce.setRelativeXY(node.getX(), node.getY());
+					;
+				}
+			}
+		}
+
+		reSetDrawCoordinate();
+
+		resetElement();
+
+	}
+
+	/**
 	 * 自动化排版功能 优先定义连体和链接点的位置，然后再将链头的位置插入
 	 * */
-
 	public void autoFormat() {
+		boolean isNeedFormat2 = false;
+		
 		// 定义相对坐标：
 		int dx = 180;
 		int DY = -1; // 不在一个连通图内的
@@ -271,6 +322,9 @@ public class ECModel implements Serializable {
 
 		max.setRelativeXY(0, 0);
 		max.setStartAngle(0);
+		max.setStart(true);
+		max.setTotalAngle(Math.PI);
+		System.out.println(max.getID());
 		while (max != null) {
 			CanvasElement currentElement = null;
 			// 先遍历该图元所在的连通图：这里采用的是广度优先遍历
@@ -279,32 +333,60 @@ public class ECModel implements Serializable {
 				queueElements.remove(0);
 
 				currentElement.setFlag(-1);
-				System.out.println(currentElement.getID() + " : "
-						+ currentElement.getRelativeX() + " , "
-						+ currentElement.getRelativeY());
-				double angle = 0;
+				double angle = Math.PI;
 				ArrayList<CanvasElement> nextElements = getSortedNextElements(currentElement);
-				if (nextElements.size() > 1)
-					angle = Math.PI / (nextElements.size()-1);
+				if (nextElements.size() > 1 && (currentElement.isStart()||currentElement.getTotalAngle()!=Math.PI))
+					angle = currentElement.getTotalAngle() / (nextElements.size() - 1);
+				else if (nextElements.size() > 0)
+					angle = currentElement.getTotalAngle() / (nextElements.size());
 
 				for (int i = 0; i < nextElements.size(); i++) {
 					queueElements.add(nextElements.get(i));
-					nextElements.get(i).setStartAngle(
-							currentElement.getStartAngle() + i * angle);
+
+					double DeltaAngle = currentElement.getStartAngle();
+					
+					int tempY = currentElement.getRelativeY();
+					
+					if (currentElement.isClockwise()) {
+						DeltaAngle-=i*angle;
+						tempY -= dx* Math.sin(DeltaAngle);
+						if(Math.abs(DeltaAngle)<=Math.PI/2)
+							nextElements.get(i).setClockwise(false);
+						else
+							nextElements.get(i).setClockwise(true);
+						
+					} else {
+						DeltaAngle+=i*angle;
+						tempY -= dx* Math.sin(DeltaAngle);
+						if(Math.abs(DeltaAngle)<=Math.PI/2)
+							nextElements.get(i).setClockwise(true);
+						else
+							nextElements.get(i).setClockwise(false);
+					}
 					int tempX = (int) (currentElement.getRelativeX() + dx
-							* Math.cos(currentElement.getStartAngle() + i
-									* angle));
-					int tempY = (int) (currentElement.getRelativeY() + dx
-							* Math.sin(currentElement.getStartAngle() + i
-									* angle));
-					if(nextElements.get(i).getFlag()==0)
+							* Math.cos(DeltaAngle));
+					
+					nextElements.get(i).setStartAngle(DeltaAngle);
+
+					if (nextElements.get(i).getFlag() == 0)
 						nextElements.get(i).setRelativeXY(tempX, tempY);
-					else{
-						tempX += nextElements.get(i).getRelativeX()*nextElements.get(i).getFlag();
-						tempY += nextElements.get(i).getRelativeY()*nextElements.get(i).getFlag();
-						nextElements.get(i).setRelativeXY(tempX/(nextElements.get(i).getFlag()+1), tempY/(nextElements.get(i).getFlag()+1));
+					else {
+						isNeedFormat2=  true;
+						tempX += nextElements.get(i).getRelativeX()
+								* nextElements.get(i).getFlag();
+						tempY += nextElements.get(i).getRelativeY()
+								* nextElements.get(i).getFlag();
+						nextElements.get(i).setRelativeXY(
+								tempX / (nextElements.get(i).getFlag() + 1),
+								tempY / (nextElements.get(i).getFlag() + 1));
 					}
 					
+					if(i==0)
+						nextElements.get(i).setTotalAngle(Math.PI);
+					else if(i==nextElements.size()-1&&currentElement.isStart())
+						nextElements.get(i).setTotalAngle(Math.PI);
+					else
+						nextElements.get(i).setTotalAngle(Math.abs(angle));
 				}
 
 			}
@@ -315,14 +397,17 @@ public class ECModel implements Serializable {
 			DY = getMaxRelativeY() + dx;
 			max.setRelativeXY(0, DY);
 			max.setStartAngle(0);
+			max.setStart(true);
+			max.setTotalAngle(Math.PI);
 			queueElements.add(max);
 		}
 
 		reSetDrawCoordinate();
 
-		// printCoordinate();
-
 		resetElement();
+		
+		if(isNeedFormat2)
+			autoFormat2();
 	}
 
 	// 设置链头坐标位置
@@ -410,23 +495,6 @@ public class ECModel implements Serializable {
 
 	}
 
-	// private void printCoordinate() {
-	// for (CanvasElement ce : elements) {
-	// if (ce.getElementType() == ElementType.Body
-	// || ce.getElementType() == ElementType.Connector) {
-	// System.out.println(ce.getID() + ": ("
-	// + (ce.getX1() + ce.getWidth() / 2) + " , "
-	// + (ce.getY1() + ce.getHeight() / 2) + ")    "
-	// + ce.getElementType().toString());
-	// } else if (ce.getElementType() == ElementType.Header) {
-	// System.out
-	// .println(ce.getID() + ": (" + ce.getX2() + " , "
-	// + ce.getY2() + ")    "
-	// + ce.getElementType().toString());
-	// }
-	// }
-	// }
-
 	private int getMaxRelativeY() {
 		int max = 0;
 		for (CanvasElement ce : this.elements) {
@@ -491,7 +559,7 @@ public class ECModel implements Serializable {
 		Comparator<CanvasElement> comparator = new Comparator<CanvasElement>() {
 			@Override
 			public int compare(CanvasElement c1, CanvasElement c2) {
-				return c1.getDegree() - c2.getDegree();
+				return c2.getDegree() - c1.getDegree();
 			}
 		};
 		Collections.sort(nextElements, comparator);
