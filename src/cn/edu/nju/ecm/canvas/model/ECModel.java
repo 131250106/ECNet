@@ -262,7 +262,7 @@ public class ECModel implements Serializable {
 
 	public void autoFormat() {
 		// 定义相对坐标：
-		int dx = 200;
+		int dx = 180;
 		int DY = -1; // 不在一个连通图内的
 		System.out.println("Format start!!");
 		ArrayList<CanvasElement> queueElements = new ArrayList<CanvasElement>();
@@ -277,8 +277,11 @@ public class ECModel implements Serializable {
 			while (!queueElements.isEmpty()) {
 				currentElement = queueElements.get(0);
 				queueElements.remove(0);
-				
+
 				currentElement.setFlag(2);
+				System.out.println(currentElement.getID() + " : "
+						+ currentElement.getRelativeX() + " , "
+						+ currentElement.getRelativeY());
 				double angle = 0;
 				ArrayList<CanvasElement> nextElements = getSortedNextElements(currentElement);
 				if (nextElements.size() > 0)
@@ -286,24 +289,15 @@ public class ECModel implements Serializable {
 
 				for (int i = 0; i < nextElements.size(); i++) {
 					queueElements.add(nextElements.get(i));
-					System.out.println(currentElement.getStartAngle()
-							- i
-							* angle
-							+ " : "
-							+ Math.cos(currentElement.getStartAngle() - i
-									* angle)
-							+ " , "
-							+ Math.sin(currentElement.getStartAngle() - i
-									* angle));
 					nextElements.get(i).setRelativeXY(
 							(int) (currentElement.getRelativeX() + dx
 									* Math.cos(currentElement.getStartAngle()
-											- i * angle)),
+											+ i * angle)),
 							(int) (currentElement.getRelativeY() + dx
 									* Math.sin(currentElement.getStartAngle()
-											- i * angle)));
+											+ i * angle)));
 					nextElements.get(i).setStartAngle(
-							currentElement.getStartAngle() - i * angle);
+							currentElement.getStartAngle() + i * angle);
 				}
 
 			}
@@ -311,17 +305,15 @@ public class ECModel implements Serializable {
 			max = findMaxDegreeElement(this.elements);
 			if (max == null)
 				break;
-			DY = getMaxRelativeY() + dx;
+			DY = getMaxRelativeY() + dx / 2;
 			max.setRelativeXY(0, DY);
 			max.setStartAngle(0);
 			queueElements.add(max);
 		}
 
-		// setHeaderCoordinate();
-
 		reSetDrawCoordinate();
 
-		printCoordinate();
+//		printCoordinate();
 
 		resetElement();
 	}
@@ -337,38 +329,33 @@ public class ECModel implements Serializable {
 					if (tempRelations.get(i).connectedSon) {
 						CanvasElement tempConnector = tempRelations.get(i)
 								.getConnectedSon();
-						ce.setRelativeXY((body.getRelativeX() + tempConnector
-								.getRelativeX()) / 2,
-								(body.getRelativeY() + tempConnector
-										.getRelativeY()) / 2);
+						int tempX = (body.getX1() + body.getWidth() / 2
+								+ tempConnector.getX1() + tempConnector
+								.getWidth() / 2) / 2;
+						int tempY = (body.getY1() + body.getHeight() / 2
+								+ tempConnector.getY1() + tempConnector
+								.getHeight() / 2) / 2;
+						if (ce.getFlag() == 0) {
+							ce.setX2Y2(tempX, tempY);
+						} else {
+							tempX += ce.getX2() * ce.getFlag();
+							tempY += ce.getY2() * ce.getFlag();
+							ce.setX2Y2(tempX / (ce.getFlag() + 1),
+									tempY / (ce.getFlag() + 1));
+						}
+						ce.setFlag(ce.getFlag() + 1);
 					}
 				}
 			}
 		}
-	}
 
-	// 设置链头坐标位置
-	private void setHeaderCoordinate2() {
-		// TODO 暂时不考虑联结点和链体之间由多个链头链接
+		// 检查链头是否与其他的图元（只有可能是链体）重合
 		for (CanvasElement ce : this.elements) {
 			if (ce.getElementType() == ElementType.Header) {
-				CanvasElement body = ce.getConnectedOwner();
-				ArrayList<CanvasElement> tempRelations = getAllRelation(ce);
-				for (int i = 0; i < tempRelations.size(); i++) {
-					if (tempRelations.get(i).connectedSon) {
-						CanvasElement tempConnector = tempRelations.get(i)
-								.getConnectedSon();
-						ce.setX2Y2((body.getX1() + body.getWidth() / 2
-								+ tempConnector.getX1() + tempConnector
-								.getWidth() / 2) / 2,
-								(body.getY1() + body.getHeight() / 2
-										+ tempConnector.getY1() + tempConnector
-										.getHeight() / 2) / 2);
-						// ce.setRelativeXY((body.getRelativeX() + tempConnector
-						// .getRelativeX()) / 2,
-						// (body.getRelativeY() + tempConnector
-						// .getRelativeY()) / 2);
-					}
+				if (ce.connectedOwner
+						&& isOverlying(ce, ce.getConnectedOwner())) {
+					// 暂定策略是移动header
+					moveHeader(ce, ce.getConnectedOwner());
 				}
 			}
 		}
@@ -392,7 +379,7 @@ public class ECModel implements Serializable {
 						ce.getRelativeY() + dy - ce.getHeight() / 2);
 			}
 		}
-		setHeaderCoordinate2();
+		setHeaderCoordinate();
 		for (CanvasElement ce : this.elements) {
 			updateConnectable(ce);
 			reSetConnected(ce);
@@ -527,5 +514,54 @@ public class ECModel implements Serializable {
 		}
 
 		return new ArrayList<CanvasElement>();
+	}
+
+	private boolean isOverlying(CanvasElement header, CanvasElement body) { // 判断header是否和body有重合
+		if (body.pointWithInMe(header.getX2(), header.getY2())
+				|| body.pointWithInMe(header.getX2() + header.getWidth() * 2,
+						header.getY2())
+				|| body.pointWithInMe(header.getX2(),
+						header.getY2() + header.getHeight() * 2)
+				|| body.pointWithInMe(header.getX2() + header.getWidth(),
+						header.getY2() + header.getHeight() * 2))
+			return true;
+		return false;
+	}
+
+	private void moveHeader(CanvasElement header, CanvasElement body) { // header相对于body进行一个身位的平移
+		int bodyX = body.getX1() + body.getWidth() / 2;
+		int bodyY = body.getY1() + body.getHeight() / 2;
+		int headX = header.getX2() ;
+		int headY = header.getY2() ;
+		int dx = headX - bodyX;
+		int dy = headY - bodyY;
+		//忽略由于double转换为int的误差
+		System.out.println(dx+"   "+dy);
+		System.out.println(bodyX+"   "+bodyY);
+		System.out.println(headX+"   "+headY);
+		if(Math.abs(dx)<2)
+			dx = 0;
+		if(Math.abs(dy)<2)
+			dy = 0;
+		if (dx == 0 && dy == 0) {
+			dy -= 3 * header.getWidth();
+		} else {
+			while ((dx * dx + dy * dy) < (Math.pow(
+					(3 * header.getWidth() + body.getWidth() / 2), 2) + Math
+					.pow((3 * header.getWidth() + body.getHeight() / 2), 2))) {
+				if (dx > 0) {
+					dx += header.getWidth() * 2;
+				} else if (dx < 0) {
+					dx -= header.getWidth() * 2;
+				}
+				if (dy > 0) {
+					dy += header.getWidth() * 2;
+				} else if (dy < 0) {
+					dy -= header.getWidth() * 2;
+				}
+			}
+		}
+		header.setX2Y2(dx + bodyX ,
+				dy + bodyY);
 	}
 }
