@@ -1,5 +1,7 @@
 package cn.edu.nju.ecm.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,7 +33,7 @@ import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 
-public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
+public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +46,7 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 
 	// private int openNum = 0;
 
-	public MyFilePanel(JTabbedPane tabbedCanvasPane,JFrame frmEcm,JLabel lblPosition) {
+	public MyFileBar(JTabbedPane tabbedCanvasPane,JFrame frmEcm,JLabel lblPosition) {
 		super();
 		this.frmEcm = frmEcm;
 		this.tabbedCanvasPanel = tabbedCanvasPane;
@@ -53,13 +55,9 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 	}
 
 	private void initialMenu() {
-		// 菜单栏
-		JMenuBar fileMenuBar = new JMenuBar();
-		add(fileMenuBar);
-
 		JMenu fileMenu = new JMenu("文件");
 		fileMenu.setHorizontalAlignment(SwingConstants.CENTER);
-		fileMenuBar.add(fileMenu);
+		this.add(fileMenu);
 
 		JMenuItem newFileMenuItem = new JMenuItem("新建");
 		// 增加快捷键（CTRL+N）
@@ -148,11 +146,8 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 		});
 		fileMenu.add(saveAllMenuItem);
 
-		JMenuBar functionMenuBar = new JMenuBar();
-		add(functionMenuBar);
-
 		JMenu editMenu = new JMenu("编辑");
-		functionMenuBar.add(editMenu);
+		this.add(editMenu);
 
 		JMenuItem copyMenuItem = new JMenuItem("复制");
 		// 增加快捷键（CTRL+C）
@@ -251,17 +246,13 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 		});
 		editMenu.add(formatMenuItem);
 
-		JMenuBar setMenuBar = new JMenuBar();
-		add(setMenuBar);
 		JMenu setMenu = new JMenu("设置");
-		setMenuBar.add(setMenu);
+		this.add(setMenu);
 		JMenuItem keyMenuItem = new JMenuItem("快捷键设置");
 		setMenu.add(keyMenuItem);
 
-		JMenuBar helpMenuBar = new JMenuBar();
-		add(helpMenuBar);
-		JMenuItem helpMenu = new JMenu("帮助");
-		helpMenuBar.add(helpMenu);
+		JMenuItem helpMenu = new JMenu("帮助(H)");
+		this.add(helpMenu);
 		JMenuItem aboutusMenuItem = new JMenuItem("关于我们");
 		helpMenu.add(aboutusMenuItem);
 		JMenuItem updateMenuItem = new JMenuItem("检查更新");
@@ -315,10 +306,10 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 			}
 
 			JPanel componentPanel = new JPanel();
-			componentPanel.setLayout(new FlowLayout());
+			componentPanel.setLayout(new BorderLayout());
 
 			JLabel title = new JLabel();
-
+			title.setOpaque(true);
 			try {
 				CanvasPanel canvasPanel = new CanvasPanel(
 						lblPosition, fileType, title, file, newModel,
@@ -335,12 +326,17 @@ public class MyFilePanel extends JPanel {								//最顶层菜单面板以及对应的操作
 					ViewHelper.fileTitleDisplay(fileName, title);
 				}
 				JLabel closeIcon = new JLabel();
+				closeIcon.setOpaque(true);
 				closeIcon.setIcon(new ImageIcon("resources/close-out.png",
 						"Close"));
 				closeIcon.setToolTipText("关闭");
-				componentPanel.add(title);
-				componentPanel.add(closeIcon);
+				componentPanel.add(title,BorderLayout.WEST);
+				componentPanel.add(closeIcon,BorderLayout.EAST);
 
+				componentPanel.setOpaque(false);
+				title.setOpaque(false);
+				closeIcon.setOpaque(false);
+				
 				tabbedCanvasPanel.setTabComponentAt(
 						tabbedCanvasPanel
 								.indexOfComponent(canvasPanel), componentPanel);

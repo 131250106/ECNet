@@ -68,7 +68,7 @@ public class MyFormat {
 		boolean isNeedFormat2 = false;
 		
 		// 定义相对坐标：
-		int dx = 180;
+		int dx = 200;
 		int DY = -1; // 不在一个连通图内的
 		System.out.println("Format start!!");
 		ArrayList<CanvasElement> queueElements = new ArrayList<CanvasElement>();
@@ -187,7 +187,7 @@ public class MyFormat {
 			if(ce.getElementType()==ElementType.Header && ce.isConnectedOwner()&&ce.getFlag()==0){
 				CanvasElement body = ce.getConnectedOwner();
 				//TODO 暂定
-				ce.setX2Y2(body.getX1()-body.getWidth()/2+ce.getWidth()*2, body.getY1()-body.getWidth()/2+ce.getWidth()*2);
+				ce.setX2Y2(body.getX1()-ce.getWidth()*3/2, body.getY1()-ce.getWidth()*3/2);
 			}else if(ce.getElementType()==ElementType.Relation && ce.isConnectedOwner()&&!ce.isConnectedSon()){
 				CanvasElement header = ce.getConnectedOwner();
 				ce.setX2Y2(header.getX2()-header.getWidth()*3, header.getY2()-header.getWidth()*3);

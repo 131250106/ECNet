@@ -77,6 +77,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		modelcontentArea = new JTextArea();
 		modelcontentArea.setColumns(120);
 		modelcontentArea.setRows(5);
+		modelcontentArea.setLineWrap(true);
 		modelcontentArea.addFocusListener(new MyFocusListener());
 		jScrollPane2.setViewportView(modelcontentArea);
 
@@ -90,6 +91,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		modify = new JButton();
 		reset = new JButton();
 		delete = new JButton();
+		
 
 		type.setFont(new java.awt.Font("宋体", 1, 24)); 
 
@@ -101,6 +103,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 
 		contentArea.setColumns(120);
 		contentArea.setRows(5);
+		contentArea.setLineWrap(true);
 		jScrollPane1.setViewportView(contentArea);
 
 		modify.setText("确认修改");

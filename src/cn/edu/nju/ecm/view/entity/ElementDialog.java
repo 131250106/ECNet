@@ -72,6 +72,9 @@ public class ElementDialog extends JDialog {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
+		this.elementPanel = ElementPanelFactory.getPanelByType(type);
+		contentPane.add(elementPanel, BorderLayout.CENTER);
+		
 		JPanel buttonPanel = new JPanel();
 		contentPane.add(buttonPanel, BorderLayout.SOUTH);
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
@@ -92,12 +95,11 @@ public class ElementDialog extends JDialog {
 
 		});
 		buttonPanel.add(cancelButton);
+		pack();
+//		JPanel informationPanel = new JPanel();
+//		contentPane.add(informationPanel, BorderLayout.CENTER);
 
-		JPanel informationPanel = new JPanel();
-		contentPane.add(informationPanel, BorderLayout.CENTER);
-
-		this.elementPanel = ElementPanelFactory.getPanelByType(type);
-		contentPane.add(elementPanel, BorderLayout.CENTER);
+		
 	}
 
 	public Element showCreateDialog() {

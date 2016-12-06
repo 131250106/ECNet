@@ -1,45 +1,46 @@
 package cn.edu.nju.ecm.view;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Locale;
 
-import javax.swing.JButton;
+import javax.swing.JToggleButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 
-public class MyelementBar extends JToolBar{											//上层快速工具栏面板
+public class MyelementBar extends JToolBar { // 上层快速工具栏面板
 
 	private static final long serialVersionUID = 1L;
 
 	private JTabbedPane tabbedCanvasPanel;
-	
+
 	// 当前选中的命令按钮
-	private JButton currentCommandButton;
-	//默认背景色
-	private Color defaultColor = new Color(240, 240, 240);
-		
-	private JButton elementBody;
-	private JButton elementHead;
-	private JButton elementDirectedLine;
-	private JButton elementConnector;
-	
+	private JToggleButton currentCommandButton;
+
+	private JToggleButton elementBody;
+	private JToggleButton elementHead;
+	private JToggleButton elementDirectedLine;
+	private JToggleButton elementConnector;
+
 	public MyelementBar(JTabbedPane tabbedCanvasPanel) {
 		super();
+		this.setFloatable(true);
 		this.tabbedCanvasPanel = tabbedCanvasPanel;
 		initialElement();
 	}
 
 	private void initialElement() {
-		
-		elementBody = new JButton("链体");
-		elementHead = new JButton("链头");
-		elementDirectedLine = new JButton("箭头");
-		elementConnector = new JButton("联结");
-		
+
+		elementBody = new JToggleButton("链体");
+		elementHead = new JToggleButton("链头");
+		elementDirectedLine = new JToggleButton("箭头");
+		elementConnector = new JToggleButton("联结");
+
 		elementBody.addMouseListener(new MouseAction());
 		elementBody.addMouseMotionListener(new MouseMotionAction());
 		add(elementBody);
@@ -56,22 +57,23 @@ public class MyelementBar extends JToolBar{											//上层快速工具栏面板
 		elementConnector.addMouseMotionListener(new MouseMotionAction());
 		add(elementConnector);
 	}
-	
+
 	class MouseAction implements MouseListener {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
+			Point point = getLocationOnScreen();
+			System.out.print("("+point.x+" , "+point.y+")");
 			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 					.getSelectedComponent();
-			int x = e.getX() + ECMMainFrame.ScreenCenterX / 30;
-			int y = e.getY() - ECMMainFrame.ScreenCenterY / 7;
-			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x += ((JButton) e.getSource()).getWidth();
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
-				x += ((JButton) e.getSource()).getWidth() * 2;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
-				x += ((JButton) e.getSource()).getWidth() * 3;
+			int x = e.getX() + point.x;
+			int y = e.getY() + point.y;
+			if (((JToggleButton) e.getSource()).getText().equals("链头")) {
+				x += ((JToggleButton) e.getSource()).getWidth();
+			} else if (((JToggleButton) e.getSource()).getText().equals("箭头")) {
+				x += ((JToggleButton) e.getSource()).getWidth() * 2;
+			} else if (((JToggleButton) e.getSource()).getText().equals("联结")) {
+				x += ((JToggleButton) e.getSource()).getWidth() * 3;
 			}
 			if (canvasPanel != null) {
 				canvasPanel.drawCurrentlabel(x, y);
@@ -83,18 +85,18 @@ public class MyelementBar extends JToolBar{											//上层快速工具栏面板
 		public void mousePressed(MouseEvent e) {
 			// TODO Auto-generated method stub
 			if (currentCommandButton != null)
-				currentCommandButton.setBackground(defaultColor);
+				currentCommandButton.setSelected(false);
 
-			if (((JButton) e.getSource()).getText().equals("链体")) {
+			if (((JToggleButton) e.getSource()).getText().equals("链体")) {
 				ECMMainFrame.command = Command.EBody;
 				currentCommandButton = elementBody;
-			} else if (((JButton) e.getSource()).getText().equals("链头")) {
+			} else if (((JToggleButton) e.getSource()).getText().equals("链头")) {
 				ECMMainFrame.command = Command.EHeader;
 				currentCommandButton = elementHead;
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
+			} else if (((JToggleButton) e.getSource()).getText().equals("箭头")) {
 				ECMMainFrame.command = Command.ERelation;
 				currentCommandButton = elementDirectedLine;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
+			} else if (((JToggleButton) e.getSource()).getText().equals("联结")) {
 				ECMMainFrame.command = Command.EConnector;
 				currentCommandButton = elementConnector;
 			}
@@ -121,21 +123,21 @@ public class MyelementBar extends JToolBar{											//上层快速工具栏面板
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			// TODO Auto-generated method stub
-			int x = e.getX();
-			int y = e.getY() - ECMMainFrame.ScreenCenterY / 6;
-			if (((JButton) e.getSource()).getText().equals("链头")) {
-				x += ((JButton) e.getSource()).getWidth();
-			} else if (((JButton) e.getSource()).getText().equals("箭头")) {
-				x += ((JButton) e.getSource()).getWidth() * 2;
-			} else if (((JButton) e.getSource()).getText().equals("联结")) {
-				x += ((JButton) e.getSource()).getWidth() * 3;
+			Point point = getLocationOnScreen();
+			int x = e.getX() + point.x;
+			int y = e.getY() + point.y;
+			if (((JToggleButton) e.getSource()).getText().equals("链头")) {
+				x += ((JToggleButton) e.getSource()).getWidth();
+			} else if (((JToggleButton) e.getSource()).getText().equals("箭头")) {
+				x += ((JToggleButton) e.getSource()).getWidth() * 2;
+			} else if (((JToggleButton) e.getSource()).getText().equals("联结")) {
+				x += ((JToggleButton) e.getSource()).getWidth() * 3;
 			}
 			CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 					.getSelectedComponent();
 			if (canvasPanel != null)
 				canvasPanel.showCurrentlabel(x, y,
-						((JButton) e.getSource()).getText());
+						((JToggleButton) e.getSource()).getText());
 		}
 
 		@Override
@@ -147,11 +149,10 @@ public class MyelementBar extends JToolBar{											//上层快速工具栏面板
 	}
 
 	public void resetButton() {
-		if(currentCommandButton!=null){
-			currentCommandButton.setBackground(defaultColor);
+		if (currentCommandButton != null) {
+			currentCommandButton.setSelected(false);
 			ECMMainFrame.command = Command.Choose;
 			currentCommandButton = null;
 		}
 	}
-	
 }

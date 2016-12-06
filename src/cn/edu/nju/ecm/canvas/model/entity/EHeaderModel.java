@@ -20,7 +20,7 @@ public class EHeaderModel extends CanvasElement {
 
 	public EHeaderModel(int x1, int y1, int x2, int y2, int id, EHeader eheader) {
 		super();
-		width = 13;
+		width = 15;
 		height = 60;
 		this.x1 = x1;
 		this.y1 = y1;
@@ -49,7 +49,7 @@ public class EHeaderModel extends CanvasElement {
 
 	public void draw(Graphics2D g2d) {
 		if (this.isConnectedOwner()) {
-			g2d.setPaint(Color.BLUE);
+			g2d.setPaint(Color.BLACK);
 			g2d.setStroke(new BasicStroke(2));
 
 			g2d.fillOval(this.x1 - 3, this.y1 - 3, 6, 6);
@@ -63,10 +63,10 @@ public class EHeaderModel extends CanvasElement {
 			g2d.drawOval(this.x2 - this.width - this.distance, this.y2 - this.distance - this.width,
 					(this.width + this.distance) * 2, (this.width + this.distance) * 2);
 		}
-		g2d.setPaint(Color.GRAY);
+		g2d.setPaint(Color.gray);
 		g2d.setStroke(new BasicStroke(1));
 		g2d.drawLine(x1, y1, x2, y2);
-		g2d.setStroke(new BasicStroke(1));
+		g2d.setPaint(Color.lightGray);
 		g2d.fillOval(x2 - this.width, y2 - this.width, width + this.width, width + this.width);
 
 		if (!this.geteHeader().getName().equals("")) {

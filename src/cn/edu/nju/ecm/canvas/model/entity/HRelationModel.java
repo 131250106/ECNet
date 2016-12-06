@@ -48,13 +48,13 @@ public class HRelationModel extends CanvasElement {
 
 	public void draw(Graphics2D g2d) {
 		if (this.isConnectedOwner()) {
-			g2d.setPaint(Color.BLUE);
+			g2d.setPaint(Color.black);
 			g2d.setStroke(new BasicStroke(1));
 
 			g2d.fillOval(this.x1 - 3, this.y1 - 3, 6, 6);
 		}
 		if (this.isConnectedSon()) {
-			g2d.setPaint(Color.BLUE);
+			g2d.setPaint(Color.black);
 			g2d.setStroke(new BasicStroke(1));
 
 			g2d.fillOval(this.x2 - 3, this.y2 - 3, 6, 6);
@@ -255,6 +255,7 @@ public class HRelationModel extends CanvasElement {
 		triangle.lineTo(x3, y3);
 		triangle.lineTo(x4, y4);
 		triangle.closePath();
+		g2.setColor(Color.gray);
 		g2.fill(triangle);
 
 	}

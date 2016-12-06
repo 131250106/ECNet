@@ -51,7 +51,7 @@ public class ConnectorModel extends CanvasElement {
 
 			g2d.drawRect(x1 - 3, y1 - 3, width + 5, height + 5);
 		}
-		g2d.setPaint(Color.GRAY);
+		g2d.setPaint(Color.lightGray);
 		g2d.setStroke(new BasicStroke(1));
 
 		g2d.fillRect(x1, y1, width, height);

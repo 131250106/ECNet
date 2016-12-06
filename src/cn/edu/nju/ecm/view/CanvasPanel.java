@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -246,8 +247,9 @@ public class CanvasPanel extends JScrollPane {
 	public void recoverElement(CanvasElement element) { // 删除后undo 的恢复操作
 		model.insertNewWElement(element,true);
 		model.updateConnectable(element);
-		element.setChoosed(true);
-		model.reSetConnected(element);
+//		element.setChoosed(true);
+////		model.reSetConnected(element);
+		model.reSetAllElements();
 		refresh();
 	}
 
@@ -263,30 +265,42 @@ public class CanvasPanel extends JScrollPane {
 	}
 
 	public void showCurrentlabel(int x, int y, String name) {			//显示正在拖拽的图元
-		if (x > 5 && y > 8) {
-			currentLabel.setLocation(x+this.getHorizontalScrollBar().getValue(), y+this.getVerticalScrollBar().getValue());
-			currentLabel.setVisible(true);
-
+		Point point = getLocationOnScreen();
+		x -= point.x;
+		y -= point.y;
+		if (x > 5 && y > 5) {
 			ImageIcon icon = new ImageIcon("resources/ebody.png");
 			if (name.equals("链体")) {
 				icon = new ImageIcon("resources/ebody.png");
 			} else if (name.equals("链头")) {
 				icon = new ImageIcon("resources/eheader.png");
 			} else if (name.equals("箭头")) {
-				icon = new ImageIcon("resources/hconnector.png");
-			} else if (name.equals("联结")) {
 				icon = new ImageIcon("resources/hrelation.png");
+			} else if (name.equals("联结")) {
+				icon = new ImageIcon("resources/hconnector.png");
 			}
 			currentLabel.setIcon(icon);
+			currentLabel.setLocation(x+this.getHorizontalScrollBar().getValue()-currentLabel.getWidth()/2, y+this.getVerticalScrollBar().getValue()-currentLabel.getHeight()/2);
+			currentLabel.setVisible(true);
 		} else
 			currentLabel.setVisible(false);
 	}
 
 	public void drawCurrentlabel(int x, int y) {			//先拖拽的图元画出来
+		Point point = getLocationOnScreen();
+		x -= point.x;
+		y -= point.y;
 		currentLabel.setText("");
 		currentLabel.setVisible(false);
-		if (x > 5 && y > 5)
-			drawElement(x+this.getHorizontalScrollBar().getValue(), y+this.getVerticalScrollBar().getValue());
+		if (x > 5 && y > 5){
+			x+=this.getHorizontalScrollBar().getValue();
+			y+=this.getVerticalScrollBar().getValue();
+			if(ECMMainFrame.command == Command.EHeader)
+				y-=currentLabel.getHeight()/2;
+			else if(ECMMainFrame.command == Command.ERelation)
+				x-=currentLabel.getWidth()/2;
+			drawElement(x, y);
+		}
 	}
 
 

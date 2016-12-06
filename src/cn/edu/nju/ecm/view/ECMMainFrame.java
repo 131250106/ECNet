@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -47,7 +48,7 @@ public class ECMMainFrame {
 	private JLabel lblPosition = new JLabel("Position:");
 
 	// 画布所在的面板
-	private JTabbedPane tabbedCanvasPanel = new JTabbedPane(JTabbedPane.TOP);
+	private JTabbedPane tabbedCanvasPanel = new JTabbedPane();
 
 	// 上层图元选择栏
 	private static MyelementBar elementBar;
@@ -62,7 +63,7 @@ public class ECMMainFrame {
 		ECMMainFrame.ScreenCenterX = width / 2;
 		ECMMainFrame.ScreenCenterY = height / 2;
 
-		int frameWidth = 1200, frameHeight = 750;
+		int frameWidth = 1200, frameHeight = 760;
 		int x = ECMMainFrame.ScreenCenterX - frameWidth / 2;
 		int y = ECMMainFrame.ScreenCenterY - frameHeight / 2;
 		Rectangle bounds = new Rectangle(x, y, frameWidth, frameHeight);
@@ -70,7 +71,7 @@ public class ECMMainFrame {
 		frmEcm.setTitle("ECM");
 		frmEcm.setBounds(bounds);
 		frmEcm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frmEcm.getContentPane().setLayout(new BorderLayout(0, 1));
+		frmEcm.getContentPane().setLayout(new BorderLayout());
 
 		initialize();
 	}
@@ -89,22 +90,19 @@ public class ECMMainFrame {
 	private void initialize() {
 		JPanel commandPanel = new JPanel();
 		frmEcm.getContentPane().add(commandPanel, BorderLayout.NORTH);
-		commandPanel.setLayout(new GridLayout(2, 1, 0, 0));
+		commandPanel.setLayout(new BorderLayout());
 
 		// 菜单栏
-		JPanel filePanel = new MyFilePanel(tabbedCanvasPanel,frmEcm,lblPosition);
-		filePanel.setBackground(UIManager.getColor("Panel.background"));
-		commandPanel.add(filePanel);
-		filePanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
+		JMenuBar filePanel = new MyFileBar(tabbedCanvasPanel,frmEcm,lblPosition);
+		frmEcm.setJMenuBar(filePanel);
 
 		// 快速操作栏
 		JPanel editPanel = new JPanel();
-		FlowLayout fl_editPanel = (FlowLayout) editPanel.getLayout();
-		fl_editPanel.setVgap(2);
-		fl_editPanel.setAlignment(FlowLayout.LEFT);
-		editPanel.setBackground(UIManager.getColor("PopupMenu.background"));
-		commandPanel.add(editPanel);
+		editPanel.setLayout(new BorderLayout());
+		
+		commandPanel.add(editPanel,BorderLayout.SOUTH);
 		// 图元绘制命令
+		
 		elementBar = new MyelementBar(tabbedCanvasPanel);
 		editPanel.add(elementBar);
 
@@ -113,7 +111,7 @@ public class ECMMainFrame {
 		 */
 		JPanel mainPanel = new JPanel();
 		frmEcm.getContentPane().add(mainPanel, BorderLayout.CENTER);
-		mainPanel.setLayout(new BorderLayout(0, 0));
+		mainPanel.setLayout(new BorderLayout());
 
 		JSplitPane splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
@@ -122,7 +120,7 @@ public class ECMMainFrame {
 		// 左側區域信息
 		JPanel modelPanel = new JPanel();
 		splitPane.setLeftComponent(modelPanel);
-		modelPanel.setLayout(new BorderLayout(0, 3));
+		modelPanel.setLayout(new BorderLayout());
 
 		// 画布区，底部是一个多Tab的panel
 		tabbedCanvasPanel.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -138,12 +136,12 @@ public class ECMMainFrame {
 				}
 			}
 		});
+		
+		
 		modelPanel.add(tabbedCanvasPanel, BorderLayout.CENTER);
 
 		// 最底部的状态栏
 		JPanel statusPanel = new JPanel();
-		statusPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
-		statusPanel.setBackground(UIManager.getColor("Panel.background"));
 		modelPanel.add(statusPanel, BorderLayout.SOUTH);
 		statusPanel.setLayout(new BorderLayout(0, 0));
 
