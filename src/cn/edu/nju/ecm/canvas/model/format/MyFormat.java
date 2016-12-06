@@ -68,7 +68,7 @@ public class MyFormat {
 		boolean isNeedFormat2 = false;
 		
 		// 定义相对坐标：
-		int dx = 200;
+		int dx = 220;
 		int DY = -1; // 不在一个连通图内的
 		System.out.println("Format start!!");
 		ArrayList<CanvasElement> queueElements = new ArrayList<CanvasElement>();

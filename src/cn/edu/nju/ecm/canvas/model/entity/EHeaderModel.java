@@ -295,7 +295,8 @@ public class EHeaderModel extends CanvasElement {
 	}
 
 	private void drawName(Graphics2D g2d, String name) {
-		int x = this.x2 - name.length() * 6;
+		g2d.setPaint(Color.black);
+		int x = this.x2 - name.length() * 4;
 		int y = this.y2 - this.width - this.distance;
 		g2d.drawString(name, x, y);
 	}

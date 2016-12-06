@@ -88,8 +88,8 @@ public class ConnectorModel extends CanvasElement {
 	}
 
 	private void drawName(Graphics2D g2d, String name) {
-		int x = this.x1 - name.length() * 2;
-		int y = this.y1 + 5;
+		int x = this.x1+this.width/2 - name.length() * 4;
+		int y = this.y1 - 4;
 		g2d.drawString(name, x, y);
 	}
 

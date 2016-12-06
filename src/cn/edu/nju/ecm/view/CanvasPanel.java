@@ -247,8 +247,6 @@ public class CanvasPanel extends JScrollPane {
 	public void recoverElement(CanvasElement element) { // É¾³ýºóundo µÄ»Ö¸´²Ù×÷
 		model.insertNewWElement(element,true);
 		model.updateConnectable(element);
-//		element.setChoosed(true);
-////		model.reSetConnected(element);
 		model.reSetAllElements();
 		refresh();
 	}

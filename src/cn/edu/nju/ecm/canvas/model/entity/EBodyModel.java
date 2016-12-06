@@ -126,8 +126,8 @@ public class EBodyModel extends CanvasElement {
 	}
 
 	private void drawName(Graphics2D g2d) {
-		int x = (this.x1 + this.width / 2) - (this.geteBody().getName().length() * 6);
-		int y = this.y1 + this.height/2;
+		int x = (this.x1 + this.width / 2) - (this.geteBody().getName().length() * 4);
+		int y = this.y1 + this.height/2+4;
 		g2d.drawString(this.geteBody().getName(), x, y);
 	}
 

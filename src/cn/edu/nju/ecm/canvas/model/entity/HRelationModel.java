@@ -278,8 +278,9 @@ public class HRelationModel extends CanvasElement {
 	}
 
 	private void drawName(Graphics2D g2d, String name) {
-		int x = (this.x1 + this.x2) / 2 - name.length() * 6;
-		int y = (this.y1 + this.y2) / 2 + 5;
+		g2d.setPaint(Color.black);
+		int x = (this.x1 + this.x2) / 2 - name.length() * 4;
+		int y = (this.y1 + this.y2) / 2 - 4;
 		g2d.drawString(name, x, y);
 	}
 
