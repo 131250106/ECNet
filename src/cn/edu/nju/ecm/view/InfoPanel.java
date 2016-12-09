@@ -420,6 +420,7 @@ public class InfoPanel extends JPanel {									//”“≤‡–≈œ¢¿∏panel
 				} else{
 					canvasPanel.model.setTitle(modeltitleField.getText());
 					canvasPanel.model.setDescription(modelcontentArea.getText());
+					canvasPanel.getMytable().changeTitle();
 					canvasPanel.setChanged(true);
 				}
 			}

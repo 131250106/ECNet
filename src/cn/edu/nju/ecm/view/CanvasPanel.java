@@ -40,6 +40,7 @@ import cn.edu.nju.ecm.utility.Undotooler;
 import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.view.ECMMainFrame.Command;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
+import cn.edu.nju.ecm.view.MyStatusPanel.Model;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 
@@ -54,13 +55,14 @@ public class CanvasPanel extends JScrollPane {
 	public ECModel model;
 	private CanvasElement currentChoosed;
 
-	private JLabel cursorStatus;
 	public FileType type;
 	private JLabel title;
 
 	// 画布
 	private JPanel canvasPanel;
-
+	//表格
+	private MyJScrollTable mytable;
+	
 	// 从工具栏拖拽时使用，当前所拖拽的label
 	private JLabel currentLabel = new JLabel();
 
@@ -92,13 +94,12 @@ public class CanvasPanel extends JScrollPane {
 	 * 
 	 * @throws DocumentException
 	 */
-	public CanvasPanel(JLabel cursorStatus, FileType type, JLabel title,
+	public CanvasPanel(FileType type, JLabel title,
 			File file, Element newModel, JFrame mainFrame)
 			throws DocumentException {
 		mainPanel = this;
 		this.model = new ECModel();
 		this.model.setFile(file);
-		this.cursorStatus = cursorStatus;
 		this.type = type;
 		this.title = title;
 		this.mainFrame = mainFrame;
@@ -132,6 +133,7 @@ public class CanvasPanel extends JScrollPane {
 		
 		currentLabel.setVisible(false);
 		this.canvasPanel.add(currentLabel);
+		
 
 		// 新增弹出式菜单
 		popupMenu.add(deleteItem);
@@ -162,8 +164,11 @@ public class CanvasPanel extends JScrollPane {
 		});
 		popupMenu.add(undoItem);
 		
-		setcanvasPanelPreferredSize();
-
+		setcanvasPanelPreferredSize(); 				//默认设置为图模式
+		
+		mytable = new MyJScrollTable(model);
+		
+		changeModel();
 	}
 
 	private void setcanvasPanelPreferredSize() {			//设置画布的最佳大小
@@ -372,11 +377,11 @@ public class CanvasPanel extends JScrollPane {
 	class MouseAction extends MouseAdapter {
 
 		public void mouseEntered(MouseEvent me) {
-			cursorStatus.setText("鼠标进入位置: x-" + me.getX() + ", y-" + me.getY());
+//			cursorStatus.setText("鼠标进入位置: x-" + me.getX() + ", y-" + me.getY());
 		}
 
 		public void mouseExited(MouseEvent me) {
-			cursorStatus.setText("鼠标退出位置: x-" + me.getX() + ", y-" + me.getY());
+//			cursorStatus.setText("鼠标退出位置: x-" + me.getX() + ", y-" + me.getY());
 		}
 
 		/*
@@ -482,7 +487,7 @@ public class CanvasPanel extends JScrollPane {
 	class MouseMoveAction extends MouseMotionAdapter {
 
 		public void mouseMoved(MouseEvent me) {
-			cursorStatus.setText("鼠标当前位置: x-" + me.getX() + ", y-" + me.getY());
+//			cursorStatus.setText("鼠标当前位置: x-" + me.getX() + ", y-" + me.getY());
 			currentX = me.getX();
 			currentY = me.getY();
 		}
@@ -506,5 +511,21 @@ public class CanvasPanel extends JScrollPane {
 			canvasPanel.repaint();
 		}
 	}
+	
+	//改变当前模式
+	public void changeModel(){
+		ECMMainFrame.resetButton();
+		ECMMainFrame.resetElementInfo();
+		if(MyStatusPanel.CurrentModel==Model.Image){
+			this.setViewportView(canvasPanel);
+		}else if(MyStatusPanel.CurrentModel==Model.Table){
+			this.setViewportView(mytable);
+		}
+	}
 
+	public MyJScrollTable getMytable() {
+		return mytable;
+	}
+	
+	
 }

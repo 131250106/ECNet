@@ -38,18 +38,16 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 
 	private JFrame frmEcm;
 	private JTabbedPane tabbedCanvasPanel;
-	private JLabel lblPosition;
 
 	// 记录新建文件的个数和打开的文件个数
 	private int newNum = 0;
 
 	// private int openNum = 0;
 
-	public MyFileBar(JTabbedPane tabbedCanvasPane,JFrame frmEcm,JLabel lblPosition) {
+	public MyFileBar(JTabbedPane tabbedCanvasPane,JFrame frmEcm) {
 		super();
 		this.frmEcm = frmEcm;
 		this.tabbedCanvasPanel = tabbedCanvasPane;
-		this.lblPosition = lblPosition;
 		initialMenu();
 	}
 
@@ -155,7 +153,6 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 		copyMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
@@ -316,7 +313,7 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 			title.setOpaque(true);
 			try {
 				CanvasPanel canvasPanel = new CanvasPanel(
-						lblPosition, fileType, title, file, newModel,
+						 fileType, title, file, newModel,
 						frmEcm);
 
 				tabbedCanvasPanel.add(canvasPanel);

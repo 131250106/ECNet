@@ -2,19 +2,14 @@ package cn.edu.nju.ecm.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -39,9 +34,6 @@ public class ECMMainFrame {
 
 	// 主要窗体
 	private JFrame frmEcm = new JFrame();
-
-	// 底部鼠标位置信息
-	private JLabel lblPosition = new JLabel("Position:");
 
 	// 画布所在的面板
 	private JTabbedPane tabbedCanvasPanel = new JTabbedPane();
@@ -89,16 +81,16 @@ public class ECMMainFrame {
 		commandPanel.setLayout(new BorderLayout());
 
 		// 菜单栏
-		JMenuBar filePanel = new MyFileBar(tabbedCanvasPanel,frmEcm,lblPosition);
+		JMenuBar filePanel = new MyFileBar(tabbedCanvasPanel, frmEcm);
 		frmEcm.setJMenuBar(filePanel);
 
 		// 快速操作栏
 		JPanel editPanel = new JPanel();
 		editPanel.setLayout(new BorderLayout());
-		
-		commandPanel.add(editPanel,BorderLayout.SOUTH);
+
+		commandPanel.add(editPanel, BorderLayout.SOUTH);
 		// 图元绘制命令
-		
+
 		elementBar = new MyelementBar(tabbedCanvasPanel);
 		editPanel.add(elementBar);
 
@@ -132,42 +124,17 @@ public class ECMMainFrame {
 				}
 			}
 		});
-		
-		
+
 		modelPanel.add(tabbedCanvasPanel, BorderLayout.CENTER);
-
-		// 最底部的状态栏
-		JPanel statusPanel = new JPanel();
-		modelPanel.add(statusPanel, BorderLayout.SOUTH);
-		statusPanel.setLayout(new BorderLayout(0, 0));
-
-		JPanel positionPanel = new JPanel();
-		statusPanel.add(positionPanel, BorderLayout.WEST);
-		positionPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-
-		lblPosition.setHorizontalAlignment(SwingConstants.CENTER);
-		positionPanel.add(lblPosition);
-
-		JPanel sliderPanel = new JPanel();
-		statusPanel.add(sliderPanel, BorderLayout.EAST);
-		sliderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-
-		JLabel canvasSliderValueLabel = new JLabel("New label");
-		sliderPanel.add(canvasSliderValueLabel);
-
-		JSlider canvaSlider = new JSlider();
-		sliderPanel.add(canvaSlider);
-		canvasSliderValueLabel.setText(canvaSlider.getValue() + "%");
-
-		JScrollPane scrollPane = new JScrollPane();
-		splitPane.setRightComponent(scrollPane);
-
-		JPanel elementInforPanel = new JPanel();
-		scrollPane.setViewportView(elementInforPanel);
 
 		// 右侧信息栏
 		infoPanel = new InfoPanel();
 		splitPane.setRightComponent(infoPanel);
+
+		// 最底部的状态栏
+		MyStatusPanel statusPanel = new MyStatusPanel(tabbedCanvasPanel);
+		modelPanel.add(statusPanel, BorderLayout.SOUTH);
+		
 	}
 
 	public static void resetButton() {
