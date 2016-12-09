@@ -1,8 +1,6 @@
 package cn.edu.nju.ecm.view;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.dom4j.DocumentException;
 
+import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.utility.Undotooler;
 import cn.edu.nju.ecm.utility.UndoCommand;
@@ -221,9 +220,14 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 								.getSelectedComponent();
 						if (canvasPanel != null) {
-							canvasPanel.deleteElementById(undo.getElement()
-									.getID(), true);
-							canvasPanel.recoverElement(undo.getElement());
+							canvasPanel.removeToBefore(undo.getElement());
+						}
+					} else if (undo.getType() == UndoCommand.ActionType.Format) {
+						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+								.getSelectedComponent();
+						if (canvasPanel != null&&undo.getElementlist()!=null) {
+							for(CanvasElement ce:undo.getElementlist())
+								canvasPanel.removeToBefore(ce);
 						}
 					}
 				}

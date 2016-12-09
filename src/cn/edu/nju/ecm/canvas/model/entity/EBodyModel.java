@@ -139,13 +139,6 @@ public class EBodyModel extends CanvasElement {
 		return result;
 	}
 	
-	public CanvasElement copy() {
-		CanvasElement copy = new EBodyModel(getX1(), getY1(), getHeight(),
-				getWidth(), getID(), geteBody());
-		copy.setConnectedOutputs(getConnectedOutputs());
-		return copy;
-	}
-
 	public int getDegree(){
 		return this.connectedOutputs.size();
 	}

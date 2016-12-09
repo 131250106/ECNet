@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -250,6 +251,19 @@ public class CanvasPanel extends JScrollPane {
 		model.reSetAllElements();
 		refresh();
 	}
+	
+	public void removeToBefore(CanvasElement copyOne) {		//移动后undo的恢复操作
+		CanvasElement beforeOne = model.getElementByID(copyOne.getID());
+		if(beforeOne!=null){
+			beforeOne.setX1Y1(copyOne.getX1(), copyOne.getY1());
+			beforeOne.setX2Y2(copyOne.getX2(), copyOne.getY2());
+			model.updateConnectable(beforeOne);
+			model.reSetAllElements();
+			refresh();
+		}
+		
+	}
+
 
 	public void refresh() {								//修改后刷新界面
 		setChanged(true);
@@ -257,6 +271,11 @@ public class CanvasPanel extends JScrollPane {
 	}
 	
 	public void autoFormat(){								//自动化排版
+		ArrayList<CanvasElement> copylist = new ArrayList<CanvasElement>();
+		for(CanvasElement ce:model.getElements()){
+			copylist.add(ce.copyLocation());
+		}
+		Undotooler.pushUndoCommand(new UndoCommand(copylist, UndoCommand.ActionType.Format));
 		model.autoFormat();
 		setcanvasPanelPreferredSize();
 		refresh();
@@ -372,7 +391,7 @@ public class CanvasPanel extends JScrollPane {
 					currentChoosed.setChoosed(false);
 				}
 				if (choosed != null) {
-					beforeMovedElement = choosed.copy();
+					beforeMovedElement = choosed.copyLocation();
 					
 					currentChoosed = choosed;
 					currentChoosed.setChoosed(true);
@@ -422,9 +441,10 @@ public class CanvasPanel extends JScrollPane {
 		 */
 		public void mouseReleased(MouseEvent me) {
 			if (ECMMainFrame.command == Command.Choose && fromDragging) {
-				Undotooler.pushUndoCommand(new UndoCommand(beforeMovedElement, UndoCommand.ActionType.Move));
 				
 				if (currentChoosed != null) {
+					Undotooler.pushUndoCommand(new UndoCommand(beforeMovedElement, UndoCommand.ActionType.Move));
+					
 					if (!currentChoosed.isConnectedOwner()
 							|| !currentChoosed.isConnectedSon()) {
 						model.reSetConnected(currentChoosed);
@@ -486,4 +506,5 @@ public class CanvasPanel extends JScrollPane {
 			canvasPanel.repaint();
 		}
 	}
+
 }

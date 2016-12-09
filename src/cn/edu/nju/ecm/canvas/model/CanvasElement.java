@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class CanvasElement implements Serializable {
 
 	/**
@@ -300,16 +301,9 @@ public class CanvasElement implements Serializable {
 		return newXY;
 	}
 
-	public CanvasElement copy() {
+	public CanvasElement copyLocation() {
 		CanvasElement copy = new CanvasElement();
-		copy.setChoosed(choosed);
-		copy.setConnectedOwner(connectedOwner);
-		copy.setConnectedSon(connectedSon);
-		copy.setRotateOwner(rotateOwner);
-		copy.setElementType(elementType);
-		copy.setHeight(height);
 		copy.setID(ID);
-		copy.setWidth(width);
 		copy.setX1Y1(x1, y1);
 		copy.setX2Y2(x2, y2);
 		return copy;

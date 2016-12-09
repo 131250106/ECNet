@@ -209,6 +209,10 @@ public class HRelationModel extends CanvasElement {
 	}
 
 	public void setConnectedOwner(CanvasElement owner) {
+		if(owner!=null){
+			resetConnectedOwner();
+			owner.getConnectedOutputs().add(this);
+		}
 		this.connectedInput = owner;
 	}
 
@@ -217,6 +221,10 @@ public class HRelationModel extends CanvasElement {
 	}
 
 	public void setConnectedSon(CanvasElement son) {
+		if(son!=null){
+			resetConnectedSon();
+			son.getConnectedInputs().add(this);
+		}
 		this.connectedOutput = son;
 	}
 
@@ -304,13 +312,4 @@ public class HRelationModel extends CanvasElement {
 		return result;
 	}
 	
-	public CanvasElement copy() {
-		CanvasElement copy = new HRelationModel(getX1(), getY1(), getX2(),
-				getY2(), getID(), gethRelation());
-		copy.setConnectedOwner(getConnectedOwner());
-		copy.setConnectedOwner(isConnectedOwner());
-		copy.setConnectedSon(getConnectedSon());
-		copy.setConnectedSon(isConnectedSon());
-		return copy;
-	}
 }

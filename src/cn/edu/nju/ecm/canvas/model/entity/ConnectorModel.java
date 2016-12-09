@@ -162,13 +162,6 @@ public class ConnectorModel extends CanvasElement {
 		return result;
 	}
 
-	public CanvasElement copy() {
-		CanvasElement copy = new ConnectorModel(getX1(), getY1(), getHeight(),
-				getWidth(), getID(), gethConnector());
-		copy.setConnectedInputs(getConnectedInputs());
-		return copy;
-	}
-	
 	public int getDegree(){
 		return this.connectedInputs.size();
 	}

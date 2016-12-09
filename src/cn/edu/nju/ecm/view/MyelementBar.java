@@ -5,7 +5,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.Locale;
 
 import javax.swing.JToggleButton;
 import javax.swing.JTabbedPane;

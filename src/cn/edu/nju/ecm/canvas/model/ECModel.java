@@ -58,6 +58,21 @@ public class ECModel implements Serializable {
 	public boolean deleteElement(int ID, boolean isUndo) {
 		CanvasElement element = this.getElementByID(ID);
 		if (element != null) {
+			element.setConnectedOwner(false);
+			element.resetConnectedOwner();
+			element.setConnectedSon(false);
+			element.resetConnectedSon();
+			if(element.getElementType()==ElementType.Body){
+				for(CanvasElement ce:element.getConnectedOutputs()){
+					ce.setConnectedOwner(false);
+				}
+				element.getConnectedOutputs().clear();
+			}else if(element.getElementType()==ElementType.Connector){
+				for(CanvasElement ce:element.getConnectedInputs()){
+					ce.setConnectedSon(false);;
+				}
+				element.getConnectedInputs().clear();
+			}
 			this.getElements().remove(element);
 			if (!isUndo) // 如果不是由于撤销操作引起的则增加undo记录
 				Undotooler.pushUndoCommand(new UndoCommand(element,
@@ -190,7 +205,6 @@ public class ECModel implements Serializable {
 							ce.setChoosed(false);
 							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
-							ce.getConnectedOutputs().add(element);
 							element.setConnectedOwner(ce);
 							break;
 						}
@@ -217,7 +231,6 @@ public class ECModel implements Serializable {
 						if (ce.pointWithInMe(element.getX1(), element.getY1())) {
 							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
-							ce.getConnectedOutputs().add(element);
 							element.setConnectedOwner(ce);
 						}
 						ce.setChoosed(false);
@@ -226,7 +239,6 @@ public class ECModel implements Serializable {
 						if (ce.pointWithInMe(element.getX2(), element.getY2())) {
 							element.setConnectedSon(true);
 							element.resetConnectedPointSon(ce);
-							ce.getConnectedInputs().add(element);
 							element.setConnectedSon(ce);
 						}
 						ce.setChoosed(false);
@@ -257,9 +269,26 @@ public class ECModel implements Serializable {
 	}
 	
 	public void reSetAllElements(){
+		
+		for (CanvasElement ce : this.elements) {
+			if(ce.getID()==4||ce.getID()==3){
+				for(CanvasElement re:ce.getConnectedOutputs()){
+					System.out.println(ce.getID()+" : "+re.getID());
+				}
+			}
+		}
+		
 		for (CanvasElement ce : this.elements) {
 			updateConnectable(ce);
 			reSetConnected(ce);
+		}
+		System.out.println("After format");
+		for (CanvasElement ce : this.elements) {
+			if(ce.getID()==4||ce.getID()==3){
+				for(CanvasElement re:ce.getConnectedOutputs()){
+					System.out.println(ce.getID()+" : "+re.getID());
+				}
+			}
 		}
 	}
 

@@ -283,6 +283,10 @@ public class EHeaderModel extends CanvasElement {
 	}
 
 	public void setConnectedOwner(CanvasElement owner) {
+		if(owner!=null){
+			resetConnectedOwner();
+			owner.getConnectedOutputs().add(this);
+		}
 		this.connectedInput = owner;
 	}
 
@@ -315,13 +319,4 @@ public class EHeaderModel extends CanvasElement {
 		return result;
 	}
 	
-	public CanvasElement copy() {
-		CanvasElement copy = new EHeaderModel(getX1(), getY1(), getX2(),
-				getY2(), getID(), geteHeader());
-		copy.setConnectedOwner(getConnectedOwner());
-		copy.setConnectedOwner(isConnectedOwner());
-		copy.setConnectedOutputs(getConnectedOutputs());
-		copy.setConnectedInputs(getConnectedInputs());
-		return copy;
-	}
 }
