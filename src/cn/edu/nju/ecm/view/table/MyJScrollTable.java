@@ -43,6 +43,7 @@ public class MyJScrollTable extends JPanel {
 	private TableModel dataModel;
 	private MyButtonEditor myButtonEditor;
 	private MyButtonRenderer myButtonRenderer;
+	private JComboBox<String> comboBox;
 	
 	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "OwnerId", "操作" };
 
@@ -72,18 +73,11 @@ public class MyJScrollTable extends JPanel {
 	public JScrollPane createTable() {
 		tableView = new JTable();
 		loadData();
-		JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox = new JComboBox<String>();
 		comboBox.addItem("链体");
 		comboBox.addItem("链头");
 		comboBox.addItem("连结点");
 		comboBox.addItem("箭头");
-
-		TableColumn typeColumn = tableView.getColumn("图元类型");
-		typeColumn.setCellEditor(new DefaultCellEditor(comboBox));
-
-		DefaultTableCellRenderer tcrLeft = new DefaultTableCellRenderer();
-		tcrLeft.setHorizontalAlignment(JLabel.LEFT);
-		tableView.getColumn("ID(唯一标识符)").setCellRenderer(tcrLeft);
 
 		tableView.setRowHeight(30);
 
@@ -308,5 +302,12 @@ public class MyJScrollTable extends JPanel {
 
 		tableView.getColumnModel().getColumn(4)
 			.setCellRenderer(myButtonRenderer);
+		
+		TableColumn typeColumn = tableView.getColumn("图元类型");
+		typeColumn.setCellEditor(new DefaultCellEditor(comboBox));
+
+		DefaultTableCellRenderer tcrLeft = new DefaultTableCellRenderer();
+		tcrLeft.setHorizontalAlignment(JLabel.LEFT);
+		tableView.getColumn("ID(唯一标识符)").setCellRenderer(tcrLeft);
 	}
 }

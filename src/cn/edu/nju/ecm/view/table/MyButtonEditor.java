@@ -99,7 +99,7 @@ public class MyButtonEditor extends AbstractCellEditor implements
 					}
 					canvasPanel.getMytable().ResetTableView();
 				}
-//				canvasPanel.model.autoFormat();
+				canvasPanel.model.autoFormat();
 				canvasPanel.refresh();
 			}
 		});
