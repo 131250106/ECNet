@@ -212,6 +212,7 @@ public class HRelationModel extends CanvasElement {
 		if(owner!=null){
 			resetConnectedOwner();
 			owner.getConnectedOutputs().add(this);
+			setConnectedOwner(true);
 		}else{
 			setConnectedOwner(false);
 		}
@@ -226,6 +227,7 @@ public class HRelationModel extends CanvasElement {
 		if(son!=null){
 			resetConnectedSon();
 			son.getConnectedInputs().add(this);
+			setConnectedSon(true);
 		}else{
 			setConnectedSon(false);
 		}

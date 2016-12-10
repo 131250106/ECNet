@@ -191,7 +191,7 @@ public class CanvasElement implements Serializable {
 		return connectedOwner;
 	}
 
-	public void setConnectedOwner(boolean connected) {
+	protected void setConnectedOwner(boolean connected) {
 		this.connectedOwner = connected;
 	}
 
@@ -199,7 +199,7 @@ public class CanvasElement implements Serializable {
 		return connectedSon;
 	}
 
-	public void setConnectedSon(boolean connected) {
+	protected void setConnectedSon(boolean connected) {
 		this.connectedSon = connected;
 	}
 

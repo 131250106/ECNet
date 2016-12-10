@@ -209,7 +209,7 @@ public class CanvasPanel extends JScrollPane {
 	}
 
 	public void deleteCurrentElement() {							//删除当前选中的图元
-		if (model.deleteElement(currentChoosed.getID(), false)) {
+		if (currentChoosed!=null&&model.deleteElement(currentChoosed.getID(), false)) {
 			refresh();
 			ECMMainFrame.resetElementInfo();
 		}
@@ -261,13 +261,24 @@ public class CanvasPanel extends JScrollPane {
 		if(beforeOne!=null){
 			beforeOne.setX1Y1(copyOne.getX1(), copyOne.getY1());
 			beforeOne.setX2Y2(copyOne.getX2(), copyOne.getY2());
-			model.updateConnectable(beforeOne);
 			model.reSetAllElements();
 			refresh();
 		}
 		
 	}
 
+	public void removeToBefore(ArrayList<CanvasElement> elementlist) {
+		for(CanvasElement copyOne:elementlist){
+			CanvasElement beforeOne = model.getElementByID(copyOne.getID());
+			if(beforeOne!=null){
+				beforeOne.setX1Y1(copyOne.getX1(), copyOne.getY1());
+				beforeOne.setX2Y2(copyOne.getX2(), copyOne.getY2());
+				
+			}
+		}
+		model.reSetAllElements();
+		refresh();
+	}
 
 	public void refresh() {								//修改后刷新界面
 		setChanged(true);
@@ -496,9 +507,7 @@ public class CanvasPanel extends JScrollPane {
 		public void mouseDragged(MouseEvent me) {
 			if (currentChoosed != null) {
 				setChanged(true);
-				currentChoosed.setConnectedOwner(false);
 				currentChoosed.resetConnectedOwner();
-				currentChoosed.setConnectedSon(false);
 				currentChoosed.resetConnectedSon();
 				if (rotate) {
 					currentChoosed.resetPointsRotate(me.getX(), me.getY());
@@ -527,6 +536,5 @@ public class CanvasPanel extends JScrollPane {
 	public MyJScrollTable getMytable() {
 		return mytable;
 	}
-	
-	
+
 }

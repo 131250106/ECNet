@@ -286,6 +286,7 @@ public class EHeaderModel extends CanvasElement {
 		if(owner!=null){
 			resetConnectedOwner();
 			owner.getConnectedOutputs().add(this);
+			setConnectedOwner(true);
 		}else{
 			setConnectedOwner(false);
 		}

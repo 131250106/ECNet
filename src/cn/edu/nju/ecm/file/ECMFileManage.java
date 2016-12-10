@@ -87,7 +87,6 @@ public class ECMFileManage {
 	public static EHeaderModel parseEHeader(Element eheader, ECModel model) {
 		String name = eheader.element("name").getText();
 		String content = eheader.element("content").getText();
-		boolean connected = Boolean.parseBoolean(eheader.element("connected").getText());
 		int ownerID = 0;
 		EHeader entityEHeader = new EHeader(name, content);
 		if (eheader.element("ownerID") != null) {
@@ -105,7 +104,6 @@ public class ECMFileManage {
 			headerModel.setConnectedOwner(model.getElementByID(ownerID));
 			model.getElementByID(ownerID).getConnectedOutputs().add(headerModel);
 		}
-		headerModel.setConnectedOwner(connected);
 
 		return headerModel;
 	}
@@ -146,12 +144,10 @@ public class ECMFileManage {
 		if (ownerID != -1) {
 			relationModel.setConnectedOwner(model.getElementByID(ownerID));
 			model.getElementByID(ownerID).getConnectedOutputs().add(relationModel);
-			relationModel.setConnectedOwner(true);
 		}
 		if (sonID != -1) {
 			relationModel.setConnectedSon(model.getElementByID(sonID));
 			model.getElementByID(sonID).getConnectedInputs().add(relationModel);
-			relationModel.setConnectedSon(true);
 		}
 
 		return relationModel;

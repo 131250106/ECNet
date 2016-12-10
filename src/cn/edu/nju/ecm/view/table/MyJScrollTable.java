@@ -41,6 +41,9 @@ public class MyJScrollTable extends JPanel {
 
 	private Object[][] data;
 	private TableModel dataModel;
+	private MyButtonEditor myButtonEditor;
+	private MyButtonRenderer myButtonRenderer;
+	
 	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "OwnerId", "操作" };
 
 	public MyJScrollTable(CanvasPanel canvasPanel) {
@@ -84,11 +87,14 @@ public class MyJScrollTable extends JPanel {
 
 		tableView.setRowHeight(30);
 
+		myButtonEditor = new MyButtonEditor(canvasPanel);
+		myButtonRenderer = new MyButtonRenderer();
+		
 		tableView.getColumnModel().getColumn(4)
-				.setCellEditor(new MyButtonEditor(canvasPanel));
+				.setCellEditor(myButtonEditor);
 
 		tableView.getColumnModel().getColumn(4)
-				.setCellRenderer(new MyButtonRenderer());
+				.setCellRenderer(myButtonRenderer);
 
 		tableView.addMouseListener(new MouseListener() {
 			@Override
@@ -247,7 +253,7 @@ public class MyJScrollTable extends JPanel {
 				else
 					data[i][3] = " ";
 			} else if (elements.get(i).getElementType() == ElementType.Connector) {
-				data[i][0] = "       联结点";
+				data[i][0] = "      联结点";
 				data[i][1] = elements.get(i).getID();
 				data[i][2] = ((ConnectorModel) elements.get(i)).gethConnector()
 						.getName();
@@ -298,8 +304,9 @@ public class MyJScrollTable extends JPanel {
 	public void ResetTableView() {
 		loadData();
 		tableView.getColumnModel().getColumn(4)
-				.setCellEditor(new MyButtonEditor(canvasPanel));
+			.setCellEditor(myButtonEditor);
+
 		tableView.getColumnModel().getColumn(4)
-				.setCellRenderer(new MyButtonRenderer());
+			.setCellRenderer(myButtonRenderer);
 	}
 }

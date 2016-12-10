@@ -54,13 +54,17 @@ public class ECModel implements Serializable {
 		}
 		this.getElements().add(0, element);
 	}
+	
+	public void insertTableElement(CanvasElement element) {
+		this.maxIDNumber++;
+		element.setID(this.maxIDNumber);
+		this.getElements().add(0, element);
+	}
 
 	public boolean deleteElement(int ID, boolean isUndo) {
 		CanvasElement element = this.getElementByID(ID);
 		if (element != null) {
-			element.setConnectedOwner(false);
 			element.resetConnectedOwner();
-			element.setConnectedSon(false);
 			element.resetConnectedSon();
 			if(element.getElementType()==ElementType.Body){
 				for(CanvasElement ce:element.getConnectedOutputs()){
@@ -203,7 +207,6 @@ public class ECModel implements Serializable {
 					if (ce.getElementType() == ElementType.Body) {
 						if (ce.pointWithInMe(element.getX1(), element.getY1())) {
 							ce.setChoosed(false);
-							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
 							element.setConnectedOwner(ce);
 							break;
@@ -229,7 +232,6 @@ public class ECModel implements Serializable {
 				if (ce.isChoosed()) {
 					if (ce.getElementType() == ElementType.Header) {
 						if (ce.pointWithInMe(element.getX1(), element.getY1())) {
-							element.setConnectedOwner(true);
 							element.resetConnectedPointOwner(ce);
 							element.setConnectedOwner(ce);
 						}
@@ -237,7 +239,6 @@ public class ECModel implements Serializable {
 
 					} else if (ce.getElementType() == ElementType.Connector) {
 						if (ce.pointWithInMe(element.getX2(), element.getY2())) {
-							element.setConnectedSon(true);
 							element.resetConnectedPointSon(ce);
 							element.setConnectedSon(ce);
 						}

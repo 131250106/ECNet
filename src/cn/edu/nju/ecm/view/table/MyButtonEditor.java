@@ -18,6 +18,10 @@ import cn.edu.nju.ecm.canvas.model.entity.ConnectorModel;
 import cn.edu.nju.ecm.canvas.model.entity.EBodyModel;
 import cn.edu.nju.ecm.canvas.model.entity.EHeaderModel;
 import cn.edu.nju.ecm.canvas.model.entity.HRelationModel;
+import cn.edu.nju.ecm.entity.detail.EBody;
+import cn.edu.nju.ecm.entity.detail.EHeader;
+import cn.edu.nju.ecm.entity.detail.HConnector;
+import cn.edu.nju.ecm.entity.detail.HRelation;
 import cn.edu.nju.ecm.view.CanvasPanel;
 import cn.edu.nju.ecm.view.ECMMainFrame;
 
@@ -66,128 +70,36 @@ public class MyButtonEditor extends AbstractCellEditor implements
 			public void actionPerformed(ActionEvent e) {
 				if (ID != -1) {					//修改操作
 					CanvasElement ce = canvasPanel.model.getElementByID(ID);
-					if (ce.getElementType() == ElementType.Body) {
-						((EBodyModel) ce).geteBody()
-								.setName(
-										(String) canvasPanel.getMytable()
-												.getData()[row][2]);
-					} else if (ce.getElementType() == ElementType.Connector) {
-						((ConnectorModel) ce).gethConnector()
-								.setName(
-										(String) canvasPanel.getMytable()
-												.getData()[row][2]);
-						try{
-							//TODO 暂时没想好怎么做，图表有没有必要显示箭头
-							
-							String[] ids = ((String) canvasPanel.getMytable()
-									.getData()[row][3]).split(";");
-							for(int i=0;i<ids.length;i++){
-								
-							}
-						}catch(Exception ex){
-							ex.printStackTrace();
-						}
-						
-					} else if (ce.getElementType() == ElementType.Header) {
-						((EHeaderModel) ce).geteHeader()
-								.setName(
-										(String) canvasPanel.getMytable()
-												.getData()[row][2]);
-						try {
-							String temp = ((String) canvasPanel.getMytable()
-									.getData()[row][3]).trim();
-							if (temp.equals("")) {
-								ce.setConnectedOwner(false);
-								ce.resetConnectedOwner();
-							} else {
-								int ownerId = Integer.parseInt(temp);
-								CanvasElement body = canvasPanel.model
-										.getElementByID(ownerId);
-								if(body==null || body.getElementType()!=ElementType.Body){
-									ce.setConnectedOwner(false);
-									ce.resetConnectedOwner();
-								}else{
-									ce.setConnectedOwner(true);
-									ce.setConnectedOwner(body);
-								}
-								
-							}
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					} else if (ce.getElementType() == ElementType.Relation) {
-						((HRelationModel) ce).gethRelation()
-								.setName(
-										(String) canvasPanel.getMytable()
-												.getData()[row][2]);
-						try {
-							String[] ids = ((String) canvasPanel.getMytable()
-									.getData()[row][3]).split("&");
-							if(ids.length == 0){
-								ce.setConnectedOwner(false);
-								ce.resetConnectedOwner();
-								ce.setConnectedSon(false);
-								ce.resetConnectedSon();
-							}else if(ids.length == 1){
-								if (!ids[0].equals("")) {
-									int ownerId = Integer.parseInt(ids[0]);
-									CanvasElement header = canvasPanel.model
-											.getElementByID(ownerId);
-									if(header==null || header.getElementType()!=ElementType.Header){
-										ce.setConnectedOwner(false);
-										ce.resetConnectedOwner();
-									}else{
-										ce.setConnectedOwner(true);
-										ce.setConnectedOwner(header);
-									}
-									
-								} else {
-									ce.setConnectedOwner(false);
-									ce.resetConnectedOwner();
-								}
-								ce.setConnectedSon(false);
-								ce.resetConnectedSon();
-							}else if (ids.length == 2) {
-								if (!ids[0].equals("")) {
-									int ownerId = Integer.parseInt(ids[0]);
-									CanvasElement header = canvasPanel.model
-											.getElementByID(ownerId);
-									if(header==null || header.getElementType()!=ElementType.Header){
-										ce.setConnectedOwner(false);
-										ce.resetConnectedOwner();
-									}else{
-										ce.setConnectedOwner(true);
-										ce.setConnectedOwner(header);
-									}
-									
-								} else {
-									ce.setConnectedOwner(false);
-									ce.resetConnectedOwner();
-								}
-								if (!ids[1].equals("")) {
-									int sonId = Integer.parseInt(ids[1]);
-									CanvasElement connector = canvasPanel.model.getElementByID(sonId);
-									if(connector==null || connector.getElementType()!=ElementType.Connector){
-										ce.setConnectedSon(false);
-										ce.resetConnectedSon();
-									}else{
-										ce.setConnectedSon(true);
-										ce.setConnectedSon(connector);
-									}
-								} else {
-									ce.setConnectedSon(false);
-									ce.resetConnectedSon();
-								}
-							}
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
-					}
-					ECMMainFrame.showElementInfo(canvasPanel.model
-							.getElementByID(ID));
+					modifyElement(ce);
 				} else if (ID == -1) {				//新增操作
-
+					Object[][] data = canvasPanel.getMytable().getData();
+					String type = (String)data[row][0];
+					if(type.equals("链体")){
+						EBody eBodyEntity = new EBody((String)data[row][2], "");
+						EBodyModel eBodyModel = new EBodyModel(50, 50, 2);
+						eBodyModel.seteBody(eBodyEntity);
+						canvasPanel.model.insertTableElement(eBodyModel);
+					}else if(type.equals("链头")){
+						EHeader eHeaderEntity = new EHeader((String)data[row][2], "");
+						EHeaderModel eHeaderModel = new EHeaderModel(50, 50, 2);
+						eHeaderModel.seteHeader(eHeaderEntity);
+						canvasPanel.model.insertTableElement(eHeaderModel);
+						modifyElement(canvasPanel.model.getElementByID(eHeaderModel.getID()));
+					}else if(type.equals("连结点")){
+						HConnector hConnectorEntity = new HConnector((String)data[row][2], "");
+						ConnectorModel hConnectorModel = new ConnectorModel(50, 50, 2);
+						hConnectorModel.sethConnector(hConnectorEntity);
+						canvasPanel.model.insertTableElement(hConnectorModel);
+					}else if(type.equals("箭头")){
+						HRelation hRelationEntity = new HRelation((String)data[row][2], "");
+						HRelationModel hRelationModel = new HRelationModel(50, 50, 2);
+						hRelationModel.sethRelation(hRelationEntity);
+						canvasPanel.model.insertTableElement(hRelationModel);
+						modifyElement(canvasPanel.model.getElementByID(hRelationModel.getID()));
+					}
+					canvasPanel.getMytable().ResetTableView();
 				}
+//				canvasPanel.model.autoFormat();
 				canvasPanel.refresh();
 			}
 		});
@@ -223,6 +135,113 @@ public class MyButtonEditor extends AbstractCellEditor implements
 	@Override
 	public Object getCellEditorValue() {
 		return delete.getText() + "," + modify.getText() + "," + ID;
+	}
+	
+	private void modifyElement(CanvasElement ce){
+		if (ce.getElementType() == ElementType.Body) {
+			((EBodyModel) ce).geteBody()
+					.setName(
+							(String) canvasPanel.getMytable()
+									.getData()[row][2]);
+		} else if (ce.getElementType() == ElementType.Connector) {
+			((ConnectorModel) ce).gethConnector()
+					.setName(
+							(String) canvasPanel.getMytable()
+									.getData()[row][2]);
+			try{
+				//TODO 暂时没想好怎么做，图表有没有必要显示箭头
+				
+				String[] ids = ((String) canvasPanel.getMytable()
+						.getData()[row][3]).split(";");
+				for(int i=0;i<ids.length;i++){
+					
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+			
+		} else if (ce.getElementType() == ElementType.Header) {
+			((EHeaderModel) ce).geteHeader()
+					.setName(
+							(String) canvasPanel.getMytable()
+									.getData()[row][2]);
+			try {
+				String temp = ((String) canvasPanel.getMytable()
+						.getData()[row][3]).trim();
+				if (temp.equals("")) {
+					ce.resetConnectedOwner();
+				} else {
+					int ownerId = Integer.parseInt(temp);
+					CanvasElement body = canvasPanel.model
+							.getElementByID(ownerId);
+					if(body==null || body.getElementType()!=ElementType.Body){
+						ce.resetConnectedOwner();
+					}else{
+						ce.setConnectedOwner(body);
+					}
+					
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else if (ce.getElementType() == ElementType.Relation) {
+			((HRelationModel) ce).gethRelation()
+					.setName(
+							(String) canvasPanel.getMytable()
+									.getData()[row][2]);
+			try {
+				String[] ids = ((String) canvasPanel.getMytable()
+						.getData()[row][3]).split("&");
+				if(ids.length == 0){
+					ce.resetConnectedOwner();
+					ce.resetConnectedSon();
+				}else if(ids.length == 1){
+					if (!ids[0].equals("")) {
+						int ownerId = Integer.parseInt(ids[0]);
+						CanvasElement header = canvasPanel.model
+								.getElementByID(ownerId);
+						if(header==null || header.getElementType()!=ElementType.Header){
+							ce.resetConnectedOwner();
+						}else{
+							ce.setConnectedOwner(header);
+						}
+						
+					} else {
+						ce.resetConnectedOwner();
+					}
+					ce.resetConnectedSon();
+				}else if (ids.length == 2) {
+					if (!ids[0].equals("")) {
+						int ownerId = Integer.parseInt(ids[0]);
+						CanvasElement header = canvasPanel.model
+								.getElementByID(ownerId);
+						if(header==null || header.getElementType()!=ElementType.Header){
+							ce.resetConnectedOwner();
+						}else{
+							ce.setConnectedOwner(header);
+						}
+						
+					} else {
+						ce.resetConnectedOwner();
+					}
+					if (!ids[1].equals("")) {
+						int sonId = Integer.parseInt(ids[1]);
+						CanvasElement connector = canvasPanel.model.getElementByID(sonId);
+						if(connector==null || connector.getElementType()!=ElementType.Connector){
+							ce.resetConnectedSon();
+						}else{
+							ce.setConnectedSon(connector);
+						}
+					} else {
+						ce.resetConnectedSon();
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+		ECMMainFrame.showElementInfo(canvasPanel.model
+				.getElementByID(ID));
 	}
 
 }

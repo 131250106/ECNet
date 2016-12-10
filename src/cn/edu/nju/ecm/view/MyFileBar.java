@@ -232,8 +232,7 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 									.getSelectedComponent();
 							if (canvasPanel != null
 									&& undo.getElementlist() != null) {
-								for (CanvasElement ce : undo.getElementlist())
-									canvasPanel.removeToBefore(ce);
+								canvasPanel.removeToBefore(undo.getElementlist());
 							}
 						}
 					}
