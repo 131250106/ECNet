@@ -25,7 +25,7 @@ public class MyStatusPanel extends JPanel { // 底部状态栏，外加模式的选择
 	private JTabbedPane tabbedCanvasPanel;
 
 	public MyStatusPanel(JTabbedPane tabbedCanvasPanel) {
-		this.tabbedCanvasPanel = tabbedCanvasPanel;
+		this.setTabbedCanvasPanel(tabbedCanvasPanel);
 		
 		setLayout(new BorderLayout(0, 0));
 
@@ -43,10 +43,11 @@ public class MyStatusPanel extends JPanel { // 底部状态栏，外加模式的选择
 				tableModel.setSelected(false);
 				imageModel.setSelected(true);
 				CurrentModel = Model.Image;
-				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-						.getSelectedComponent();
-				if (canvasPanel != null)
-					canvasPanel.changeModel();
+				for (int i = 0; i < tabbedCanvasPanel.getTabCount(); i++) {
+					CanvasPanel currentCanvas = (CanvasPanel) tabbedCanvasPanel
+							.getComponentAt(i);
+					currentCanvas.changeModel();
+				}
 			}
 		});
 		tableModel.addActionListener(new ActionListener() {
@@ -76,5 +77,13 @@ public class MyStatusPanel extends JPanel { // 底部状态栏，外加模式的选择
 		sliderPanel.add(canvaSlider);
 		canvasSliderValueLabel.setText(canvaSlider.getValue() + "%");
 
+	}
+
+	public JTabbedPane getTabbedCanvasPanel() {
+		return tabbedCanvasPanel;
+	}
+
+	public void setTabbedCanvasPanel(JTabbedPane tabbedCanvasPanel) {
+		this.tabbedCanvasPanel = tabbedCanvasPanel;
 	}
 }

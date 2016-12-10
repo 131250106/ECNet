@@ -364,7 +364,7 @@ public class MyFormat {
 		return new ArrayList<CanvasElement>();
 	}
 
-	private ArrayList<CanvasElement> getAllRelation(CanvasElement element) {
+	public ArrayList<CanvasElement> getAllRelation(CanvasElement element) {
 		if (element.getElementType() == ElementType.Connector) {
 			ArrayList<CanvasElement> result = new ArrayList<CanvasElement>();
 			for (CanvasElement ce : elements) {

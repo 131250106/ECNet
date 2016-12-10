@@ -43,6 +43,7 @@ import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.MyStatusPanel.Model;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
+import cn.edu.nju.ecm.view.table.MyJScrollTable;
 
 public class CanvasPanel extends JScrollPane {
 
@@ -164,9 +165,7 @@ public class CanvasPanel extends JScrollPane {
 		});
 		popupMenu.add(undoItem);
 		
-		setcanvasPanelPreferredSize(); 				//默认设置为图模式
-		
-		mytable = new MyJScrollTable(model);
+		mytable = new MyJScrollTable(this);
 		
 		changeModel();
 	}
@@ -273,6 +272,7 @@ public class CanvasPanel extends JScrollPane {
 	public void refresh() {								//修改后刷新界面
 		setChanged(true);
 		canvasPanel.repaint();
+		mytable.reloadData();
 	}
 	
 	public void autoFormat(){								//自动化排版
@@ -517,8 +517,9 @@ public class CanvasPanel extends JScrollPane {
 		ECMMainFrame.resetButton();
 		ECMMainFrame.resetElementInfo();
 		if(MyStatusPanel.CurrentModel==Model.Image){
-			this.setViewportView(canvasPanel);
+			setcanvasPanelPreferredSize();
 		}else if(MyStatusPanel.CurrentModel==Model.Table){
+			mytable.reloadData();
 			this.setViewportView(mytable);
 		}
 	}

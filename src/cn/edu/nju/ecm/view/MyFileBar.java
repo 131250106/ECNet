@@ -29,10 +29,11 @@ import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.utility.Undotooler;
 import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
+import cn.edu.nju.ecm.view.MyStatusPanel.Model;
 import cn.edu.nju.ecm.view.entity.ElementDialog;
 import cn.edu.nju.ecm.view.entity.ElementDialog.ElementType;
 
-public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
+public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 
 	private static final long serialVersionUID = 1L;
 
@@ -44,7 +45,7 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 
 	// private int openNum = 0;
 
-	public MyFileBar(JTabbedPane tabbedCanvasPane,JFrame frmEcm) {
+	public MyFileBar(JTabbedPane tabbedCanvasPane, JFrame frmEcm) {
 		super();
 		this.frmEcm = frmEcm;
 		this.tabbedCanvasPanel = tabbedCanvasPane;
@@ -153,10 +154,13 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 		copyMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//暂时只在图元模式下支持
+				if (MyStatusPanel.CurrentModel == Model.Image) {
 				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.copyElement();
+				}
 			}
 		});
 		editMenu.add(copyMenuItem);
@@ -168,11 +172,13 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 		pasteMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				//暂时只在图元模式下支持
+				if (MyStatusPanel.CurrentModel == Model.Image) {
 				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.pasteElement();
+				}
 			}
 		});
 		editMenu.add(pasteMenuItem);
@@ -200,31 +206,35 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 		undoMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				UndoCommand undo = Undotooler.popUndoCommand();
-				if (undo != null) {
-					if (undo.getType() == UndoCommand.ActionType.Delete) {
-						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-								.getSelectedComponent();
-						if (canvasPanel != null)
-							canvasPanel.recoverElement(undo.getElement());
-					} else if (undo.getType() == UndoCommand.ActionType.New) {
-						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-								.getSelectedComponent();
-						if (canvasPanel != null)
-							canvasPanel.deleteElementById(undo.getElement()
-									.getID(), true);
-					} else if (undo.getType() == UndoCommand.ActionType.Move) {
-						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-								.getSelectedComponent();
-						if (canvasPanel != null) {
-							canvasPanel.removeToBefore(undo.getElement());
-						}
-					} else if (undo.getType() == UndoCommand.ActionType.Format) {
-						CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
-								.getSelectedComponent();
-						if (canvasPanel != null&&undo.getElementlist()!=null) {
-							for(CanvasElement ce:undo.getElementlist())
-								canvasPanel.removeToBefore(ce);
+				//暂时只在图元模式下支持
+				if (MyStatusPanel.CurrentModel == Model.Image) {
+					UndoCommand undo = Undotooler.popUndoCommand();
+					if (undo != null) {
+						if (undo.getType() == UndoCommand.ActionType.Delete) {
+							CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+									.getSelectedComponent();
+							if (canvasPanel != null)
+								canvasPanel.recoverElement(undo.getElement());
+						} else if (undo.getType() == UndoCommand.ActionType.New) {
+							CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+									.getSelectedComponent();
+							if (canvasPanel != null)
+								canvasPanel.deleteElementById(undo.getElement()
+										.getID(), true);
+						} else if (undo.getType() == UndoCommand.ActionType.Move) {
+							CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+									.getSelectedComponent();
+							if (canvasPanel != null) {
+								canvasPanel.removeToBefore(undo.getElement());
+							}
+						} else if (undo.getType() == UndoCommand.ActionType.Format) {
+							CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+									.getSelectedComponent();
+							if (canvasPanel != null
+									&& undo.getElementlist() != null) {
+								for (CanvasElement ce : undo.getElementlist())
+									canvasPanel.removeToBefore(ce);
+							}
 						}
 					}
 				}
@@ -239,10 +249,13 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 		formatMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				//暂时只在图元模式下支持
+				if (MyStatusPanel.CurrentModel == Model.Image) {
 				CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
 						.getSelectedComponent();
 				if (canvasPanel != null)
 					canvasPanel.autoFormat();
+				}
 			}
 		});
 		editMenu.add(formatMenuItem);
@@ -290,8 +303,7 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 							.getComponentAt(canvasIndex)).model.getFile()) != null
 							&& tmpFile.getAbsolutePath().equals(
 									this.file.getAbsolutePath())) {
-						tabbedCanvasPanel
-								.setSelectedIndex(canvasIndex);
+						tabbedCanvasPanel.setSelectedIndex(canvasIndex);
 						return;
 					}
 				}
@@ -312,9 +324,8 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 			JLabel title = new JLabel();
 			title.setOpaque(true);
 			try {
-				CanvasPanel canvasPanel = new CanvasPanel(
-						 fileType, title, file, newModel,
-						frmEcm);
+				CanvasPanel canvasPanel = new CanvasPanel(fileType, title,
+						file, newModel, frmEcm);
 
 				tabbedCanvasPanel.add(canvasPanel);
 				canvasPanel.setVisible(true);
@@ -331,16 +342,16 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 				closeIcon.setIcon(new ImageIcon("resources/close-out.png",
 						"Close"));
 				closeIcon.setToolTipText("关闭");
-				componentPanel.add(title,BorderLayout.WEST);
-				componentPanel.add(closeIcon,BorderLayout.EAST);
+				componentPanel.add(title, BorderLayout.WEST);
+				componentPanel.add(closeIcon, BorderLayout.EAST);
 
 				componentPanel.setOpaque(false);
 				title.setOpaque(false);
 				closeIcon.setOpaque(false);
-				
+
 				tabbedCanvasPanel.setTabComponentAt(
-						tabbedCanvasPanel
-								.indexOfComponent(canvasPanel), componentPanel);
+						tabbedCanvasPanel.indexOfComponent(canvasPanel),
+						componentPanel);
 
 				tabbedCanvasPanel.setSelectedComponent(canvasPanel);
 
@@ -369,9 +380,8 @@ public class MyFileBar extends JMenuBar {								//最顶层菜单面板以及对应的操作
 				});
 			} catch (DocumentException e1) {
 				// TODO Auto-generated catch block
-				JOptionPane.showMessageDialog(frmEcm,
-						e1.getLocalizedMessage(), "无法打开或者新建文件",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frmEcm, e1.getLocalizedMessage(),
+						"无法打开或者新建文件", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}

@@ -269,31 +269,18 @@ public class ECModel implements Serializable {
 	}
 	
 	public void reSetAllElements(){
-		
-		for (CanvasElement ce : this.elements) {
-			if(ce.getID()==4||ce.getID()==3){
-				for(CanvasElement re:ce.getConnectedOutputs()){
-					System.out.println(ce.getID()+" : "+re.getID());
-				}
-			}
-		}
-		
 		for (CanvasElement ce : this.elements) {
 			updateConnectable(ce);
 			reSetConnected(ce);
-		}
-		System.out.println("After format");
-		for (CanvasElement ce : this.elements) {
-			if(ce.getID()==4||ce.getID()==3){
-				for(CanvasElement re:ce.getConnectedOutputs()){
-					System.out.println(ce.getID()+" : "+re.getID());
-				}
-			}
 		}
 	}
 
 	public void autoFormat() {
 		format.autoFormat();
 		reSetAllElements();
+	}
+
+	public MyFormat getFormat() {
+		return format;
 	}
 }
