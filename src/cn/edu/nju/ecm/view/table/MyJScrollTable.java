@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.print.PrinterException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
@@ -41,6 +40,7 @@ public class MyJScrollTable extends JPanel {
 	private CanvasPanel canvasPanel;
 
 	private Object[][] data;
+	private TableModel dataModel;
 	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "OwnerId", "操作" };
 
 	public MyJScrollTable(CanvasPanel canvasPanel) {
@@ -178,7 +178,7 @@ public class MyJScrollTable extends JPanel {
 	private void loadData() {
 		data = getModelData();
 
-		TableModel dataModel = new AbstractTableModel() {
+		dataModel = new AbstractTableModel() {
 			private static final long serialVersionUID = 1L;
 
 			public int getColumnCount() {
@@ -202,6 +202,8 @@ public class MyJScrollTable extends JPanel {
 			}
 
 			public boolean isCellEditable(int row, int col) {
+				if (col == 1)
+					return false;
 				if (col == 4 || col == 2)
 					return true;
 				if (row == data.length - 1)
@@ -218,8 +220,8 @@ public class MyJScrollTable extends JPanel {
 
 		tableView.setModel(dataModel);
 	}
-	
-	public void reloadData(){
+
+	public void reloadData() {
 		data = getModelData();
 		tableView.repaint();
 	}
@@ -249,36 +251,42 @@ public class MyJScrollTable extends JPanel {
 				data[i][1] = elements.get(i).getID();
 				data[i][2] = ((ConnectorModel) elements.get(i)).gethConnector()
 						.getName();
-				ArrayList<CanvasElement> relationlist = canvasPanel.model.getFormat()
-						.getAllRelation(elements.get(i));
 				String temp = "";
-				for (CanvasElement ce : relationlist) {
-					temp += (ce.getID() + " ; ");
-				}
-				if (temp.length() >= 3)
-					temp = temp.substring(0, temp.length() - 3);
-				else
-					temp=" ";
+				// TODO 暂时没想好怎么做，图表有没有必要显示箭头
+				// ArrayList<CanvasElement> relationlist =
+				// canvasPanel.model.getFormat()
+				// .getAllRelation(elements.get(i));
+				// for (CanvasElement ce : relationlist) {
+				// temp += (ce.getID() + " ; ");
+				// }
+				// if (temp.length() >= 3)
+				// temp = temp.substring(0, temp.length() - 3);
+				// else
+				// temp=" ";
 				data[i][3] = temp;
 			} else if (elements.get(i).getElementType() == ElementType.Relation) {
 				data[i][0] = "           箭头";
 				data[i][1] = elements.get(i).getID();
 				HRelationModel temp = ((HRelationModel) elements.get(i));
 				data[i][2] = temp.gethRelation().getName();
-				
-				if (temp.isConnectedOwner() && temp.isConnectedSon()){
+
+				if (temp.isConnectedOwner() && temp.isConnectedSon()) {
 					data[i][3] = temp.getConnectedOwner().getID() + "&"
 							+ temp.getConnectedSon().getID();
-				}else if (temp.isConnectedOwner()) {
+				} else if (temp.isConnectedOwner()) {
 					data[i][3] = temp.getConnectedOwner().getID() + "&";
 				} else if (temp.isConnectedSon()) {
-					data[i][3] = "&"+temp.getConnectedSon().getID();
+					data[i][3] = "&" + temp.getConnectedSon().getID();
 				} else {
 					data[i][3] = "&";
 				}
 			}
 			data[i][4] = "删除,确认修改," + elements.get(i).getID();
 		}
+		data[elements.size()][0] = "";
+		data[elements.size()][1] = "";
+		data[elements.size()][2] = "";
+		data[elements.size()][3] = "";
 		data[elements.size()][4] = "重置,确认新增," + -1;
 		return data;
 	}
@@ -287,4 +295,11 @@ public class MyJScrollTable extends JPanel {
 		return data;
 	}
 
+	public void ResetTableView() {
+		loadData();
+		tableView.getColumnModel().getColumn(4)
+				.setCellEditor(new MyButtonEditor(canvasPanel));
+		tableView.getColumnModel().getColumn(4)
+				.setCellRenderer(new MyButtonRenderer());
+	}
 }

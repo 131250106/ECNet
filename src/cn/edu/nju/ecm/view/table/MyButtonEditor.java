@@ -50,7 +50,13 @@ public class MyButtonEditor extends AbstractCellEditor implements
 
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(row + " : É¾³ý");
+				System.out.println(ID);
+				if (ID != -1) {
+					canvasPanel.model.deleteElement(ID, true);
+					canvasPanel.getMytable().ResetTableView();
+					ECMMainFrame.resetElementInfo();
+				}
+				canvasPanel.refresh();
 			}
 		});
 

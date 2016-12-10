@@ -53,5 +53,13 @@ public class MyButtonRenderer  implements TableCellRenderer {
         return panel;
     }
 
+	public int getRow() {
+		return row;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
 }
 

@@ -69,7 +69,7 @@ public class ECModel implements Serializable {
 				element.getConnectedOutputs().clear();
 			}else if(element.getElementType()==ElementType.Connector){
 				for(CanvasElement ce:element.getConnectedInputs()){
-					ce.setConnectedSon(false);;
+					ce.setConnectedSon(false);
 				}
 				element.getConnectedInputs().clear();
 			}
