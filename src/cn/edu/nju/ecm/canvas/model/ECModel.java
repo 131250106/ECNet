@@ -284,4 +284,8 @@ public class ECModel implements Serializable {
 	public MyFormat getFormat() {
 		return format;
 	}
+
+	public List<CanvasElement> getSortedElementsByTable() {			//根据表格所需要的格式排序的elements
+		return format.getSortedElementsByTable();
+	}
 }

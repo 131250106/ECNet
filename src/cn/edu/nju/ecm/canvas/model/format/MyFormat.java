@@ -12,17 +12,17 @@ import cn.edu.nju.ecm.canvas.model.CanvasElement.ElementType;
 
 public class MyFormat {
 	private List<CanvasElement> elements;
-	
-	public MyFormat(List<CanvasElement> elements){
+
+	public MyFormat(List<CanvasElement> elements) {
 		this.elements = elements;
 	}
-	
+
 	/**
 	 * 自动化排版功能 使用力向导算法
 	 * */
 	private void autoFormat2() {
 		resetElement();
-		
+
 		Spring sp = new Spring();
 		List<Node> lNodes = new ArrayList<Node>();
 		List<Edge> lEdges = new ArrayList<Edge>();
@@ -58,7 +58,7 @@ public class MyFormat {
 			}
 		}
 		reSetDrawCoordinate();
-		
+
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class MyFormat {
 	 * */
 	public void autoFormat() {
 		boolean isNeedFormat2 = false;
-		
+
 		// 定义相对坐标：
 		int dx = 220;
 		int DY = -1; // 不在一个连通图内的
@@ -90,43 +90,47 @@ public class MyFormat {
 				currentElement.setFlag(-1);
 				double angle = Math.PI;
 				ArrayList<CanvasElement> nextElements = getSortedNextElements(currentElement);
-				if (nextElements.size() > 1 && (currentElement.isStart()||currentElement.getTotalAngle()!=Math.PI))
-					angle = currentElement.getTotalAngle() / (nextElements.size() - 1);
+				if (nextElements.size() > 1
+						&& (currentElement.isStart() || currentElement
+								.getTotalAngle() != Math.PI))
+					angle = currentElement.getTotalAngle()
+							/ (nextElements.size() - 1);
 				else if (nextElements.size() > 0)
-					angle = currentElement.getTotalAngle() / (nextElements.size());
+					angle = currentElement.getTotalAngle()
+							/ (nextElements.size());
 
 				for (int i = 0; i < nextElements.size(); i++) {
 					queueElements.add(nextElements.get(i));
 
 					double DeltaAngle = currentElement.getStartAngle();
-					
+
 					int tempY = currentElement.getRelativeY();
-					
+
 					if (currentElement.isClockwise()) {
-						DeltaAngle-=i*angle;
-						tempY -= dx* Math.sin(DeltaAngle);
-						if(Math.abs(DeltaAngle)<=Math.PI/2)
+						DeltaAngle -= i * angle;
+						tempY -= dx * Math.sin(DeltaAngle);
+						if (Math.abs(DeltaAngle) <= Math.PI / 2)
 							nextElements.get(i).setClockwise(false);
 						else
 							nextElements.get(i).setClockwise(true);
-						
+
 					} else {
-						DeltaAngle+=i*angle;
-						tempY -= dx* Math.sin(DeltaAngle);
-						if(Math.abs(DeltaAngle)<=Math.PI/2)
+						DeltaAngle += i * angle;
+						tempY -= dx * Math.sin(DeltaAngle);
+						if (Math.abs(DeltaAngle) <= Math.PI / 2)
 							nextElements.get(i).setClockwise(true);
 						else
 							nextElements.get(i).setClockwise(false);
 					}
 					int tempX = (int) (currentElement.getRelativeX() + dx
 							* Math.cos(DeltaAngle));
-					
+
 					nextElements.get(i).setStartAngle(DeltaAngle);
 
 					if (nextElements.get(i).getFlag() == 0)
 						nextElements.get(i).setRelativeXY(tempX, tempY);
 					else {
-						isNeedFormat2=  true;
+						isNeedFormat2 = true;
 						tempX += nextElements.get(i).getRelativeX()
 								* nextElements.get(i).getFlag();
 						tempY += nextElements.get(i).getRelativeY()
@@ -135,10 +139,11 @@ public class MyFormat {
 								tempX / (nextElements.get(i).getFlag() + 1),
 								tempY / (nextElements.get(i).getFlag() + 1));
 					}
-					
-					if(i==0)
+
+					if (i == 0)
 						nextElements.get(i).setTotalAngle(Math.PI);
-					else if(i==nextElements.size()-1&&currentElement.isStart())
+					else if (i == nextElements.size() - 1
+							&& currentElement.isStart())
 						nextElements.get(i).setTotalAngle(Math.PI);
 					else
 						nextElements.get(i).setTotalAngle(Math.abs(angle));
@@ -159,41 +164,49 @@ public class MyFormat {
 
 		reSetDrawCoordinate();
 
-		if(isNeedFormat2)
+		if (isNeedFormat2)
 			autoFormat2();
-		
+
 		dealwithNoOutPutHeader();
-		dealWithNoConnectedElements(dx,getMaxRelativeY() + dx*3/2);
+		dealWithNoConnectedElements(dx, getMaxRelativeY() + dx * 3 / 2);
 		resetElement();
 	}
 
-	private void dealWithNoConnectedElements(int dx, int y) {			//处理游离的图元(未与任何其他图元相连接)
+	private void dealWithNoConnectedElements(int dx, int y) { // 处理游离的图元(未与任何其他图元相连接)
 		int x = 50;
-		for(CanvasElement ce : this.elements){
-			if(ce.getElementType()==ElementType.Header && !ce.isConnectedOwner()){
+		for (CanvasElement ce : this.elements) {
+			if (ce.getElementType() == ElementType.Header
+					&& !ce.isConnectedOwner()) {
 				ce.setX1Y1(x, y);
-				ce.setX2Y2(x+dx/2, y);
-				x+=dx;
-			}else if(ce.getElementType()==ElementType.Relation&&!ce.isConnectedSon()&&!ce.isConnectedOwner()){
+				ce.setX2Y2(x + dx / 2, y);
+				x += dx;
+			} else if (ce.getElementType() == ElementType.Relation
+					&& !ce.isConnectedSon() && !ce.isConnectedOwner()) {
 				ce.setX1Y1(x, y);
-				ce.setX2Y2(x+dx/2, y);
-				x+=dx;
+				ce.setX2Y2(x + dx / 2, y);
+				x += dx;
 			}
 		}
 	}
 
-	private void dealwithNoOutPutHeader() {					//处理没有出度的链头,或没有出度的箭头
-		for(CanvasElement ce:this.elements){
-			if(ce.getElementType()==ElementType.Header && ce.isConnectedOwner()&&ce.getFlag()==0){
+	private void dealwithNoOutPutHeader() { // 处理没有出度的链头,或没有出度的箭头
+		for (CanvasElement ce : this.elements) {
+			if (ce.getElementType() == ElementType.Header
+					&& ce.isConnectedOwner() && ce.getFlag() == 0) {
 				CanvasElement body = ce.getConnectedOwner();
-				//TODO 暂定
-				ce.setX2Y2(body.getX1()-ce.getWidth()*3/2, body.getY1()-ce.getWidth()*3/2);
-			}else if(ce.getElementType()==ElementType.Relation && ce.isConnectedOwner()&&!ce.isConnectedSon()){
+				// TODO 暂定
+				ce.setX2Y2(body.getX1() - ce.getWidth() * 3 / 2, body.getY1()
+						- ce.getWidth() * 3 / 2);
+			} else if (ce.getElementType() == ElementType.Relation
+					&& ce.isConnectedOwner() && !ce.isConnectedSon()) {
 				CanvasElement header = ce.getConnectedOwner();
-				ce.setX2Y2(header.getX2()-header.getWidth()*3, header.getY2()-header.getWidth()*3);
-			}else if(ce.getElementType()==ElementType.Relation && !ce.isConnectedOwner()&&ce.isConnectedSon()){
+				ce.setX2Y2(header.getX2() - header.getWidth() * 3,
+						header.getY2() - header.getWidth() * 3);
+			} else if (ce.getElementType() == ElementType.Relation
+					&& !ce.isConnectedOwner() && ce.isConnectedSon()) {
 				CanvasElement connector = ce.getConnectedSon();
-				ce.setX1Y1(connector.getX1()-connector.getWidth(), connector.getY1()-connector.getWidth());
+				ce.setX1Y1(connector.getX1() - connector.getWidth(),
+						connector.getY1() - connector.getWidth());
 			}
 		}
 	}
@@ -201,7 +214,7 @@ public class MyFormat {
 	// 设置链头坐标位置
 	private void setHeaderCoordinate() {
 		for (CanvasElement ce : this.elements) {
-			if (ce.getElementType() == ElementType.Header) {
+			if (ce.getElementType() == ElementType.Header && ce.isConnectedOwner()) {
 				CanvasElement body = ce.getConnectedOwner();
 				ArrayList<CanvasElement> tempRelations = getAllRelation(ce);
 				for (int i = 0; i < tempRelations.size(); i++) {
@@ -287,7 +300,7 @@ public class MyFormat {
 		return max;
 	}
 
-	private void resetElement() {
+	public void resetElement() {
 		for (CanvasElement ce : this.elements) {
 			ce.setRelativeX(-1);
 			ce.setRelativeY(-1);
@@ -349,7 +362,7 @@ public class MyFormat {
 		return nextElements;
 	}
 
-	private ArrayList<CanvasElement> getAllHeader(CanvasElement element) {
+	public ArrayList<CanvasElement> getAllHeader(CanvasElement element) {
 		if (element.getElementType() == ElementType.Body) {
 			ArrayList<CanvasElement> result = new ArrayList<CanvasElement>();
 			for (CanvasElement ce : elements) {
@@ -360,11 +373,20 @@ public class MyFormat {
 				}
 			}
 			return result;
+		} else if (element.getElementType() == ElementType.Connector) {
+			ArrayList<CanvasElement> relations = getAllRelation(element);
+			ArrayList<CanvasElement> result = new ArrayList<CanvasElement>();
+			for (CanvasElement ce : relations) {
+				if (ce.isConnectedOwner()) {
+					result.add(ce.getConnectedOwner());
+				}
+			}
+			return result;
 		}
 		return new ArrayList<CanvasElement>();
 	}
 
-	public ArrayList<CanvasElement> getAllRelation(CanvasElement element) {
+	private ArrayList<CanvasElement> getAllRelation(CanvasElement element) {
 		if (element.getElementType() == ElementType.Connector) {
 			ArrayList<CanvasElement> result = new ArrayList<CanvasElement>();
 			for (CanvasElement ce : elements) {
@@ -475,5 +497,40 @@ public class MyFormat {
 						+ dy * (i + 1 - half));
 			}
 		}
+	}
+
+	public List<CanvasElement> getSortedElementsByTable() { // 根据表格所需要的格式排序的elements
+		List<CanvasElement> result = new ArrayList<CanvasElement>();
+		// 第一遍遍历，先将链体以及它的链头加入
+		for (CanvasElement ce : elements) {
+			if (ce.getElementType() == ElementType.Body) {
+				result.add(ce);
+				ArrayList<CanvasElement> headers = getAllHeader(ce);
+				for (CanvasElement ca : headers) {
+					ca.setFlag(-99);
+					result.add(ca);
+				}
+			}
+		}
+
+		// 第二遍遍历，将游离的加入
+		for (CanvasElement ce : elements) {
+			if (ce.getElementType() == ElementType.Header && ce.getFlag() == 0) {
+				result.add(ce);
+			} else if (ce.getElementType() == ElementType.Header
+					&& ce.getFlag() == -99) {
+				ce.setFlag(0); // 记住重置回来flag
+			}
+		}
+
+		// 第三遍遍历，将联结点加入
+		for (CanvasElement ce : elements) {
+			if (ce.getElementType() == ElementType.Connector) {
+				result.add(ce);
+			}
+		}
+
+		// 对于表格来说，箭头是毫无意义的存在，所以不需要显示
+		return result;
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
@@ -149,17 +150,42 @@ public class MyButtonEditor extends AbstractCellEditor implements
 							(String) canvasPanel.getMytable()
 									.getData()[row][2]);
 			try{
-				//TODO 暂时没想好怎么做，图表有没有必要显示箭头
+				ArrayList<CanvasElement> headerlist = canvasPanel.model.getFormat().getAllHeader(ce);
 				
 				String[] ids = ((String) canvasPanel.getMytable()
 						.getData()[row][3]).split(";");
 				for(int i=0;i<ids.length;i++){
-					
+					String temp = ids[i].trim();
+					int headerId = Integer.parseInt(temp);
+					boolean isExist = false;
+					for(CanvasElement header:headerlist){
+						if(header.getID()==headerId){
+							header.setFlag(-100);
+							isExist = true;
+							break;
+						}
+					}
+					if(!isExist){				//说明是新增的,因此要新增一条relation
+						HRelation hRelationEntity = new HRelation("", "");
+						HRelationModel hRelationModel = new HRelationModel(50, 50, 2);
+						hRelationModel.sethRelation(hRelationEntity);
+						CanvasElement header = canvasPanel.model.getElementByID(headerId);
+						if(header!=null&& header.isConnectedOwner()){		//如果是游离态的链头，原则上不让链接
+							hRelationModel.setConnectedOwner(header);
+							hRelationModel.setConnectedSon(ce);
+							canvasPanel.model.insertTableElement(hRelationModel);
+						}
+					}
+				}
+				for(CanvasElement header:headerlist){		//删除不存在的
+					if(header.getFlag()==0 && header.isConnectedSon()){
+						canvasPanel.model.deleteElement(header.getConnectedSon().getID(), true);
+					}
 				}
 			}catch(Exception ex){
-				ex.printStackTrace();
+				System.out.println("illegal input!");
 			}
-			
+			canvasPanel.model.getFormat().resetElement();			//修改过后一定要重置flag
 		} else if (ce.getElementType() == ElementType.Header) {
 			((EHeaderModel) ce).geteHeader()
 					.setName(

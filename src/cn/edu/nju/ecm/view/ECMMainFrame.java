@@ -119,6 +119,7 @@ public class ECMMainFrame {
 						.getSelectedComponent();
 				if (canvasPanel != null) {
 					infoPanel.setCanvasPanel(canvasPanel);
+					canvasPanel.changeModel();
 				} else {
 					infoPanel.reSetModel();
 				}

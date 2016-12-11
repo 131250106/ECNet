@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.print.PrinterException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultCellEditor;
@@ -44,8 +45,8 @@ public class MyJScrollTable extends JPanel {
 	private MyButtonEditor myButtonEditor;
 	private MyButtonRenderer myButtonRenderer;
 	private JComboBox<String> comboBox;
-	
-	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "OwnerId", "操作" };
+
+	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "链接关系", "操作" };
 
 	public MyJScrollTable(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
@@ -72,23 +73,19 @@ public class MyJScrollTable extends JPanel {
 
 	public JScrollPane createTable() {
 		tableView = new JTable();
-		loadData();
+
 		comboBox = new JComboBox<String>();
 		comboBox.addItem("链体");
 		comboBox.addItem("链头");
 		comboBox.addItem("连结点");
 		comboBox.addItem("箭头");
 
-		tableView.setRowHeight(30);
-
 		myButtonEditor = new MyButtonEditor(canvasPanel);
 		myButtonRenderer = new MyButtonRenderer();
-		
-		tableView.getColumnModel().getColumn(4)
-				.setCellEditor(myButtonEditor);
 
-		tableView.getColumnModel().getColumn(4)
-				.setCellRenderer(myButtonRenderer);
+		ResetTableView();
+
+		tableView.setRowHeight(30);
 
 		tableView.addMouseListener(new MouseListener() {
 			@Override
@@ -98,7 +95,7 @@ public class MyJScrollTable extends JPanel {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				int row = tableView.getSelectedRow();
-				if (row == -1 || row == canvasPanel.model.getElements().size()) {
+				if (row == -1 || row == data.length - 1) {
 					ECMMainFrame.resetElementInfo();
 				} else
 					ECMMainFrame.showElementInfo(canvasPanel.model
@@ -227,7 +224,8 @@ public class MyJScrollTable extends JPanel {
 	}
 
 	private Object[][] getModelData() {
-		List<CanvasElement> elements = canvasPanel.model.getElements();
+		List<CanvasElement> elements = canvasPanel.model
+				.getSortedElementsByTable();
 		Object[][] data = new Object[elements.size() + 1][5];
 		for (int i = 0; i < elements.size(); i++) {
 			if (elements.get(i).getElementType() == ElementType.Body) {
@@ -252,17 +250,16 @@ public class MyJScrollTable extends JPanel {
 				data[i][2] = ((ConnectorModel) elements.get(i)).gethConnector()
 						.getName();
 				String temp = "";
-				// TODO 暂时没想好怎么做，图表有没有必要显示箭头
-				// ArrayList<CanvasElement> relationlist =
-				// canvasPanel.model.getFormat()
-				// .getAllRelation(elements.get(i));
-				// for (CanvasElement ce : relationlist) {
-				// temp += (ce.getID() + " ; ");
-				// }
-				// if (temp.length() >= 3)
-				// temp = temp.substring(0, temp.length() - 3);
-				// else
-				// temp=" ";
+				// 暂定不显示箭头，联结点直接显示所链接的链头ID
+				ArrayList<CanvasElement> headlist = canvasPanel.model
+						.getFormat().getAllHeader(elements.get(i));
+				for (CanvasElement ce : headlist) {
+					temp += (ce.getID() + " ; ");
+				}
+				if (temp.length() >= 3)
+					temp = temp.substring(0, temp.length() - 3);
+				else
+					temp = " ";
 				data[i][3] = temp;
 			} else if (elements.get(i).getElementType() == ElementType.Relation) {
 				data[i][0] = "           箭头";
@@ -297,12 +294,11 @@ public class MyJScrollTable extends JPanel {
 
 	public void ResetTableView() {
 		loadData();
-		tableView.getColumnModel().getColumn(4)
-			.setCellEditor(myButtonEditor);
+		tableView.getColumnModel().getColumn(4).setCellEditor(myButtonEditor);
 
 		tableView.getColumnModel().getColumn(4)
-			.setCellRenderer(myButtonRenderer);
-		
+				.setCellRenderer(myButtonRenderer);
+
 		TableColumn typeColumn = tableView.getColumn("图元类型");
 		typeColumn.setCellEditor(new DefaultCellEditor(comboBox));
 
