@@ -689,4 +689,14 @@ public class CanvasPanel extends JScrollPane {
 
 	}
 
+	public void selectAll() {
+		System.out.println("1121312");
+		ChoosedList.clear();
+		for(CanvasElement ce:model.getElements()){
+			ChoosedList.add(ce);
+		}
+		canvasPanel.repaint();
+		showChoosedElements();
+	}
+
 }

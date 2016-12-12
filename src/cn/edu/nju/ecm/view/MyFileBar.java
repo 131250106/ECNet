@@ -217,6 +217,21 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 			}
 		});
 		editMenu.add(undoMenuItem);
+		
+		JMenuItem selectAllMenuItem = new JMenuItem("全选");
+		// 增加快捷键（CTRL+A）
+		selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+				java.awt.event.KeyEvent.VK_A, java.awt.Event.CTRL_MASK));
+		selectAllMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					CanvasPanel canvasPanel = (CanvasPanel) tabbedCanvasPanel
+							.getSelectedComponent();
+					if (canvasPanel != null)
+						canvasPanel.selectAll();
+			}
+		});
+		editMenu.add(selectAllMenuItem);
 
 		JMenuItem formatMenuItem = new JMenuItem("自动排版");
 		// 增加快捷键（CTRL+F）
