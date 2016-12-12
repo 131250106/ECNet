@@ -93,7 +93,7 @@ public class ConnectorModel extends CanvasElement {
 		g2d.drawString(name, x, y);
 	}
 
-	private void setConnectedOffset(int x, int y) {
+	public void setConnectedOffset(int x, int y) {
 		for (CanvasElement ce : this.getConnectedOutputs()) {
 			ce.setRotateOwner(true);
 			ce.setOffset(x, y);

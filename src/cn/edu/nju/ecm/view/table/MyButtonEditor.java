@@ -76,12 +76,12 @@ public class MyButtonEditor extends AbstractCellEditor implements
 					Object[][] data = canvasPanel.getMytable().getData();
 					String type = (String)data[row][0];
 					if(type.equals("Á´Ìå")){
-						EBody eBodyEntity = new EBody((String)data[row][2], "");
+						EBody eBodyEntity = new EBody((String)data[row][2], "","","","","");
 						EBodyModel eBodyModel = new EBodyModel(50, 50, 2);
 						eBodyModel.seteBody(eBodyEntity);
 						canvasPanel.model.insertTableElement(eBodyModel);
 					}else if(type.equals("Á´Í·")){
-						EHeader eHeaderEntity = new EHeader((String)data[row][2], "");
+						EHeader eHeaderEntity = new EHeader((String)data[row][2], "","");
 						EHeaderModel eHeaderModel = new EHeaderModel(50, 50, 2);
 						eHeaderModel.seteHeader(eHeaderEntity);
 						canvasPanel.model.insertTableElement(eHeaderModel);

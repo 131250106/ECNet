@@ -170,6 +170,30 @@ public class MyFormat {
 		dealwithNoOutPutHeader();
 		dealWithNoConnectedElements(dx, getMaxRelativeY() + dx * 3 / 2);
 		resetElement();
+		adjustCoordinate();
+	}
+
+	private void adjustCoordinate() {
+		int minx=0;
+		int miny=0;
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Header){
+				if(ce.getX2()-ce.getWidth()<minx)
+					minx=ce.getX2()-ce.getWidth();
+				if(ce.getY2()-ce.getWidth()<miny)
+					miny=ce.getY2()-ce.getWidth();
+			}
+		}
+		int dx=0;
+		int dy=0;
+		if(minx<0)
+			dx=Math.abs(minx)+20;
+		if(miny<0)
+			dy=Math.abs(miny)+20;
+		for(CanvasElement ce:this.elements){
+			ce.setX1Y1(ce.getX1()+dx, ce.getY1()+dy);
+			ce.setX2Y2(ce.getX2()+dx, ce.getY2()+dy);
+		}
 	}
 
 	private void dealWithNoConnectedElements(int dx, int y) { // 处理游离的图元(未与任何其他图元相连接)

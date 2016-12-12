@@ -10,7 +10,7 @@ public class UndoCommand {
 	
 	private CanvasElement element;		//被操作的图元对象
 	public enum ActionType{
-		Move, New, Delete, Format
+		Move, New, Delete, Format, MoveAll
 	}
 	private ActionType type;			//命令模式
 	

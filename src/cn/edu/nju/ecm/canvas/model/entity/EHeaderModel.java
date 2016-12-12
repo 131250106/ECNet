@@ -136,7 +136,7 @@ public class EHeaderModel extends CanvasElement {
 		}
 	}
 
-	private void setConnectedOffset(int x, int y) {
+	public void setConnectedOffset(int x, int y) {
 		for (CanvasElement ce : this.getConnectedOutputs()) {
 			ce.setRotateOwner(true);
 			ce.setRotateOffset(x, y);

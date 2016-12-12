@@ -1,9 +1,11 @@
 package cn.edu.nju.ecm.canvas.model;
 
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 
@@ -32,14 +34,17 @@ public class ECModel implements Serializable {
 	private File file;
 	
 	private MyFormat format;
+	
+	private Undotooler Undotooler;
 
-	public ECModel() {
+	public ECModel(Undotooler Undotooler) {
 		this.elements = new ArrayList<CanvasElement>();
 		format = new MyFormat(elements);
+		this.Undotooler = Undotooler;
 	}
 
-	public ECModel(String title, String description, File file) {
-		this();
+	public ECModel(String title, String description, File file,Undotooler Undotooler) {
+		this(Undotooler);
 		this.title = title;
 		this.description = description;
 		this.file = file;
@@ -278,7 +283,15 @@ public class ECModel implements Serializable {
 
 	public void autoFormat() {
 		format.autoFormat();
-		reSetAllElements();
+		for (CanvasElement ce : this.elements) {
+			for (CanvasElement connectedRelation : ce
+					.getConnectedOutputs()) {
+				connectedRelation.resetConnectedPointOwner(ce);
+			}
+			for (CanvasElement connectedRelation : ce.getConnectedInputs()) {
+				connectedRelation.resetConnectedPointSon(ce);
+			}
+		}
 	}
 
 	public MyFormat getFormat() {
@@ -287,5 +300,44 @@ public class ECModel implements Serializable {
 
 	public List<CanvasElement> getSortedElementsByTable() {			//根据表格所需要的格式排序的elements
 		return format.getSortedElementsByTable();
+	}
+
+	public ArrayList<CanvasElement> chooseElementList(int pressX, int pressY, int currentX, int currentY) {			//选择矩形中所有元素
+		ArrayList<CanvasElement> result = new ArrayList<CanvasElement>();
+		int x1 = pressX;
+		int y1 = pressY;
+		int x2 = currentX;
+		int y2 = currentY;
+		if(pressX>currentX){
+			x1 = currentX;
+			x2 = pressX;
+		}
+		if(pressY>currentY){
+			y1=currentY;
+			y2=pressY;
+		}
+		Rectangle temp = new Rectangle(x1,y1,x2-x1,y2-y1);
+		for(CanvasElement ce:this.elements){
+			Rectangle rectangle = new Rectangle();
+			if(ce.getElementType()==ElementType.Header){
+				rectangle.setBounds(ce.getX2()-ce.getWidth(), ce.getY2()-ce.getWidth(), ce.getWidth()*2, ce.getWidth()*2); 
+			}else if(ce.getElementType()==ElementType.Connector||ce.getElementType()==ElementType.Body){
+				rectangle.setBounds(ce.getX1(), ce.getY1(), ce.getWidth(), ce.getHeight());
+			}else if(ce.getElementType()==ElementType.Relation){
+				int tempx1 = ce.getX1();
+				int tempy1 = ce.getY1();
+				if(tempx1>ce.getX2()){
+					tempx1 = ce.getX2();
+				}
+				if(tempy1>ce.getY2()){
+					tempy1=ce.getY2();
+				}
+				rectangle.setBounds(tempx1, tempy1, Math.abs(ce.getX1()-ce.getX2())+1, Math.abs(ce.getY1()-ce.getY2())+1);
+			}
+			if(temp.intersects(rectangle)){
+				result.add(ce);
+			}
+		}
+		return result;
 	}
 }

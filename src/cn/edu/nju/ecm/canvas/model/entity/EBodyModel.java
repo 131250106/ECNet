@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,16 +80,20 @@ public class EBodyModel extends CanvasElement {
 	public boolean withInMe(int x, int y) {
 		if (this.x1 <= x && this.y1 <= y && x <= this.x1 + this.width && y <= this.y1 + this.height) {
 			this.setOffset(x, y);
-			for (CanvasElement connected : this.getConnectedOutputs()) {
-				connected.setRotateOwner(true);
-				connected.setRotateOffset(x, y);
-			}
+			setConnectedOffset(x, y);
 			return true;
 		} else {
 			return false;
 		}
 	}
-
+	
+	public void setConnectedOffset(int x,int y){
+		for (CanvasElement connected : this.getConnectedOutputs()) {
+			connected.setRotateOwner(true);
+			connected.setRotateOffset(x, y);
+		}
+	}
+	
 	public void setOffset(int x, int y) {
 		this.offsetX1 = x - this.x1;
 		this.offsetY1 = y - this.y1;
