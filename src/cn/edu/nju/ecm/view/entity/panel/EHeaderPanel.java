@@ -21,6 +21,7 @@ public class EHeaderPanel extends ElementPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField eheadName;
+	private JTextField keySentence;
 	private JTextArea eheadContent;
 
 	/**
@@ -29,15 +30,21 @@ public class EHeaderPanel extends ElementPanel {
 	public EHeaderPanel() {
 		super();
 
-		JLabel lblNewLabel = new JLabel("链头标题");
+		JLabel lblNewLabel = new JLabel("链头名称");
 		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		eheadName = new JTextField();
 		eheadName.setFont(new Font("宋体", Font.PLAIN, 15));
 		eheadName.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("链头简介");
+		JLabel lblNewLabel_1 = new JLabel("链头内容");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
+		
+		JLabel keyword = new JLabel("关键文本");
+		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
+		keySentence = new JTextField();
+		keySentence.setFont(new Font("宋体", Font.PLAIN, 15));
+		keySentence.setColumns(10);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -48,6 +55,9 @@ public class EHeaderPanel extends ElementPanel {
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(eheadName,
 												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
+								.addGroup(groupLayout.createSequentialGroup().addComponent(keyword)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(keySentence,
+												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel_1)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(scrollPane,
 												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)))
@@ -56,6 +66,9 @@ public class EHeaderPanel extends ElementPanel {
 				.createSequentialGroup().addContainerGap()
 				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblNewLabel).addComponent(
 						eheadName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGap(18)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(keyword).addComponent(
+						keySentence, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18).addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblNewLabel_1)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
 				.addContainerGap()));
@@ -73,7 +86,8 @@ public class EHeaderPanel extends ElementPanel {
 	public Element generateElement() {
 		String name = eheadName.getText();
 		String content = eheadContent.getText();
-		EHeader eheader = new EHeader(name, content);
+		String keyword = keySentence.getText();
+		EHeader eheader = new EHeader(name, content,keyword);
 		return eheader;
 	}
 }

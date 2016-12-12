@@ -178,8 +178,14 @@ public class MyButtonEditor extends AbstractCellEditor implements
 					}
 				}
 				for(CanvasElement header:headerlist){		//É¾³ý²»´æÔÚµÄ
-					if(header.getFlag()==0 && header.isConnectedSon()){
-						canvasPanel.model.deleteElement(header.getConnectedSon().getID(), true);
+					if(header.getFlag()==0){
+						for(CanvasElement relation:canvasPanel.model.getElements()){
+							if(relation.getElementType()==ElementType.Relation && relation.isConnectedOwner() && relation.getConnectedOwner().getID()==header.getID() && relation.isConnectedSon()&&relation.getConnectedSon().getID()==ce.getID()){
+								canvasPanel.model.deleteElement(relation.getID(), true);
+								break;
+							}
+						}
+						
 					}
 				}
 			}catch(Exception ex){

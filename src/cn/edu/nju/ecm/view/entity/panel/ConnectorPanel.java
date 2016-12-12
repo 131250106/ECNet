@@ -30,14 +30,14 @@ public class ConnectorPanel extends ElementPanel {
 	public ConnectorPanel() {
 		super();
 
-		JLabel lblNewLabel = new JLabel("联结点标题");
+		JLabel lblNewLabel = new JLabel("事实名称");
 		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		connectorName = new JTextField();
 		connectorName.setFont(new Font("宋体", Font.PLAIN, 15));
 		connectorName.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("联结点简介");
+		JLabel lblNewLabel_1 = new JLabel("事实信息");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		JScrollPane scrollPane = new JScrollPane();

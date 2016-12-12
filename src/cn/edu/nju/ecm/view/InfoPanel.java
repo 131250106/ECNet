@@ -51,9 +51,19 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 
 	private JLabel modeltitle;
 	private JLabel modelcontent;
+
 	private JTextField modeltitleField;
 	private JTextArea modelcontentArea;
 
+	private JLabel modellabel1;
+	private JLabel modellabel2;
+	private JLabel modellabel3;
+	private JLabel modellabel4;
+	private JTextField modeltitleField1;
+	private JTextField modeltitleField2;
+	private JTextField modeltitleField3;
+	private JTextField modeltitleField4;
+	
 	private CanvasPanel canvasPanel;
 
 	private void initComponents() {
@@ -80,7 +90,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		modelcontentArea.setLineWrap(true);
 		modelcontentArea.addFocusListener(new MyFocusListener());
 		jScrollPane2.setViewportView(modelcontentArea);
-
+		
 		JSeparator jSeparator1 = new JSeparator();
 		type = new JLabel();
 		title = new JLabel();
@@ -105,6 +115,22 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		contentArea.setRows(5);
 		contentArea.setLineWrap(true);
 		jScrollPane1.setViewportView(contentArea);
+		
+		modellabel1 = new JLabel("label1");
+		modellabel1.setFont(new java.awt.Font("宋体", 0, 18));
+		modeltitleField1 = new JTextField();
+		
+		modellabel2 = new JLabel("label2");
+		modellabel2.setFont(new java.awt.Font("宋体", 0, 18));
+		modeltitleField2 = new JTextField();
+		
+		modellabel3 = new JLabel("label3");
+		modellabel3.setFont(new java.awt.Font("宋体", 0, 18));
+		modeltitleField3 = new JTextField();
+		
+		modellabel4 = new JLabel("label4");
+		modellabel4.setFont(new java.awt.Font("宋体", 0, 18));
+		modeltitleField4 = new JTextField();
 
 		modify.setText("确认修改");
 		modify.addActionListener(new ActionListener() {
@@ -192,7 +218,15 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 																												.addComponent(
 																														content)
 																												.addComponent(
-																														title))
+																														title)
+																												.addComponent(
+																														modellabel1)
+																												.addComponent(
+																														modellabel2)
+																												.addComponent(
+																														modellabel3)
+																												.addComponent(
+																														modellabel4))
 																								.addPreferredGap(
 																										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 																								.addGroup(
@@ -200,6 +234,14 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 																												GroupLayout.Alignment.LEADING)
 																												.addComponent(
 																														titleField)
+																														.addComponent(
+																														modeltitleField1)
+																														.addComponent(
+																														modeltitleField2)
+																														.addComponent(
+																														modeltitleField3)
+																														.addComponent(
+																														modeltitleField4)
 																												.addComponent(
 																														jScrollPane1))))
 																.addGap(15, 15,
@@ -261,7 +303,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 												.addComponent(
 														jScrollPane2,
 														GroupLayout.PREFERRED_SIZE,
-														137,
+														112,
 														GroupLayout.PREFERRED_SIZE)
 												.addComponent(
 														modelcontent,
@@ -291,14 +333,54 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 														GroupLayout.DEFAULT_SIZE,
 														GroupLayout.PREFERRED_SIZE)
 												.addComponent(title))
-								.addGap(18, 18, 18)
+								.addGap(1, 1, 1)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														modeltitleField1,
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(modellabel1))
+								.addGap(1, 1, 1)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														modeltitleField2,
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(modellabel2))
+								.addGap(1, 1, 1)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														modeltitleField3,
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(modellabel3))
+								.addGap(1, 1, 1)
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														modeltitleField4,
+														GroupLayout.PREFERRED_SIZE,
+														GroupLayout.DEFAULT_SIZE,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(modellabel4))
+								.addGap(1, 1, 1)
 								.addGroup(
 										layout.createParallelGroup(
 												GroupLayout.Alignment.LEADING)
 												.addComponent(
 														jScrollPane1,
 														GroupLayout.PREFERRED_SIZE,
-														187,
+														112,
 														GroupLayout.PREFERRED_SIZE)
 												.addComponent(content))
 								.addPreferredGap(
@@ -317,6 +399,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 										Short.MAX_VALUE)));
 
 		setInfo(element);
+		
 	}
 
 	public int getID() {
@@ -327,43 +410,91 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 
 	public void reSetInfo() {
 		titleField.setText("");
+		title.setText("名称:");
 		contentArea.setText("");
+		content.setText("内容:");
 		type.setText("未选中");
 		element = null;
+		modellabel1.setVisible(false);
+		modeltitleField1.setVisible(false);
+		modellabel2.setVisible(false);
+		modeltitleField2.setVisible(false);
+		modellabel3.setVisible(false);
+		modeltitleField3.setVisible(false);
+		modellabel4.setVisible(false);
+		modeltitleField4.setVisible(false);
 	}
 
 	public void setInfo(CanvasElement element) {
+		reSetInfo();			//先重置一下信息
+		
 		this.element = element;
 
 		String typestr = "未选中";
 		String titlestr = "";
+		String titleName="";
 		String contentstr = "";
+		String contentname="";
 		if (element != null) {
 			if (element.getElementType() == ElementType.Body) {
 				typestr = "链体";
 				EBody eb = ((EBodyModel) element).geteBody();
 				titlestr = eb.getName();
 				contentstr = eb.getContent();
+				titleName="证据名称:";
+				contentname="证据明细:";
+				modellabel1.setText("证据类型:");
+				modellabel1.setVisible(true);
+				modeltitleField1.setText(eb.getEvidenceType());
+				modeltitleField1.setVisible(true);
+				
+				modellabel2.setVisible(true);
+				modellabel2.setText("提交人:");
+				modeltitleField2.setVisible(true);
+				modeltitleField2.setText(eb.getCommiter());
+				
+				modellabel3.setVisible(true);
+				modellabel3.setText("质证理由:");
+				modeltitleField3.setVisible(true);
+				modeltitleField3.setText(eb.getEvidenceReason());
+				
+				modellabel4.setVisible(true);
+				modellabel4.setText("质证结论:");
+				modeltitleField4.setVisible(true);
+				modeltitleField4.setText(eb.getEvidenceConclusion());
 			} else if (element.getElementType() == ElementType.Header) {
 				typestr = "链头";
 				EHeader eh = ((EHeaderModel) element).geteHeader();
 				titlestr = eh.getName();
 				contentstr = eh.getContent();
+				titleName="链头名称:";
+				contentname="链头内容:";
+				modellabel1.setText("关键文本:");
+				modellabel1.setVisible(true);
+				modeltitleField1.setVisible(true);
+				modeltitleField1.setText(eh.getKeySentence());
 			} else if (element.getElementType() == ElementType.Connector) {
-				typestr = "箭头";
+				typestr = "联结点";
 				HConnector hc = ((ConnectorModel) element).gethConnector();
 				titlestr = hc.getName();
 				contentstr = hc.getContent();
+				titleName="事实名称:";
+				contentname="事实信息:";
 			} else if (element.getElementType() == ElementType.Relation) {
-				typestr = "联结";
+				typestr = "箭头";
 				HRelation hr = ((HRelationModel) element).gethRelation();
 				titlestr = hr.getName();
 				contentstr = hr.getContent();
+				titleName="箭头标题:";
+				contentname="箭头简介:";
 			}
+			type.setText(typestr);
+			titleField.setText(titlestr);
+			contentArea.setText(contentstr);
+			title.setText(titleName);
+			content.setText(contentname);
 		}
-		type.setText(typestr);
-		titleField.setText(titlestr);
-		contentArea.setText(contentstr);
+		
 	}
 
 	public void setCanvasPanel(CanvasPanel canvasPanel) {
@@ -387,10 +518,15 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 				EBody eb = ((EBodyModel) element).geteBody();
 				eb.setName(titleField.getText());
 				eb.setContent(contentArea.getText());
+				eb.setEvidenceType(modeltitleField1.getText());
+				eb.setCommiter(modeltitleField2.getText());
+				eb.setEvidenceReason(modeltitleField3.getText());
+				eb.setEvidenceConclusion(modeltitleField4.getText());
 			} else if (element.getElementType() == ElementType.Header) {
 				EHeader eh = ((EHeaderModel) element).geteHeader();
 				eh.setName(titleField.getText());
 				eh.setContent(contentArea.getText());
+				eh.setKeySentence(modeltitleField1.getText());
 			} else if (element.getElementType() == ElementType.Connector) {
 				HConnector hc = ((ConnectorModel) element).gethConnector();
 				hc.setName(titleField.getText());

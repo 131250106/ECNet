@@ -34,6 +34,10 @@ public class EBodyPanel extends ElementPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField ebodyName;
+	private JTextField ebodytype;
+	private JTextField commiter;
+	private JTextField evidenceReason;
+	private JTextField evidenceConclusion;
 	private JTextArea ebodyContent;
 	private JPanel panel;
 
@@ -44,15 +48,39 @@ public class EBodyPanel extends ElementPanel {
 	 */
 	public EBodyPanel() {
 
-		JLabel lblNewLabel = new JLabel("链体名称");
+		JLabel lblNewLabel = new JLabel("证据名称");
 		lblNewLabel.setFont(new Font("宋体", Font.PLAIN, 15));
 
 		ebodyName = new JTextField();
 		ebodyName.setFont(new Font("宋体", Font.PLAIN, 15));
 		ebodyName.setColumns(10);
 
-		JLabel lblNewLabel_1 = new JLabel("链体内容");
+		JLabel lblNewLabel_1 = new JLabel("证据明细");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
+		
+		JLabel type = new JLabel("证据类型");
+		type.setFont(new Font("宋体", Font.PLAIN, 15));
+		ebodytype = new JTextField();
+		ebodytype.setFont(new Font("宋体", Font.PLAIN, 15));
+		ebodytype.setColumns(10);
+		
+		JLabel commiterLabel = new JLabel("提交人");
+		type.setFont(new Font("宋体", Font.PLAIN, 15));
+		commiter = new JTextField();
+		commiter.setFont(new Font("宋体", Font.PLAIN, 15));
+		commiter.setColumns(10);
+		
+		JLabel Reason = new JLabel("质证理由");
+		type.setFont(new Font("宋体", Font.PLAIN, 15));
+		evidenceReason = new JTextField();
+		evidenceReason.setFont(new Font("宋体", Font.PLAIN, 15));
+		evidenceReason.setColumns(10);
+		
+		JLabel Conclusion = new JLabel("质证结论");
+		type.setFont(new Font("宋体", Font.PLAIN, 15));
+		evidenceConclusion = new JTextField();
+		evidenceConclusion.setFont(new Font("宋体", Font.PLAIN, 15));
+		evidenceConclusion.setColumns(10);
 
 		JLabel lblNewLabel_2 = new JLabel("关联文件");
 		lblNewLabel_2.setFont(new Font("宋体", Font.PLAIN, 15));
@@ -85,10 +113,18 @@ public class EBodyPanel extends ElementPanel {
 						.addContainerGap().addGroup(groupLayout
 								.createParallelGroup(Alignment.LEADING).addGroup(groupLayout.createSequentialGroup()
 										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-												.addComponent(lblNewLabel_1).addComponent(lblNewLabel))
+												.addComponent(lblNewLabel_1).addComponent(lblNewLabel).addComponent(type).addComponent(commiterLabel).addComponent(Reason).addComponent(Conclusion))
 										.addPreferredGap(ComponentPlacement.RELATED)
 										.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 												.addComponent(ebodyName, GroupLayout.DEFAULT_SIZE, 351,
+														Short.MAX_VALUE)
+												.addComponent(ebodytype, GroupLayout.DEFAULT_SIZE, 351,
+														Short.MAX_VALUE)
+												.addComponent(commiter, GroupLayout.DEFAULT_SIZE, 351,
+														Short.MAX_VALUE)
+												.addComponent(evidenceReason, GroupLayout.DEFAULT_SIZE, 351,
+														Short.MAX_VALUE)
+												.addComponent(evidenceConclusion, GroupLayout.DEFAULT_SIZE, 351,
 														Short.MAX_VALUE)
 												.addComponent(scrollPane, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE,
 														351, Short.MAX_VALUE)))
@@ -104,6 +140,18 @@ public class EBodyPanel extends ElementPanel {
 				.createSequentialGroup().addContainerGap()
 				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblNewLabel).addComponent(
 						ebodyName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(type).addComponent(
+						ebodytype, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(commiterLabel).addComponent(
+						commiter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(Reason).addComponent(
+						evidenceReason, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addPreferredGap(ComponentPlacement.RELATED)
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(Conclusion).addComponent(
+						evidenceConclusion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addPreferredGap(ComponentPlacement.RELATED)
 				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblNewLabel_1)
 						.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE))
@@ -124,7 +172,11 @@ public class EBodyPanel extends ElementPanel {
 	public Element generateElement() {
 		String name = ebodyName.getText();
 		String content = ebodyContent.getText();
-		EBody ebody = new EBody(name, content);
+		String type = ebodytype.getText();
+		String commiterstr = commiter.getText();
+		String Reason = evidenceReason.getText();
+		String Conclusion = evidenceConclusion.getText();
+		EBody ebody = new EBody(name, content,type,commiterstr,Reason,Conclusion);
 		Map<String, EvidenceFileType> evidenceFiles = new HashMap<String, EvidenceFileType>();
 		for (String filePath : this.filePaths) {
 			String[] fileNameParts = filePath.split("\\.");

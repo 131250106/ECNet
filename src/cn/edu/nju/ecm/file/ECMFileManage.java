@@ -65,7 +65,11 @@ public class ECMFileManage {
 	public static EBodyModel parseEBody(Element ebody) {
 		String name = ebody.element("name").getText();
 		String content = ebody.element("content").getText();
-		EBody entityEBody = new EBody(name, content);
+		String evidenceType = ebody.element("evidenceType").getText();
+		String commiter = ebody.element("commiter").getText();
+		String evidenceReason = ebody.element("evidenceReason").getText();
+		String evidenceConclusion = ebody.element("evidenceConclusion").getText();
+		EBody entityEBody = new EBody(name, content, evidenceType, commiter, evidenceReason, evidenceConclusion);
 		
 		@SuppressWarnings("unchecked")
 		List<Element> evidenceFiles = ebody.element("files").elements();
@@ -87,8 +91,9 @@ public class ECMFileManage {
 	public static EHeaderModel parseEHeader(Element eheader, ECModel model) {
 		String name = eheader.element("name").getText();
 		String content = eheader.element("content").getText();
+		String keySentence = eheader.element("keySentence").getText();
 		int ownerID = 0;
-		EHeader entityEHeader = new EHeader(name, content);
+		EHeader entityEHeader = new EHeader(name, content, keySentence);
 		if (eheader.element("ownerID") != null) {
 			ownerID = Integer.parseInt(eheader.element("ownerID").getText());
 		}
