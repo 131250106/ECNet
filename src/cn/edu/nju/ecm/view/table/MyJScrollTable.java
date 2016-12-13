@@ -159,7 +159,7 @@ public class MyJScrollTable extends JPanel {
 	private void getModelData() {
 		List<CanvasElement> bodys = canvasPanel.model
 				.getAllBodys();
-		Object[][] data = new Object[canvasPanel.model.getElements().size()][10];
+		Object[][] data = new Object[canvasPanel.model.getElements().size()+bodys.size()+1][10];
 		int numberOfEvidence=0;
 		for(CanvasElement ce:bodys){
 			ArrayList<CanvasElement> headers = canvasPanel.model.getFormat().getAllHeader(ce);
@@ -176,7 +176,29 @@ public class MyJScrollTable extends JPanel {
 				data[numberOfEvidence][9] = "删除,确认修改,"+header.getID();
 				numberOfEvidence++;
 			}
+			data[numberOfEvidence][0] = ce.getID();
+			data[numberOfEvidence][1] = ((EBodyModel)ce).geteBody().getName();
+			data[numberOfEvidence][2] = ((EBodyModel)ce).geteBody().getContent();
+			data[numberOfEvidence][4] = ((EBodyModel)ce).geteBody().getEvidenceType();
+			data[numberOfEvidence][3] = ((EBodyModel)ce).geteBody().getCommiter();
+			data[numberOfEvidence][5] = ((EBodyModel)ce).geteBody().getEvidenceReason();
+			data[numberOfEvidence][6] = ((EBodyModel)ce).geteBody().getEvidenceConclusion();
+			data[numberOfEvidence][7] = "";
+			data[numberOfEvidence][8] = "";
+			data[numberOfEvidence][9] = "修改,新增链头,"+ce.getID();
+			numberOfEvidence++;
 		}
+		data[numberOfEvidence][0] = "";
+		data[numberOfEvidence][1] = "";
+		data[numberOfEvidence][2] = "";
+		data[numberOfEvidence][3] = "";
+		data[numberOfEvidence][4] = "";
+		data[numberOfEvidence][5] = "";
+		data[numberOfEvidence][6] = "";
+		data[numberOfEvidence][7] = "";
+		data[numberOfEvidence][8] = "";
+		data[numberOfEvidence][9] = "重置,新增链体,-1";
+		numberOfEvidence++;
 		dataOfEvidence = new Object[numberOfEvidence][10]; 
 		System.arraycopy(data,0,dataOfEvidence,0,dataOfEvidence.length);
 		tableViewOfEvidence.setMap(new EvidenceMap(dataOfEvidence,canvasPanel.model));
@@ -184,7 +206,7 @@ public class MyJScrollTable extends JPanel {
 		
 		List<CanvasElement> connectors = canvasPanel.model
 				.getAllConnectors();
-		data = new Object[canvasPanel.model.getElements().size()][10];
+		data = new Object[canvasPanel.model.getElements().size()+connectors.size()+1][7];
 		int numberOfFact=0;
 		for(CanvasElement ce:connectors){   
 			ArrayList<CanvasElement> headers = canvasPanel.model.getFormat().getAllHeader(ce);
@@ -200,7 +222,23 @@ public class MyJScrollTable extends JPanel {
 				data[numberOfFact][6] = "删除,确认修改,"+header.getID();
 				numberOfFact++;
 			}
+			data[numberOfFact][0] = ce.getID();
+			data[numberOfFact][1] = ((ConnectorModel)ce).gethConnector().getName();
+			data[numberOfFact][2] = ((ConnectorModel)ce).gethConnector().getContent();
+			data[numberOfFact][3] = "";
+			data[numberOfFact][4] = "";
+			data[numberOfFact][5] = "";
+			data[numberOfFact][6] = "修改,新增链头,"+ce.getID();
+			numberOfFact++;
 		}
+		data[numberOfFact][0] = "";
+		data[numberOfFact][1] = "";
+		data[numberOfFact][2] = "";
+		data[numberOfFact][3] = "";
+		data[numberOfFact][4] = "";
+		data[numberOfFact][5] = "";
+		data[numberOfFact][6] = "重置,新增联结,-1";
+		numberOfFact++;
 		dataOfFact = new Object[numberOfFact][7];
 		System.arraycopy(data,0,dataOfFact,0,dataOfFact.length);
 		tableViewOfFact.setMap(new FactMap(dataOfFact,canvasPanel.model));
@@ -253,7 +291,7 @@ public class MyJScrollTable extends JPanel {
 
 		try {
 			boolean status = tableViewOfEvidence.print(printMode, headerFmt, footerFmt);
-
+			status &= tableViewOfFact.print(printMode, headerFmt, footerFmt);
 			if (status) {
 				JOptionPane.showMessageDialog(tableViewOfEvidence.getParent(),
 						"TablePrint.printingComplete",

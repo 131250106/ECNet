@@ -30,9 +30,9 @@ public class MyButtonRenderer  implements TableCellRenderer {
 
     private void initButton() {
     	delete = new JButton();
-    	delete.setFont(new Font("Dialog", Font.PLAIN, 11));
+    	delete.setFont(new Font("Dialog", Font.PLAIN, 10));
     	modify = new JButton();
-    	modify.setFont(new Font("Dialog", Font.PLAIN, 11));
+    	modify.setFont(new Font("Dialog", Font.PLAIN, 10));
     }
 
     private void initPanel() {

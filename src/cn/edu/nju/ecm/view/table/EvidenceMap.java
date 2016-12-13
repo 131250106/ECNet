@@ -12,10 +12,12 @@ public class EvidenceMap implements CMap {
 		this.model = model;
 	}
 	public int span(int row, int column) {
+		if(row==data.length-1)
+			return 1;
 		if(isSpan(column)){
 			int id = (int)data[row][0];
 			CanvasElement body = model.getElementByID(id);
-			return body.getDegree();
+			return body.getDegree()+1;
 		}
 		return 1;
 	}
