@@ -24,10 +24,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.dom4j.DocumentException;
 
-import cn.edu.nju.ecm.canvas.model.CanvasElement;
 import cn.edu.nju.ecm.entity.Element;
-import cn.edu.nju.ecm.utility.Undotooler;
-import cn.edu.nju.ecm.utility.UndoCommand;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.MyStatusPanel.Model;
 import cn.edu.nju.ecm.view.entity.ElementDialog;

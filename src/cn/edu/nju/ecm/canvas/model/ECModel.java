@@ -340,4 +340,22 @@ public class ECModel implements Serializable {
 		}
 		return result;
 	}
+
+	public List<CanvasElement> getAllBodys() {
+		ArrayList<CanvasElement> bodys = new ArrayList<CanvasElement>();
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Body)
+				bodys.add(ce);
+		}
+		return bodys;
+	}
+
+	public List<CanvasElement> getAllConnectors() {
+		ArrayList<CanvasElement> bodys = new ArrayList<CanvasElement>();
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Connector)
+				bodys.add(ce);
+		}
+		return bodys;
+	}
 }

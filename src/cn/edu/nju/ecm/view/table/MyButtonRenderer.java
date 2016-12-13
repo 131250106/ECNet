@@ -3,6 +3,7 @@ package cn.edu.nju.ecm.view.table;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -29,13 +30,15 @@ public class MyButtonRenderer  implements TableCellRenderer {
 
     private void initButton() {
     	delete = new JButton();
+    	delete.setFont(new Font("Dialog", Font.PLAIN, 11));
     	modify = new JButton();
+    	modify.setFont(new Font("Dialog", Font.PLAIN, 11));
     }
 
     private void initPanel() {
         panel = new JPanel();
 
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5,0));
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 0,0));
 		
 		panel.add(this.delete);
 		panel.add(this.modify);

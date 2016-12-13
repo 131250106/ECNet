@@ -3,6 +3,7 @@ package cn.edu.nju.ecm.view.table;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -52,7 +53,10 @@ public class MyButtonEditor extends AbstractCellEditor implements
 
 	private void initButton() {
 		delete = new JButton();
-
+    	delete.setFont(new Font("Dialog", Font.PLAIN, 11));
+    	modify = new JButton();
+    	modify.setFont(new Font("Dialog", Font.PLAIN, 11));
+    	
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println(ID);
@@ -65,7 +69,6 @@ public class MyButtonEditor extends AbstractCellEditor implements
 			}
 		});
 
-		modify = new JButton();
 
 		modify.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
