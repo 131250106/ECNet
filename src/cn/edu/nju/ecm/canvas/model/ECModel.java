@@ -81,6 +81,11 @@ public class ECModel implements Serializable {
 					ce.setConnectedSon(false);
 				}
 				element.getConnectedInputs().clear();
+			}else if(element.getElementType()==ElementType.Header){
+				for(CanvasElement ce:element.getConnectedOutputs()){
+					ce.setConnectedOwner(false);
+				}
+				element.getConnectedInputs().clear();
 			}
 			this.getElements().remove(element);
 			if (!isUndo) // 如果不是由于撤销操作引起的则增加undo记录
@@ -357,5 +362,25 @@ public class ECModel implements Serializable {
 				bodys.add(ce);
 		}
 		return bodys;
+	}
+
+	public boolean isExistRelation(CanvasElement connector, CanvasElement header) {
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Relation){
+				if(ce.isConnectedOwner()&&ce.getConnectedOwner().getID()==header.getID()&&ce.isConnectedSon()&&ce.getConnectedSon().getID()==connector.getID())
+					return true;
+			}
+		}
+		return false;
+	}
+
+	public CanvasElement findRelation(int connectorId, int headerId) {
+		for(CanvasElement ce:this.elements){
+			if(ce.getElementType()==ElementType.Relation){
+				if(ce.isConnectedOwner()&&ce.getConnectedOwner().getID()==headerId&&ce.isConnectedSon()&&ce.getConnectedSon().getID()==connectorId)
+					return ce;
+			}
+		}
+		return null;
 	}
 }

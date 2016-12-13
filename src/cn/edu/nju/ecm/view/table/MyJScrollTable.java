@@ -173,7 +173,7 @@ public class MyJScrollTable extends JPanel {
 				data[numberOfEvidence][6] = ((EBodyModel)ce).geteBody().getEvidenceConclusion();
 				data[numberOfEvidence][7] = ((EHeaderModel)header).geteHeader().getContent();
 				data[numberOfEvidence][8] = ((EHeaderModel)header).geteHeader().getKeySentence();
-				data[numberOfEvidence][9] = "删除,确认修改,"+header.getID();
+				data[numberOfEvidence][9] = "删除,修改链头,"+header.getID();
 				numberOfEvidence++;
 			}
 			data[numberOfEvidence][0] = ce.getID();
@@ -219,7 +219,7 @@ public class MyJScrollTable extends JPanel {
 				if(header.isConnectedOwner())
 					data[numberOfFact][4] = ""+header.getConnectedOwner().getID();
 				data[numberOfFact][5] = ((EHeaderModel)header).geteHeader().getKeySentence();
-				data[numberOfFact][6] = "删除,确认修改,"+header.getID();
+				data[numberOfFact][6] = "删除连接,修改,"+header.getID();
 				numberOfFact++;
 			}
 			data[numberOfFact][0] = ce.getID();
@@ -318,4 +318,19 @@ public class MyJScrollTable extends JPanel {
 		}
 	}
 
+	public Object[][] getDataOfEvidence() {
+		return dataOfEvidence;
+	}
+
+	public Object[][] getDataOfFact() {
+		return dataOfFact;
+	}
+	
+	public CMap getEvidenceMap(){
+		return tableViewOfEvidence.getMap();
+	}
+	
+	public CMap getFactMap(){
+		return tableViewOfFact.getMap();
+	}
 }
