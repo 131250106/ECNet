@@ -35,7 +35,8 @@ import cn.edu.nju.ecm.view.ECMMainFrame;
 public class MyJScrollTable extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private JTable tableView;
+	private JTable tableViewOfEvidence;
+	private JTable tableViewOfFact;
 
 	private JLabel title;
 	private CanvasPanel canvasPanel;
@@ -44,16 +45,14 @@ public class MyJScrollTable extends JPanel {
 	private TableModel dataModel;
 	private MyButtonEditor myButtonEditor;
 	private MyButtonRenderer myButtonRenderer;
-	private JComboBox<String> comboBox;
 
-	private String[] names = { "图元类型", "ID(唯一标识符)", "名称", "链接关系", "操作" };
+	private String[] namesOfEvidence = { "证据序号", "证据名称", "证据明细", "证据种类", "提交人", "质证理由", "质证结论", "链头信息", "证据中的关键文本（短句","操作"};
+	private String[] namesOfFact = { "事实序号", "事实名称", "事实明细", "链头信息", "证据序号", "证据中的关键文本（短句）"};
 
 	public MyJScrollTable(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
 
 		setLayout(new BorderLayout());
-
-		this.add(createTable(), BorderLayout.CENTER);
 
 		JPanel top = new JPanel();
 		top.setLayout(new BorderLayout());
@@ -69,32 +68,29 @@ public class MyJScrollTable extends JPanel {
 		top.add(printButton, BorderLayout.EAST);
 
 		this.add(top, BorderLayout.NORTH);
+		
+		this.add(createEvidenceTable(), BorderLayout.CENTER);
+		this.add(createFactTable(), BorderLayout.SOUTH);
+		ResetTableView();
+
 	}
 
-	public JScrollPane createTable() {
-		tableView = new JTable();
-
-		comboBox = new JComboBox<String>();
-		comboBox.addItem("链体");
-		comboBox.addItem("链头");
-		comboBox.addItem("连结点");
-		comboBox.addItem("箭头");
+	public JScrollPane createEvidenceTable() {
+		tableViewOfEvidence = new JTable();
 
 		myButtonEditor = new MyButtonEditor(canvasPanel);
 		myButtonRenderer = new MyButtonRenderer();
 
-		ResetTableView();
+		tableViewOfEvidence.setRowHeight(30);
 
-		tableView.setRowHeight(30);
-
-		tableView.addMouseListener(new MouseListener() {
+		tableViewOfEvidence.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				int row = tableView.getSelectedRow();
+				int row = tableViewOfEvidence.getSelectedRow();
 				if (row == -1 || row == data.length - 1) {
 					ECMMainFrame.resetElementInfo();
 				} else
@@ -114,64 +110,52 @@ public class MyJScrollTable extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 			}
 		});
-		JScrollPane scrollpane = new JScrollPane(tableView);
+		tableViewOfEvidence.getTableHeader().setUI(new MyHeaderUI(tableViewOfEvidence,"证据清单",namesOfEvidence));
+		JScrollPane scrollpane = new JScrollPane(tableViewOfEvidence);
 		return scrollpane;
 	}
+	
+	public JScrollPane createFactTable() {
+		tableViewOfFact = new JTable();
 
-	private void printTable() {
-		MessageFormat headerFmt;
-		MessageFormat footerFmt;
+		tableViewOfFact.setRowHeight(30);
 
-		JTable.PrintMode printMode = JTable.PrintMode.FIT_WIDTH;
-
-		String text;
-		text = canvasPanel.model.getTitle();
-		if (text != null && text.length() > 0) {
-			headerFmt = new MessageFormat(text);
-		} else {
-			headerFmt = null;
-		}
-
-		text = canvasPanel.model.getDescription();
-		if (text != null && text.length() > 0) {
-			footerFmt = new MessageFormat(text);
-		} else {
-			footerFmt = null;
-		}
-
-		try {
-			boolean status = tableView.print(printMode, headerFmt, footerFmt);
-
-			if (status) {
-				JOptionPane.showMessageDialog(tableView.getParent(),
-						"TablePrint.printingComplete",
-						"TablePrint.printingResult",
-						JOptionPane.INFORMATION_MESSAGE);
-			} else {
-				JOptionPane.showMessageDialog(tableView.getParent(),
-						"TablePrint.printingCancelled",
-						"TablePrint.printingResult",
-						JOptionPane.INFORMATION_MESSAGE);
+		tableViewOfFact.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
 			}
-		} catch (PrinterException pe) {
-			String errorMessage = MessageFormat.format(
-					"TablePrint.printingFailed",
-					new Object[] { pe.getMessage() });
-			JOptionPane.showMessageDialog(tableView.getParent(), errorMessage,
-					"TablePrint.printingResult", JOptionPane.ERROR_MESSAGE);
-		} catch (SecurityException se) {
-			String errorMessage = MessageFormat.format(
-					"TablePrint.printingFailed",
-					new Object[] { se.getMessage() });
-			JOptionPane.showMessageDialog(tableView.getParent(), errorMessage,
-					"TablePrint.printingResult", JOptionPane.ERROR_MESSAGE);
-		}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				int row = tableViewOfFact.getSelectedRow();
+				if (row == -1 || row == data.length - 1) {
+					ECMMainFrame.resetElementInfo();
+				} else
+					ECMMainFrame.showElementInfo(canvasPanel.model
+							.getElementByID((int) data[row][1]));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+			}
+		});
+		tableViewOfFact.getTableHeader().setUI(new MyHeaderUI(tableViewOfFact,"事实清单",namesOfFact));
+		JScrollPane scrollpane = new JScrollPane(tableViewOfFact);
+		return scrollpane;
 	}
 
 	public void changeTitle() {
 		title.setText(canvasPanel.model.getTitle());
 	}
-
+	
 	private void loadData() {
 		data = getModelData();
 
@@ -179,7 +163,7 @@ public class MyJScrollTable extends JPanel {
 			private static final long serialVersionUID = 1L;
 
 			public int getColumnCount() {
-				return names.length;
+				return namesOfEvidence.length;
 			}
 
 			public int getRowCount() {
@@ -191,7 +175,7 @@ public class MyJScrollTable extends JPanel {
 			}
 
 			public String getColumnName(int column) {
-				return names[column];
+				return namesOfEvidence[column];
 			}
 
 			public Class<? extends Object> getColumnClass(int c) {
@@ -215,18 +199,14 @@ public class MyJScrollTable extends JPanel {
 			}
 		};
 
-		tableView.setModel(dataModel);
-	}
-
-	public void reloadData() {
-		data = getModelData();
-		tableView.repaint();
+		tableViewOfEvidence.setModel(dataModel);
+		tableViewOfFact.setModel(dataModel);
 	}
 
 	private Object[][] getModelData() {
 		List<CanvasElement> elements = canvasPanel.model
 				.getSortedElementsByTable();
-		Object[][] data = new Object[elements.size() + 1][5];
+		Object[][] data = new Object[elements.size() + 1][10];
 		for (int i = 0; i < elements.size(); i++) {
 			if (elements.get(i).getElementType() == ElementType.Body) {
 				data[i][0] = "链体";
@@ -278,13 +258,23 @@ public class MyJScrollTable extends JPanel {
 					data[i][3] = "&";
 				}
 			}
-			data[i][4] = "删除,确认修改," + elements.get(i).getID();
+			data[i][4]="删除,确认修改," + elements.get(i).getID();
+			data[i][5]="";
+			data[i][6]="";
+			data[i][7]="";
+			data[i][8]="";
+			data[i][9] = "删除,确认修改," + elements.get(i).getID();
 		}
 		data[elements.size()][0] = "";
 		data[elements.size()][1] = "";
 		data[elements.size()][2] = "";
 		data[elements.size()][3] = "";
 		data[elements.size()][4] = "重置,确认新增," + -1;
+		data[elements.size()][5]="";
+		data[elements.size()][6]="";
+		data[elements.size()][7]="";
+		data[elements.size()][8]="";
+		data[elements.size()][9] = "删除,确认新增," + -1;
 		return data;
 	}
 
@@ -292,18 +282,75 @@ public class MyJScrollTable extends JPanel {
 		return data;
 	}
 
-	public void ResetTableView() {
-		loadData();
-		tableView.getColumnModel().getColumn(4).setCellEditor(myButtonEditor);
+	public void reloadData() {							//只需要重新读一次数据就行
+		data = getModelData();
+		tableViewOfEvidence.repaint();
+		tableViewOfFact.repaint();
+	}
 
-		tableView.getColumnModel().getColumn(4)
+	public void ResetTableView() {						//需要重新reset布局
+		loadData();
+		tableViewOfEvidence.getColumnModel().getColumn(4).setCellEditor(myButtonEditor);
+
+		tableViewOfEvidence.getColumnModel().getColumn(4)
 				.setCellRenderer(myButtonRenderer);
 
-		TableColumn typeColumn = tableView.getColumn("图元类型");
-		typeColumn.setCellEditor(new DefaultCellEditor(comboBox));
-
-		DefaultTableCellRenderer tcrLeft = new DefaultTableCellRenderer();
-		tcrLeft.setHorizontalAlignment(JLabel.LEFT);
-		tableView.getColumn("ID(唯一标识符)").setCellRenderer(tcrLeft);
+//		TableColumn typeColumn = tableView.getColumn("图元类型");
+//		typeColumn.setCellEditor(new DefaultCellEditor(comboBox));
+//
+//		DefaultTableCellRenderer tcrLeft = new DefaultTableCellRenderer();
+//		tcrLeft.setHorizontalAlignment(JLabel.LEFT);
+//		tableView.getColumn("ID(唯一标识符)").setCellRenderer(tcrLeft);
 	}
+	
+	private void printTable() {
+		MessageFormat headerFmt;
+		MessageFormat footerFmt;
+
+		JTable.PrintMode printMode = JTable.PrintMode.FIT_WIDTH;
+
+		String text;
+		text = canvasPanel.model.getTitle();
+		if (text != null && text.length() > 0) {
+			headerFmt = new MessageFormat(text);
+		} else {
+			headerFmt = null;
+		}
+
+		text = canvasPanel.model.getDescription();
+		if (text != null && text.length() > 0) {
+			footerFmt = new MessageFormat(text);
+		} else {
+			footerFmt = null;
+		}
+
+		try {
+			boolean status = tableViewOfEvidence.print(printMode, headerFmt, footerFmt);
+
+			if (status) {
+				JOptionPane.showMessageDialog(tableViewOfEvidence.getParent(),
+						"TablePrint.printingComplete",
+						"TablePrint.printingResult",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(tableViewOfEvidence.getParent(),
+						"TablePrint.printingCancelled",
+						"TablePrint.printingResult",
+						JOptionPane.INFORMATION_MESSAGE);
+			}
+		} catch (PrinterException pe) {
+			String errorMessage = MessageFormat.format(
+					"TablePrint.printingFailed",
+					new Object[] { pe.getMessage() });
+			JOptionPane.showMessageDialog(tableViewOfEvidence.getParent(), errorMessage,
+					"TablePrint.printingResult", JOptionPane.ERROR_MESSAGE);
+		} catch (SecurityException se) {
+			String errorMessage = MessageFormat.format(
+					"TablePrint.printingFailed",
+					new Object[] { se.getMessage() });
+			JOptionPane.showMessageDialog(tableViewOfEvidence.getParent(), errorMessage,
+					"TablePrint.printingResult", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
 }

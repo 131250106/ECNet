@@ -44,6 +44,8 @@ public class ECMMainFrame {
 	// ”“≤‡–≈œ¢¿∏
 	private static InfoPanel infoPanel;
 
+	private static JSplitPane splitPane;
+
 	public ECMMainFrame() {
 		Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 		int width = (int) screensize.getWidth();
@@ -101,7 +103,7 @@ public class ECMMainFrame {
 		frmEcm.getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new BorderLayout());
 
-		JSplitPane splitPane = new JSplitPane();
+		splitPane = new JSplitPane();
 		splitPane.setResizeWeight(0.8);
 		mainPanel.add(splitPane, BorderLayout.CENTER);
 
@@ -150,5 +152,12 @@ public class ECMMainFrame {
 
 	public static void resetElementInfo() {
 		infoPanel.reSetInfo();
+	}
+
+	public static void setInfoVisible(boolean b) {
+		infoPanel.setVisible(b);
+		if(b){
+			splitPane.setRightComponent(infoPanel);
+		}
 	}
 }

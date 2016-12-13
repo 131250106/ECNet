@@ -641,9 +641,11 @@ public class CanvasPanel extends JScrollPane {
 		ECMMainFrame.resetButton();
 		ECMMainFrame.resetElementInfo();
 		if (MyStatusPanel.CurrentModel == Model.Image) {
+			ECMMainFrame.setInfoVisible(true);
 			setcanvasPanelPreferredSize();
 		} else if (MyStatusPanel.CurrentModel == Model.Table) {
 			mytable.reloadData();
+			ECMMainFrame.setInfoVisible(false);
 			this.setViewportView(mytable);
 		}
 	}
@@ -690,7 +692,6 @@ public class CanvasPanel extends JScrollPane {
 	}
 
 	public void selectAll() {
-		System.out.println("1121312");
 		ChoosedList.clear();
 		for(CanvasElement ce:model.getElements()){
 			ChoosedList.add(ce);
