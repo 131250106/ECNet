@@ -1,6 +1,7 @@
 package cn.edu.nju.ecm.view.table;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
@@ -49,6 +50,14 @@ public class MyJScrollTable extends JPanel {
 
 		JPanel top = new JPanel();
 		top.setLayout(new BorderLayout());
+		
+		JButton ExportButton = new JButton("导出");
+		ExportButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				ExportExcel exportExcel = new ExportExcel(tableViewOfEvidence,tableViewOfFact); 
+				exportExcel.export();
+			}
+		});
 		JButton printButton = new JButton("打印");
 		printButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
@@ -58,8 +67,12 @@ public class MyJScrollTable extends JPanel {
 		title = new JLabel(canvasPanel.model.getTitle());
 		title.setFont(new java.awt.Font("宋体", 0, 24));
 		top.add(title, BorderLayout.CENTER);
-		top.add(printButton, BorderLayout.EAST);
-
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new FlowLayout(5));
+		buttonPanel.add(ExportButton);
+		buttonPanel.add(printButton);
+		top.add(buttonPanel, BorderLayout.EAST);
+		
 		this.add(top, BorderLayout.NORTH);
 		
 		this.add(createEvidenceTable(), BorderLayout.CENTER);
