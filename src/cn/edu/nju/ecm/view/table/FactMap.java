@@ -23,6 +23,8 @@ public class FactMap implements CMap {
 	}
 
 	public int visibleCell(int row, int column) {
+		if(row==data.length-1)
+			return row;
 		if(row>0&&span(row, column)==span(row-1, column)&&isSpan(column)){
 			int id1 = (int)data[row-1][0];
 			int id2 = (int)data[row][0];

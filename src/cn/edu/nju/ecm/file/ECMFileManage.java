@@ -1,11 +1,18 @@
 package cn.edu.nju.ecm.file;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -28,7 +35,7 @@ public class ECMFileManage {
 	public static String NEW_LINE = System.getProperty("line.separator");
 
 	@SuppressWarnings("unchecked")
-	public static void readModelFromFile(ECModel model) throws DocumentException {
+	public static void readModelFromECMFile(ECModel model) throws DocumentException {
 		SAXReader reader = new SAXReader();
 		reader.setEncoding("gb2312");
 		Document doc = reader.read(model.getFile());
@@ -60,6 +67,83 @@ public class ECMFileManage {
 			model.getElements().add(parseHRelation(hrelation, model));
 		}
 
+	}
+	
+	@SuppressWarnings("resource")
+	public static void readModelFromXLSFile(ECModel model) throws IOException{
+		InputStream stream = new FileInputStream(model.getFile());  
+		
+		Workbook wb = new HSSFWorkbook(stream);  
+        
+        Sheet sheet1 = wb.getSheetAt(0);  
+        
+        int beginId = -1;
+        for(int i=2;i<sheet1.getLastRowNum()+1;i++){
+        	Row row = sheet1.getRow(i);
+        	
+        	Cell cell = row.getCell(0);
+        	int currentId = Integer.parseInt(cell.getStringCellValue());
+        	if(i==2){
+				beginId = Integer.parseInt(cell.getStringCellValue());
+			}else if(currentId==beginId){
+				continue;
+			}else{
+				beginId = currentId;
+			}
+        	String name = row.getCell(1).getStringCellValue();
+    		String content = row.getCell(2).getStringCellValue();
+    		String evidenceType = row.getCell(3).getStringCellValue();
+    		String commiter = row.getCell(4).getStringCellValue();
+    		String evidenceReason = row.getCell(5).getStringCellValue();
+    		String evidenceConclusion = row.getCell(6).getStringCellValue();
+    		EBody entityEBody = new EBody(name, content, evidenceType, commiter, evidenceReason, evidenceConclusion);
+    		model.getElements().add(new EBodyModel(0, 0, 30, 80, currentId, entityEBody));
+        }
+        Sheet sheet2 = wb.getSheetAt(1);  
+        
+        beginId = -1;
+        ConnectorModel connectorModel = null;
+        for(int i=2;i<sheet2.getLastRowNum()+1;i++){
+        	Row row = sheet2.getRow(i);
+        	
+        	Cell cell = row.getCell(0);
+        	int currentId = Integer.parseInt(cell.getStringCellValue());
+        	
+        	if(i==2||currentId!=beginId){
+				beginId = currentId;
+				String name = row.getCell(1).getStringCellValue();
+	    		String content = row.getCell(2).getStringCellValue();
+	    		HConnector entityHConnector = new HConnector(name, content);
+	    		connectorModel = new ConnectorModel(0, 0, 30, 30, currentId, entityHConnector);
+	    		model.getElements().add(connectorModel);
+			}else if(currentId==beginId){
+			}
+        	String temp = row.getCell(4).getStringCellValue();
+        	if(!temp.equals("")){
+        		int bodyId = Integer.parseInt(temp);
+        		CanvasElement body = model.getElementByID(bodyId);
+        		if(body!=null){			//暂时不判断是否有重复的链头
+        			//1.创建链头
+        			String name = "";
+        			String content = row.getCell(3).getStringCellValue();
+	    			String keySentence = row.getCell(5).getStringCellValue();
+	    			EHeader entityEHeader = new EHeader(name, content, keySentence);
+	    			EHeaderModel headerModel = new EHeaderModel(0, 0, 0, 0, model.getMaxId()+1, entityEHeader);
+	    			//2.建立链头与链体之间的关系
+	    			headerModel.setConnectedOwner(body);
+	    			model.getElements().add(headerModel);
+	    			//3.创建箭头
+	    			content = "";
+	    			HRelation entityHRealtion = new HRelation(name, content);
+	    			HRelationModel relationModel = new HRelationModel(0, 0, 0, 0, 0, entityHRealtion);
+	    			//4.建立箭头与链头，连接点的关系
+	    			relationModel.setConnectedOwner(headerModel);
+	    			relationModel.setConnectedSon(connectorModel);
+	    			model.getElements().add(relationModel);
+        		}
+        	}
+        }
+        model.autoFormat();
 	}
 
 	public static EBodyModel parseEBody(Element ebody) {

@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +55,13 @@ public class MyJScrollTable extends JPanel {
 		JButton ExportButton = new JButton("导出");
 		ExportButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				ExportExcel exportExcel = new ExportExcel(tableViewOfEvidence,tableViewOfFact); 
-				exportExcel.export();
+				try {
+					exportExcle();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(getParent(),
+							e.getLocalizedMessage(), "文件无法保存",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
 		JButton printButton = new JButton("打印");
@@ -180,8 +186,8 @@ public class MyJScrollTable extends JPanel {
 				data[numberOfEvidence][0] = ce.getID();
 				data[numberOfEvidence][1] = ((EBodyModel)ce).geteBody().getName();
 				data[numberOfEvidence][2] = ((EBodyModel)ce).geteBody().getContent();
-				data[numberOfEvidence][4] = ((EBodyModel)ce).geteBody().getEvidenceType();
-				data[numberOfEvidence][3] = ((EBodyModel)ce).geteBody().getCommiter();
+				data[numberOfEvidence][3] = ((EBodyModel)ce).geteBody().getEvidenceType();
+				data[numberOfEvidence][4] = ((EBodyModel)ce).geteBody().getCommiter();
 				data[numberOfEvidence][5] = ((EBodyModel)ce).geteBody().getEvidenceReason();
 				data[numberOfEvidence][6] = ((EBodyModel)ce).geteBody().getEvidenceConclusion();
 				data[numberOfEvidence][7] = ((EHeaderModel)header).geteHeader().getContent();
@@ -345,5 +351,10 @@ public class MyJScrollTable extends JPanel {
 	
 	public CMap getFactMap(){
 		return tableViewOfFact.getMap();
+	}
+	
+	public void exportExcle() throws IOException{
+		ExportExcel exportExcel = new ExportExcel(tableViewOfEvidence,tableViewOfFact); 
+		exportExcel.export();
 	}
 }

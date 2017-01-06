@@ -104,9 +104,10 @@ public class CanvasPanel extends JScrollPane {
 	 * Create the panel.
 	 * 
 	 * @throws DocumentException
+	 * @throws IOException 
 	 */
 	public CanvasPanel(FileType type, JLabel title, File file,
-			Element newModel, JFrame mainFrame) throws DocumentException {
+			Element newModel, JFrame mainFrame) throws Exception {
 		mainPanel = this;
 		this.model = new ECModel(Undotooler);
 		this.model.setFile(file);
@@ -116,8 +117,10 @@ public class CanvasPanel extends JScrollPane {
 
 		this.changed = false;
 
-		if (type == FileType.Open) {
-			ECMFileManage.readModelFromFile(model);
+		if (type == FileType.OpenECM) {
+			ECMFileManage.readModelFromECMFile(model);
+		}else if(type == FileType.OpenXLS){
+			ECMFileManage.readModelFromXLSFile(model);
 		} else {
 			model.setDescription(newModel.getContent());
 			model.setTitle(newModel.getName());
@@ -219,8 +222,12 @@ public class CanvasPanel extends JScrollPane {
 
 	public void saveModel(String filePath) throws IOException {
 		if (filePath != null) {
-			this.type = FileType.Open;
 		} else {
+			if(type==FileType.OpenXLS){				//如果是xls，导出成xls
+				mytable.exportExcle();
+				this.setChanged(false);
+				return ;
+			}
 			filePath = this.model.getFile().getAbsolutePath();
 		}
 		ECMFileManage.saveModelToFile(this.model, filePath);

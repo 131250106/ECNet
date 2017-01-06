@@ -22,8 +22,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import org.dom4j.DocumentException;
-
 import cn.edu.nju.ecm.entity.Element;
 import cn.edu.nju.ecm.view.ECMMainFrame.FileType;
 import cn.edu.nju.ecm.view.MyStatusPanel.Model;
@@ -66,7 +64,7 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(
 				java.awt.event.KeyEvent.VK_O, java.awt.Event.CTRL_MASK));
 		fileMenu.add(openMenuItem);
-		openMenuItem.addActionListener(new CreateCanvasAction(FileType.Open));
+		openMenuItem.addActionListener(new CreateCanvasAction(FileType.OpenECM));
 
 		JSeparator separator = new JSeparator();
 		fileMenu.add(separator);
@@ -276,10 +274,10 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 
 		public void actionPerformed(ActionEvent e) {
 			Element newModel = null;
-			if (fileType == FileType.Open) {
+			if (fileType == FileType.OpenECM||fileType == FileType.OpenXLS) {
 				this.file = ViewHelper.showOpenFileDialog(frmEcm,
-						new FileNameExtensionFilter("Evidence Chain: .ecm",
-								"ecm"), null);
+						new FileNameExtensionFilter("Evidence Chain: .ecm .xls",
+								"ecm","xls"), null);
 				if (this.file == null) {
 					return;
 				}
@@ -295,6 +293,11 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 						return;
 					}
 				}
+				if(this.file.getName().endsWith(".xls"))
+					fileType=FileType.OpenXLS;
+				else
+					fileType=FileType.OpenECM;
+				
 			} else {
 				ElementDialog dialog = new ElementDialog(frmEcm,
 						ElementType.Model);
@@ -366,7 +369,7 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 					}
 
 				});
-			} catch (DocumentException e1) {
+			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				JOptionPane.showMessageDialog(frmEcm, e1.getLocalizedMessage(),
 						"无法打开或者新建文件", JOptionPane.ERROR_MESSAGE);

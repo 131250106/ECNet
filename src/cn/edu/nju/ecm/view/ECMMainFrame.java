@@ -26,7 +26,7 @@ public class ECMMainFrame {
 
 	// 定义新建画板的方式：新建文件、打开文件
 	public enum FileType {
-		New, Open
+		New, OpenECM, OpenXLS
 	}
 
 	// 当前选中的命令，整个实例中唯一且能够被其他类型直接使用

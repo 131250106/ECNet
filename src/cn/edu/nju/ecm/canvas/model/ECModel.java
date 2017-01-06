@@ -383,4 +383,13 @@ public class ECModel implements Serializable {
 		}
 		return null;
 	}
+	
+	public int getMaxId(){
+		int result = -1;
+		for(CanvasElement ce:elements){
+			if(ce.getID()>result)
+				result = ce.getID();
+		}
+		return result;
+	}
 }

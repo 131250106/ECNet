@@ -1,7 +1,6 @@
 package cn.edu.nju.ecm.view.table;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -27,7 +26,7 @@ public class ExportExcel {
 	private JFileChooser jfc = new JFileChooser();
 	private HSSFWorkbook wb;
 
-	public ExportExcel(JTable table1, JTable table2) {
+	public ExportExcel(JTable table1, JTable table2) throws IOException {
 		this.table1 = table1;
 		this.table2 = table2;
 		jfc.addChoosableFileFilter(new FileFilter() {
@@ -42,10 +41,10 @@ public class ExportExcel {
 
 		jfc.showSaveDialog(null);
 		File file = jfc.getSelectedFile();
-		try {
+		if (!file.getName().endsWith(".xls")) {
 			this.fos = new FileOutputStream(file + ".xls");
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
+		} else {
+			this.fos = new FileOutputStream(file);
 		}
 	}
 
@@ -73,12 +72,12 @@ public class ExportExcel {
 		HSSFCellStyle titleStyle = wb.createCellStyle();
 		titleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
 		titleStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
-		HSSFFont font = wb.createFont(); 
-        font.setFontName("宋体");
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 16);// 设置字体大小
-        titleStyle.setFont(font);
-        
+		HSSFFont font = wb.createFont();
+		font.setFontName("宋体");
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 16);// 设置字体大小
+		titleStyle.setFont(font);
+
 		TableModel tm2 = table2.getModel();
 		int row2 = tm2.getRowCount();
 		int cloumn2 = tm2.getColumnCount() - 1;
@@ -95,7 +94,7 @@ public class ExportExcel {
 		int beginRow = 0; // 起始终示合并row
 		int beginId = 0; // 起始终示合并ID
 		for (int i = 0; i < row2; i++) {
-			HSSFRow hr = hs.createRow(i+1);
+			HSSFRow hr = hs.createRow(i + 1);
 			for (int j = 0; j < cloumn2; j++) {
 				if (i == 0) {
 					String value = tm2.getColumnName(j);
@@ -107,20 +106,21 @@ public class ExportExcel {
 					hc.setCellStyle(cellStyle);
 				} else {
 					if (i == 1 && j == 0) {
-						beginRow = i+1;
+						beginRow = i + 1;
 						if (tm2.getValueAt(i - 1, 0) != null) {
 							beginId = ((int) tm2.getValueAt(i - 1, 0));
 						}
 					} else if (i == row2 - 1 && j <= 2) {
-						cra = new CellRangeAddress(beginRow, i+1, j, j);
+						cra = new CellRangeAddress(beginRow, i + 1, j, j);
 						hs.addMergedRegion(cra);
 					} else if (tm2.getValueAt(i - 1, 0) != null
 							&& ((int) tm2.getValueAt(i - 1, 0)) != beginId) {
 						cra = new CellRangeAddress(beginRow, i, j, j);
-						hs.addMergedRegion(cra);
+						if (beginRow != i)
+							hs.addMergedRegion(cra);
 						if (j == 2) {
 							beginId = ((int) tm2.getValueAt(i - 1, 0));
-							beginRow = i+1;
+							beginRow = i + 1;
 						}
 					}
 					if (tm2.getValueAt(i - 1, j) != null) {
@@ -150,12 +150,12 @@ public class ExportExcel {
 		HSSFCellStyle titleStyle = wb.createCellStyle();
 		titleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 居中
 		titleStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);// 垂直
-		HSSFFont font = wb.createFont(); 
-        font.setFontName("宋体");
-        font.setBold(true);
-        font.setFontHeightInPoints((short) 16);// 设置字体大小
-        titleStyle.setFont(font);
-        
+		HSSFFont font = wb.createFont();
+		font.setFontName("宋体");
+		font.setBold(true);
+		font.setFontHeightInPoints((short) 16);// 设置字体大小
+		titleStyle.setFont(font);
+
 		TableModel tm1 = table1.getModel();
 		int row1 = tm1.getRowCount();
 		int cloumn1 = tm1.getColumnCount() - 1;
@@ -195,7 +195,8 @@ public class ExportExcel {
 					} else if (tm1.getValueAt(i - 1, 0) != null
 							&& ((int) tm1.getValueAt(i - 1, 0)) != beginId) {
 						cra = new CellRangeAddress(beginRow, i, j, j);
-						hs.addMergedRegion(cra);
+						if (beginRow != i)
+							hs.addMergedRegion(cra);
 						if (j == 6) {
 							beginId = ((int) tm1.getValueAt(i - 1, 0));
 							beginRow = i + 1;

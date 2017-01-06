@@ -3,7 +3,6 @@ package cn.edu.nju.ecm.canvas.model;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
