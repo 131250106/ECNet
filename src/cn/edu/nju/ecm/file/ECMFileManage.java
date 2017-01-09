@@ -243,7 +243,6 @@ public class ECMFileManage {
 	}
 
 	public static void saveModelToFile(ECModel model, String filePath) throws IOException {
-		// TODO Auto-generated method stub
 		BufferedWriter modelWriter = new BufferedWriter(
 				new OutputStreamWriter(new FileOutputStream(filePath), "gb2312"));
 		modelWriter.append("<ECMModel>" + ECMFileManage.NEW_LINE);
@@ -260,6 +259,68 @@ public class ECMFileManage {
 		modelWriter.append("</ECMModel>");
 		modelWriter.flush();
 		modelWriter.close();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void readFileToModel(ECModel model) throws DocumentException {				//TODO 待测试！！
+		SAXReader reader = new SAXReader();
+		reader.setEncoding("gb2312");
+		Document doc = reader.read(model.getFile());
+		Element root = doc.getRootElement();
+		String title = root.element("title").getText();
+		String description = root.element("description").getText();
+		model.setTitle(title);
+		model.setDescription(description);
+		
+		List<Element> connectors = root.elements("fact");
+		for (Element connector : connectors) {
+			//1.解析事实信息（也就是联结点）
+			String name = connector.element("name").getText();
+			String content = connector.element("content").getText();
+			HConnector entityHConnector = new HConnector(name, content);
+			int id = Integer.parseInt(connector.attributeValue("id"));
+			CanvasElement connectorModel = new ConnectorModel(0, 0, 30, 30, id, entityHConnector);
+			model.getElements().add(connectorModel);
+			
+			//2.解析事实信息中的链体信息
+			List<Element> ebodys = connector.elements("ebody");
+			for (Element ebody : ebodys) {
+				//2.1 解析链体信息
+				name = ebody.element("name").getText();
+				content = ebody.element("content").getText();
+				String evidenceType = ebody.element("evidenceType").getText();
+				String commiter = ebody.element("commiter").getText();
+				String evidenceReason = ebody.element("evidenceReason").getText();
+				String evidenceConclusion = ebody.element("evidenceConclusion").getText();
+				EBody entityEBody = new EBody(name, content, evidenceType, commiter, evidenceReason, evidenceConclusion);
+				id = Integer.parseInt(ebody.attributeValue("id"));
+				CanvasElement bodyModel = new EBodyModel(0, 0, 30, 80, id, entityEBody);
+				model.getElements().add(bodyModel);
+				
+				//2.2 解析连体中的链头信息
+				List<Element> eheaerds = ebody.elements("eheader");
+				for (Element eheader : eheaerds) {
+					//2.2.1 解析链头信息
+					name = eheader.element("name").getText();
+					content = eheader.element("content").getText();
+					String keySentence = eheader.element("keySentence").getText();
+					EHeader entityEHeader = new EHeader(name, content, keySentence);
+					id = Integer.parseInt(eheader.attributeValue("id"));
+					CanvasElement headerModel = new EHeaderModel(0, 0, 0, 0, id, entityEHeader);
+					//2.2.2 将链头绑定在链体上
+					headerModel.setConnectedOwner(bodyModel);
+					model.getElements().add(headerModel);
+					//2.2.3 创建箭头 
+	    			HRelation entityHRealtion = new HRelation("", "");
+	    			HRelationModel relationModel = new HRelationModel(0, 0, 0, 0, 0, entityHRealtion);
+	    			//2.2.4 通过箭头将链头与联结点关联起来
+	    			relationModel.setConnectedOwner(headerModel);
+	    			relationModel.setConnectedSon(connectorModel);
+	    			model.getElements().add(relationModel);
+				}
+			}
+		}
+		model.setMaxIDNumber(model.getMaxId()+1);
 	}
 
 }
