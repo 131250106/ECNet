@@ -318,7 +318,7 @@ public class CanvasPanel extends JScrollPane {
 	public void refresh() { // 修改后刷新界面
 		setChanged(true);
 		canvasPanel.repaint();
-		mytable.reloadData();
+		mytable.ResetTableView();
 		showChoosedElements();
 	}
 
@@ -651,7 +651,7 @@ public class CanvasPanel extends JScrollPane {
 			ECMMainFrame.setInfoVisible(true);
 			setcanvasPanelPreferredSize();
 		} else if (MyStatusPanel.CurrentModel == Model.Table) {
-			mytable.reloadData();
+			mytable.ResetTableView();
 			ECMMainFrame.setInfoVisible(false);
 			this.setViewportView(mytable);
 		}

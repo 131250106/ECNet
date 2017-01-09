@@ -53,7 +53,7 @@ public class ECMMainFrame {
 		ECMMainFrame.ScreenCenterX = width / 2;
 		ECMMainFrame.ScreenCenterY = height / 2;
 
-		int frameWidth = 1200, frameHeight = 760;
+		int frameWidth = 1366, frameHeight = 768;
 		int x = ECMMainFrame.ScreenCenterX - frameWidth / 2;
 		int y = ECMMainFrame.ScreenCenterY - frameHeight / 2;
 		Rectangle bounds = new Rectangle(x, y, frameWidth, frameHeight);

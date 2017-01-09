@@ -1,6 +1,7 @@
 package cn.edu.nju.ecm.view.table;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,6 +45,9 @@ public class MyJScrollTable extends JPanel {
 	private String[] namesOfEvidence = { "证据序号", "证据名称", "证据明细", "证据种类", "提交人", "质证理由", "质证结论", "链头信息", "证据中的关键文本（短句","操作"};
 	private String[] namesOfFact = { "事实序号", "事实名称", "事实明细", "链头信息", "证据序号", "证据中的关键文本（短句）","操作"};
 
+	private JScrollPane Evidencescrollpane ;
+	private JScrollPane Factscrollpane ;
+	
 	public MyJScrollTable(CanvasPanel canvasPanel) {
 		this.canvasPanel = canvasPanel;
 
@@ -81,8 +85,12 @@ public class MyJScrollTable extends JPanel {
 		
 		this.add(top, BorderLayout.NORTH);
 		
-		this.add(createEvidenceTable(), BorderLayout.CENTER);
-		this.add(createFactTable(), BorderLayout.SOUTH);
+		JPanel tableData = new JPanel();		//用于放置两个表格
+		this.add(tableData, BorderLayout.CENTER);
+		
+		tableData.setLayout(new BorderLayout());
+		tableData.add(createEvidenceTable(), BorderLayout.NORTH);
+		tableData.add(createFactTable(), BorderLayout.CENTER);
 		ResetTableView();
 
 	}
@@ -95,8 +103,8 @@ public class MyJScrollTable extends JPanel {
 
 		tableViewOfEvidence.setRowHeight(30);
 		tableViewOfEvidence.getTableHeader().setUI(new MyHeaderUI(tableViewOfEvidence,"证据清单",namesOfEvidence));
-		JScrollPane scrollpane = new JScrollPane(tableViewOfEvidence);
-		return scrollpane;
+		Evidencescrollpane = new JScrollPane(tableViewOfEvidence);
+		return Evidencescrollpane;
 	}
 	
 	public JScrollPane createFactTable() {
@@ -104,8 +112,8 @@ public class MyJScrollTable extends JPanel {
 
 		tableViewOfFact.setRowHeight(30);
 		tableViewOfFact.getTableHeader().setUI(new MyHeaderUI(tableViewOfFact,"事实清单",namesOfFact));
-		JScrollPane scrollpane = new JScrollPane(tableViewOfFact);
-		return scrollpane;
+		Factscrollpane = new JScrollPane(tableViewOfFact);
+		return Factscrollpane;
 	}
 
 	public void changeTitle() {
@@ -263,12 +271,6 @@ public class MyJScrollTable extends JPanel {
 		tableViewOfFact.setMap(new FactMap(dataOfFact,canvasPanel.model));
 	}
 
-	public void reloadData() {							//只需要重新读一次数据就行
-		getModelData();
-		tableViewOfEvidence.repaint();
-		tableViewOfFact.repaint();
-	}
-
 	public void ResetTableView() {						//需要重新reset布局
 		loadData();
 		tableViewOfEvidence.getColumnModel().getColumn(9).setCellEditor(myButtonEditor);
@@ -285,6 +287,9 @@ public class MyJScrollTable extends JPanel {
 		tcrcenter.setHorizontalAlignment(JLabel.CENTER);
 		tableViewOfEvidence.getColumn("证据序号").setCellRenderer(tcrcenter);
 		tableViewOfFact.getColumn("事实序号").setCellRenderer(tcrcenter);
+		
+		Evidencescrollpane.setPreferredSize(new Dimension(500, (dataOfEvidence.length+2)*30+5));
+		Factscrollpane.setPreferredSize(new Dimension(500, (dataOfFact.length+2)*30+5));
 	}
 	
 	private void printTable() {

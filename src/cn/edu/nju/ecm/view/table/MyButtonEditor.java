@@ -52,9 +52,9 @@ public class MyButtonEditor extends AbstractCellEditor implements
 
 	private void initButton() {
 		delete = new JButton();
-		delete.setFont(new Font("Dialog", Font.PLAIN, 10));
-		modify = new JButton();
-		modify.setFont(new Font("Dialog", Font.PLAIN, 10));
+    	delete.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 13));
+    	modify = new JButton();
+    	modify.setFont(new Font("Î¢ÈíÑÅºÚ", Font.PLAIN, 13));
 
 		delete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
