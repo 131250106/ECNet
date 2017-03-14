@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -69,7 +70,7 @@ public class ECMFileManage {
 
 	}
 	
-	@SuppressWarnings("resource")
+	@SuppressWarnings({ "resource", "deprecation" })
 	public static void readModelFromXLSFile(ECModel model) throws IOException{
 		InputStream stream = new FileInputStream(model.getFile());  
 		
@@ -78,11 +79,19 @@ public class ECMFileManage {
         Sheet sheet1 = wb.getSheetAt(0);  
         
         int beginId = -1;
+        
         for(int i=2;i<sheet1.getLastRowNum()+1;i++){
+        	
+        	
         	Row row = sheet1.getRow(i);
         	
         	Cell cell = row.getCell(0);
-        	int currentId = Integer.parseInt(cell.getStringCellValue());
+
+        	int currentId = beginId;
+        	
+        	if(cell.getCellTypeEnum()!=CellType.BLANK)
+        		currentId = Integer.parseInt(cell.getStringCellValue());
+        	
         	if(i==2){
 				beginId = Integer.parseInt(cell.getStringCellValue());
 			}else if(currentId==beginId){
@@ -99,6 +108,8 @@ public class ECMFileManage {
     		EBody entityEBody = new EBody(name, content, evidenceType, commiter, evidenceReason, evidenceConclusion);
     		model.getElements().add(new EBodyModel(0, 0, 30, 80, currentId, entityEBody));
         }
+        
+        
         Sheet sheet2 = wb.getSheetAt(1);  
         
         beginId = -1;
@@ -107,7 +118,13 @@ public class ECMFileManage {
         	Row row = sheet2.getRow(i);
         	
         	Cell cell = row.getCell(0);
-        	int currentId = Integer.parseInt(cell.getStringCellValue());
+        	
+        	int currentId = -1;
+        	
+        	if(cell.getCellTypeEnum()!=CellType.BLANK)
+        		currentId = Integer.parseInt(cell.getStringCellValue());
+        	else
+        		currentId = beginId;
         	
         	if(i==2||currentId!=beginId){
 				beginId = currentId;

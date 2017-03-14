@@ -223,7 +223,7 @@ public class CanvasPanel extends JScrollPane {
 	public void saveModel(String filePath) throws IOException {
 		if (filePath != null) {
 		} else {
-			if(type==FileType.OpenXLS){				//如果是xls，导出成xls
+			if(type==FileType.OpenXLS && MyStatusPanel.CurrentModel==Model.Table){				//如果是xls，导出成xls
 				mytable.exportExcle();
 				this.setChanged(false);
 				return ;

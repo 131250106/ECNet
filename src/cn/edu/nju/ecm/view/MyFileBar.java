@@ -371,6 +371,7 @@ public class MyFileBar extends JMenuBar { // 最顶层菜单面板以及对应的操作
 				});
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
+				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frmEcm, e1.getLocalizedMessage(),
 						"无法打开或者新建文件", JOptionPane.ERROR_MESSAGE);
 			}
