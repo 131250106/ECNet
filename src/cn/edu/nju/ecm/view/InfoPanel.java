@@ -51,9 +51,15 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 
 	private JLabel modeltitle;
 	private JLabel modelcontent;
-
+	
+	private JLabel caseReason;
+	private JLabel caseNumber;
+	
 	private JTextField modeltitleField;
 	private JTextArea modelcontentArea;
+
+	private JTextField caseReasonField;
+	private JTextField caseNumberField;
 
 	private JLabel modellabel1;
 	private JLabel modellabel2;
@@ -79,11 +85,25 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		modelcontent = new JLabel();
 		modelcontent.setFont(new java.awt.Font("宋体", 0, 18));
 		modelcontent.setText("简介:");
+		
+		caseReason = new JLabel();
+		caseReason.setFont(new java.awt.Font("宋体", 0, 18));
+		caseReason.setText("案由:");
 
+		caseNumber = new JLabel();
+		caseNumber.setFont(new java.awt.Font("宋体", 0, 18));
+		caseNumber.setText("案号:");
+		
 		modeltitleField = new JTextField();
 		modeltitleField.addFocusListener(new MyFocusListener());
+		
+		caseReasonField = new JTextField();
+		caseReasonField.addFocusListener(new MyFocusListener());
+		
+		caseNumberField = new JTextField();
+		caseNumberField.addFocusListener(new MyFocusListener());
+		
 		JScrollPane jScrollPane2 = new JScrollPane();
-
 		modelcontentArea = new JTextArea();
 		modelcontentArea.setColumns(120);
 		modelcontentArea.setRows(5);
@@ -132,7 +152,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		modellabel4.setFont(new java.awt.Font("宋体", 0, 18));
 		modeltitleField4 = new JTextField();
 
-		modify.setText("确认修改");
+		modify.setText("保存");
 		modify.addActionListener(new ActionListener() {
 
 			@Override
@@ -142,7 +162,7 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 			}
 		});
 
-		reset.setText("重置信息");
+		reset.setText("重置");
 		reset.addActionListener(new ActionListener() {
 
 			@Override
@@ -199,6 +219,10 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 																												.addComponent(
 																														modeltitle)
 																												.addComponent(
+																														caseReason)
+																												.addComponent(
+																														caseNumber)
+																												.addComponent(
 																														modelcontent))
 																								.addPreferredGap(
 																										javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -207,8 +231,9 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 																												GroupLayout.Alignment.LEADING)
 																												.addComponent(
 																														jScrollPane2)
-																												.addComponent(
-																														modeltitleField)))
+																												.addComponent(modeltitleField)
+																												.addComponent(caseReasonField)
+																												.addComponent(caseNumberField)))
 																				.addGroup(
 																						GroupLayout.Alignment.LEADING,
 																						layout.createSequentialGroup()
@@ -256,21 +281,22 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 																.addGroup(
 																		layout.createParallelGroup(
 																				GroupLayout.Alignment.LEADING)
-																				.addComponent(
-																						delete)
 																				.addGroup(
 																						layout.createSequentialGroup()
 																								.addComponent(
 																										modify)
 																								.addPreferredGap(
-																										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																										GroupLayout.DEFAULT_SIZE,
-																										Short.MAX_VALUE)
+																										javax.swing.LayoutStyle.ComponentPlacement.RELATED
+																										)
 																								.addComponent(
-																										reset)))
-																.addContainerGap(
-																		GroupLayout.DEFAULT_SIZE,
-																		Short.MAX_VALUE))))
+																										reset)
+																								.addPreferredGap(
+																										javax.swing.LayoutStyle.ComponentPlacement.RELATED
+																										)
+																								.addComponent(
+																										delete)))
+																.addGap(15, 15,
+																		15))))
 				.addGroup(
 						layout.createSequentialGroup()
 								.addContainerGap(106, Short.MAX_VALUE)
@@ -294,6 +320,24 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 														24,
 														GroupLayout.PREFERRED_SIZE)
 												.addComponent(modeltitle))
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														caseReasonField,
+														GroupLayout.PREFERRED_SIZE,
+														24,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(caseReason))
+								.addGroup(
+										layout.createParallelGroup(
+												GroupLayout.Alignment.BASELINE)
+												.addComponent(
+														caseNumber,
+														GroupLayout.PREFERRED_SIZE,
+														24,
+														GroupLayout.PREFERRED_SIZE)
+												.addComponent(caseNumberField))
 								.addPreferredGap(
 										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 										12, Short.MAX_VALUE)
@@ -383,20 +427,15 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 														112,
 														GroupLayout.PREFERRED_SIZE)
 												.addComponent(content))
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										12, Short.MAX_VALUE)
+								.addGap(1, 1, 1)
 								.addGroup(
 										layout.createParallelGroup(
 												GroupLayout.Alignment.LEADING)
 												.addComponent(modify)
-												.addComponent(reset))
-								.addPreferredGap(
-										javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-										12, Short.MAX_VALUE)
-								.addComponent(delete)
-								.addContainerGap(GroupLayout.DEFAULT_SIZE,
-										Short.MAX_VALUE)));
+												.addComponent(reset)
+												.addComponent(delete))
+								.addGap(1, 1, 1)
+								));
 
 		setInfo(element);
 		
@@ -501,6 +540,8 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 		this.canvasPanel = canvasPanel;
 		modeltitleField.setText(canvasPanel.model.getTitle());
 		modelcontentArea.setText(canvasPanel.model.getDescription());
+		caseReasonField.setText(canvasPanel.model.getCaseReason());
+		caseNumberField.setText(canvasPanel.model.getCaseNumber());
 	}
 
 	public void reSetModel() {
@@ -552,10 +593,14 @@ public class InfoPanel extends JPanel {									//右侧信息栏panel
 			if (canvasPanel != null) {
 				if (canvasPanel.model.getTitle().equals(modeltitleField.getText())
 						&& canvasPanel.model.getDescription().equals(
-								modelcontentArea.getText())) {
+								modelcontentArea.getText()) && canvasPanel.model.getCaseNumber().equals(
+										caseNumberField.getText()) &&canvasPanel.model.getCaseReason().equals(
+												caseReasonField.getText())) {
 				} else{
 					canvasPanel.model.setTitle(modeltitleField.getText());
 					canvasPanel.model.setDescription(modelcontentArea.getText());
+					canvasPanel.model.setCaseNumber(caseNumberField.getText());
+					canvasPanel.model.setCaseReason(caseReasonField.getText());
 					canvasPanel.getMytable().changeTitle();
 					canvasPanel.setChanged(true);
 				}

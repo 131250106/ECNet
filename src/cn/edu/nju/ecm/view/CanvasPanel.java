@@ -83,6 +83,11 @@ public class CanvasPanel extends JScrollPane {
 	private JMenuItem copyItem = new JMenuItem("复制");
 	private JMenuItem pasteItem = new JMenuItem("粘贴");
 	private JMenuItem undoItem = new JMenuItem("撤销");
+	
+	private JMenuItem newEBody = new JMenuItem("新增链体");
+	private JMenuItem newEHeader = new JMenuItem("新增链头");
+	private JMenuItem newHRelation = new JMenuItem("新增箭头");
+	private JMenuItem newConnctor = new JMenuItem("新增联结");
 
 	// 当前被复制的图元
 	private CanvasElement currentCopyElement = null;
@@ -170,7 +175,6 @@ public class CanvasPanel extends JScrollPane {
 		deleteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				if (currentChoosed != null) {
 					deleteElementById(currentChoosed.getID(), false);
 				}
@@ -180,7 +184,6 @@ public class CanvasPanel extends JScrollPane {
 		copyItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				copyElement();
 			}
 		});
@@ -188,11 +191,52 @@ public class CanvasPanel extends JScrollPane {
 		pasteItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
 				pasteElement();
 			}
 		});
 		popupMenu.add(undoItem);
+		undoItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				undo();
+			}
+		});
+		
+		popupMenu.add(newEBody);
+		newEBody.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ECMMainFrame.command = Command.EBody;
+				drawElement(currentX, currentY);
+			}
+		});
+		
+		popupMenu.add(newEHeader);
+		newEHeader.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ECMMainFrame.command = Command.EHeader;
+				drawElement(currentX, currentY);
+			}
+		});
+		
+		popupMenu.add(newHRelation);
+		newHRelation.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ECMMainFrame.command = Command.ERelation;
+				drawElement(currentX, currentY);
+			}
+		});
+		
+		popupMenu.add(newConnctor);
+		newConnctor.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ECMMainFrame.command = Command.EConnector;
+				drawElement(currentX, currentY);
+			}
+		});
 
 		mytable = new MyJScrollTable(this);
 
@@ -253,7 +297,7 @@ public class CanvasPanel extends JScrollPane {
 	public void copyElement() { // 复制当前选中图元
 		currentCopyElement = currentChoosed;
 	}
-
+	
 	public void pasteElement() { // 粘贴当前选中图元
 		if (currentCopyElement != null) {
 			if (currentCopyElement.getElementType() == CanvasElement.ElementType.Body) {

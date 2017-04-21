@@ -22,6 +22,8 @@ public class ECMModelPanel extends ElementPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTextField ecmNameText;
+	private JTextField caseReason;
+	private JTextField caseNumber;
 	private JTextArea ecmDescText;
 
 	/**
@@ -39,6 +41,18 @@ public class ECMModelPanel extends ElementPanel {
 		TextChecker nameChecker = new TextChecker(ecmNameText, this, "证据链名称必须至少5个字", 5, 0);
 		nameChecker.setCheckType(CheckType.Length);
 		addChecker(nameChecker);
+		
+		JLabel lblCaseReason = new JLabel("案      由");
+		lblCaseReason.setFont(new Font("宋体", Font.PLAIN, 15));
+		caseReason = new JTextField();
+		caseReason.setFont(new Font("宋体", Font.PLAIN, 15));
+		caseReason.setColumns(10);
+		
+		JLabel lblCaseNumber = new JLabel("案      号");
+		lblCaseNumber.setFont(new Font("宋体", Font.PLAIN, 15));
+		caseNumber = new JTextField();
+		caseNumber.setFont(new Font("宋体", Font.PLAIN, 15));
+		caseNumber.setColumns(10);
 
 		JLabel lblNewLabel_1 = new JLabel("证据链简介");
 		lblNewLabel_1.setFont(new Font("宋体", Font.PLAIN, 15));
@@ -52,6 +66,12 @@ public class ECMModelPanel extends ElementPanel {
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(ecmNameText,
 												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
+								.addGroup(groupLayout.createSequentialGroup().addComponent(lblCaseReason)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(caseReason,
+												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
+								.addGroup(groupLayout.createSequentialGroup().addComponent(lblCaseNumber)
+										.addPreferredGap(ComponentPlacement.RELATED).addComponent(caseNumber,
+												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE))
 								.addGroup(groupLayout.createSequentialGroup().addComponent(lblNewLabel_1)
 										.addPreferredGap(ComponentPlacement.RELATED).addComponent(scrollPane,
 												GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)))
@@ -60,6 +80,10 @@ public class ECMModelPanel extends ElementPanel {
 				.createSequentialGroup().addContainerGap()
 				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblNewLabel).addComponent(
 						ecmNameText, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblCaseReason).addComponent(
+						caseReason, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE).addComponent(lblCaseNumber).addComponent(
+						caseNumber, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(18).addGroup(groupLayout.createParallelGroup(Alignment.LEADING).addComponent(lblNewLabel_1)
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
 				.addContainerGap()));

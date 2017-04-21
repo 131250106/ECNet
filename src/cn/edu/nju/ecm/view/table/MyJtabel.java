@@ -25,6 +25,8 @@ public class MyJtabel extends JTable {
 			for (int i = 1; i < map.span(sk, column); i++) {
 				r1.height += this.getRowHeight(sk + i);
 			}
+//		r1.height = Math.max(r1.height,
+//				((TableCellTextAreaRenderer)getDefaultRenderer(Object.class)).getPreferredSize().height);
 		return r1;
 	}
 

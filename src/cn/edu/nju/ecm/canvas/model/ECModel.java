@@ -28,6 +28,9 @@ public class ECModel implements Serializable {
 	private int ID;
 	private String title = "";
 	private String description = "";
+	
+	private String caseReason = "";			//∞∏”…
+	private String caseNumber = "";			//∞∏∫≈
 
 	private int maxIDNumber = 0;
 
@@ -143,6 +146,22 @@ public class ECModel implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getCaseReason() {
+		return caseReason;
+	}
+
+	public void setCaseReason(String caseReason) {
+		this.caseReason = caseReason;
+	}
+
+	public String getCaseNumber() {
+		return caseNumber;
+	}
+
+	public void setCaseNumber(String caseNumber) {
+		this.caseNumber = caseNumber;
 	}
 
 	public File getFile() {

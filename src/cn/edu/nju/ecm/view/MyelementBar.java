@@ -148,9 +148,9 @@ public class MyelementBar extends JToolBar { // 上层快速工具栏面板
 	}
 
 	public void resetButton() {
+		ECMMainFrame.command = Command.Choose;
 		if (currentCommandButton != null) {
 			currentCommandButton.setSelected(false);
-			ECMMainFrame.command = Command.Choose;
 			currentCommandButton = null;
 		}
 	}

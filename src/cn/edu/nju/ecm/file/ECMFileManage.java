@@ -43,9 +43,13 @@ public class ECMFileManage {
 		Element root = doc.getRootElement();
 		String title = root.element("title").getText();
 		String description = root.element("description").getText();
+		String caseReason = root.element("caseReason").getText();
+		String caseNumber = root.element("caseNumber").getText();
 		int maxElementID = Integer.parseInt(root.element("maxID").getText());
 		model.setTitle(title);
 		model.setDescription(description);
+		model.setCaseReason(caseReason);
+		model.setCaseNumber(caseNumber);
 		model.setMaxIDNumber(maxElementID);
 
 		List<Element> ebodys = root.elements("ebody");
@@ -88,12 +92,14 @@ public class ECMFileManage {
         	Cell cell = row.getCell(0);
 
         	int currentId = beginId;
-        	
         	if(cell.getCellTypeEnum()!=CellType.BLANK)
-        		currentId = Integer.parseInt(cell.getStringCellValue());
+        		if(cell.getCellTypeEnum()==CellType.STRING)
+        			currentId = Integer.parseInt(cell.getStringCellValue());
+        		else if(cell.getCellTypeEnum()==CellType.NUMERIC)
+        			currentId = (int) cell.getNumericCellValue();
         	
         	if(i==2){
-				beginId = Integer.parseInt(cell.getStringCellValue());
+				beginId = currentId;
 			}else if(currentId==beginId){
 				continue;
 			}else{
@@ -119,12 +125,12 @@ public class ECMFileManage {
         	
         	Cell cell = row.getCell(0);
         	
-        	int currentId = -1;
-        	
+        	int currentId = beginId;
         	if(cell.getCellTypeEnum()!=CellType.BLANK)
-        		currentId = Integer.parseInt(cell.getStringCellValue());
-        	else
-        		currentId = beginId;
+        		if(cell.getCellTypeEnum()==CellType.STRING)
+        			currentId = Integer.parseInt(cell.getStringCellValue());
+        		else if(cell.getCellTypeEnum()==CellType.NUMERIC)
+        			currentId = (int) cell.getNumericCellValue();
         	
         	if(i==2||currentId!=beginId){
 				beginId = currentId;
@@ -135,7 +141,13 @@ public class ECMFileManage {
 	    		model.getElements().add(connectorModel);
 			}else if(currentId==beginId){
 			}
-        	String temp = row.getCell(4).getStringCellValue();
+        	
+        	String temp = "";
+        	if(row.getCell(4).getCellTypeEnum()==CellType.STRING)
+        		temp = row.getCell(4).getStringCellValue();
+        	else if(row.getCell(4).getCellTypeEnum()==CellType.NUMERIC)
+        		temp = ((int)row.getCell(4).getNumericCellValue())+"";
+        	
         	if(!temp.equals("")){
         		int bodyId = Integer.parseInt(temp);
         		CanvasElement body = model.getElementByID(bodyId);
@@ -152,7 +164,7 @@ public class ECMFileManage {
 	    			//3.创建箭头
 	    			content = "";
 	    			HRelation entityHRealtion = new HRelation(name, content);
-	    			HRelationModel relationModel = new HRelationModel(0, 0, 0, 0, 0, entityHRealtion);
+	    			HRelationModel relationModel = new HRelationModel(0, 0, 0, 0, model.getMaxId()+1, entityHRealtion);
 	    			//4.建立箭头与链头，连接点的关系
 	    			relationModel.setConnectedOwner(headerModel);
 	    			relationModel.setConnectedSon(connectorModel);
